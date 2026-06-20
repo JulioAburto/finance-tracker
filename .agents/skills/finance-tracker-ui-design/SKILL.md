@@ -1,6 +1,6 @@
 ---
 name: finance-tracker-ui-design
-description: Use when designing, reviewing, or implementing UI/UX for the Finance Tracker app, including dashboard layouts, transaction forms, category budget views, alerts, empty states, responsive behavior, MUI components, accessibility, and visual consistency.
+description: Audit, design, and implement UI/UX for the single-user Finance Tracker MVP built with Next.js App Router, TypeScript, and MUI. Use for route or component work involving /dashboard, /transactions, /transactions/new, /categories, /rules, /settings, AppShell/providers/theme, transaction forms and lists, category budgets, merchant rules, settings, financial summaries, alerts and status labels, empty/loading/error states, mobile responsiveness, accessibility, Spanish financial copy, and consistent money/date/percentage display. Apply the project rules for category versus payment method, credit-card payments as transfers, expense-only budget usage, and historical exchange rates; flag UI scope creep such as Tailwind, bank integrations, OCR, authentication, or AI-first flows.
 ---
 
 ---
