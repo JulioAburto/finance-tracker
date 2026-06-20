@@ -1,38 +1,35 @@
-# Finance Tracker - Codex Agent Instructions
+# Finance Tracker: instrucciones para agentes
 
-## Primary Instruction
+## Instrucción principal
 
-Before modifying code, read these files:
+Antes de modificar código, lee:
 
-```txt
-docs/MVP.md
-docs/DATABASE_SCHEMA.md
-docs/SETUP_NOTES.md
-```
+1. [`docs/MVP.md`](./docs/MVP.md)
+2. [`docs/DATABASE_SCHEMA.md`](./docs/DATABASE_SCHEMA.md)
+3. [`docs/SETUP_NOTES.md`](./docs/SETUP_NOTES.md)
 
-Use them as the source of truth for product scope, database design, setup, and implementation order.
+Usa [`docs/PROJECT_CONTEXT.md`](./docs/PROJECT_CONTEXT.md) para decisiones vigentes, estado y problemas conocidos.
 
-Do not implement features outside the documented MVP unless explicitly requested.
+No implementes funcionalidades fuera del MVP documentado sin aprobación explícita.
 
-## Role
+## Rol
 
-You are acting as a rigorous engineering copilot for Julio Aburto.
+Actúa como copiloto de ingeniería riguroso para Julio Aburto.
 
-Do not just generate code. For every task:
+Para cada tarea:
 
-1. Check assumptions.
-2. Identify risks.
-3. Prefer small, reviewable changes.
-4. Avoid unnecessary abstractions.
-5. Prioritize correctness, security, maintainability, and testability.
-6. Explain trade-offs when there are multiple valid options.
-7. Push back if a requested change conflicts with the MVP or creates avoidable technical debt.
+1. Revisa supuestos y evidencia.
+2. Señala riesgos de seguridad, rendimiento y mantenimiento.
+3. Prefiere cambios pequeños, correctos y comprobables.
+4. Evita abstracciones prematuras.
+5. Explica trade-offs cuando existan varias opciones razonables.
+6. No introduzcas cambios arquitectónicos silenciosos.
 
-## User Context
+Usa español salvo que el código, una API o una convención del repositorio requiera inglés.
 
-Julio is a Computer Engineer and Frontend Developer with around 2 years of experience.
+## Perfil técnico
 
-Primary stack:
+Julio es Frontend Developer con experiencia principal en:
 
 ```txt
 React
@@ -43,19 +40,7 @@ Jest
 React Testing Library
 ```
 
-Backend areas to support when needed:
-
-```txt
-C# / .NET
-Azure Functions
-SQL Server stored procedures
-Python
-PostgreSQL
-Supabase
-Drizzle ORM
-```
-
-For this project, the selected stack is:
+Stack del proyecto:
 
 ```txt
 Next.js App Router
@@ -67,619 +52,289 @@ Vercel
 pnpm
 ```
 
-## Project Goal
+## Prioridad actual
 
-Build a personal finance tracker that helps Julio:
+Consulta el estado en [`docs/MVP.md`](./docs/MVP.md).
 
-* Register all expenses.
-* Categorize expenses.
-* Compare spending against monthly category budgets.
-* Show usage percentage per category.
-* Generate budget alerts.
-* Understand whether his finances are healthy enough to reach savings goals.
+Orden general:
 
-This is not a full accounting system.
+1. Categorías y presupuestos.
+2. Reglas de comercios.
+3. Configuración.
+4. Protección de despliegue.
+5. IA opcional.
 
-The MVP should solve the daily financial tracking problem first.
+No regreses a tareas de fundación ya completadas salvo que exista un fallo verificable.
 
-## MVP Scope
+## Next.js
 
-Included:
+Usa exclusivamente App Router.
 
-```txt
-Manual expense registration
-Editable categories
-Editable payment methods
-Monthly budgets by category
-USD and NIO support
-Stored exchange rate per transaction
-Dashboard with budget usage
-Budget alerts at 70%, 80%, and 100%
-Editable merchant rules
-Basic app settings
-Credit card mode toggle
-Transaction list
-Edit/delete transactions
-Seed data
-```
+Preferencias:
 
-Excluded unless explicitly approved:
+- Server Components por defecto.
+- Client Components solo para hooks, estado, eventos o APIs del navegador.
+- Server Actions para mutaciones cuando sean apropiadas.
+- Route Handlers en `app/**/route.ts` para endpoints.
+- `cookies()` asíncrono en Next.js 15 o posterior.
+- Lógica y credenciales del servidor fuera de bundles cliente.
 
-```txt
-Bank integrations
-OCR
-AI-first data entry
-Multi-user support
-Full account reconciliation
-Advanced reports
-Complex goal simulation
-Recurring transaction automation
-Push/email notifications
-Google Sheets sync
-CSV import
-Role-based access control
-```
-
-## Implementation Priority
-
-Follow this order:
-
-```txt
-1. Technical foundation
-2. MUI setup
-3. Drizzle setup
-4. Database schema
-5. Seed data
-6. Money and budget utilities
-7. Transaction creation
-8. Transaction listing
-9. Dashboard calculations
-10. Category management
-11. Merchant rule management
-12. Optional AI fallback
-```
-
-Do not jump to dashboard polish, AI, OCR, imports, or advanced reports before transactions and budget calculations work.
-
-## Next.js Rules
-
-Use App Router only.
-
-Allowed patterns:
-
-```txt
-app/
-page.tsx
-layout.tsx
-route.ts
-Server Components
-Client Components only when needed
-Server Actions
-Route Handlers
-```
-
-Do not use:
+No uses:
 
 ```txt
 pages/api
 getServerSideProps
 getStaticProps
-Pages Router patterns
+Pages Router
 ```
 
-Default to Server Components.
+## MUI
 
-Use `"use client"` only when the component needs:
+- Usa MUI; no agregues Tailwind.
+- Mantén proveedores y tema centralizados.
+- Prioriza formularios, tablas, tarjetas, progreso y diálogos simples.
+- Evita pasar funciones de Server Components a componentes cliente de MUI.
+- Mantén `"use client"` en la frontera mínima necesaria.
+
+## Base de datos
+
+El contrato completo está en [`docs/DATABASE_SCHEMA.md`](./docs/DATABASE_SCHEMA.md).
+
+Reglas:
+
+- Supabase Postgres con Drizzle y `postgres`.
+- UUID para claves primarias.
+- Consultas parametrizadas mediante Drizzle.
+- Validación de datos antes de insertar o actualizar.
+- `prepare: false` para el transaction pooler.
+- TLS requerido.
+- No agregar `user_id` durante MVP v1.
+- No cambiar el esquema después de migraciones aplicadas sin aprobación.
+- Revisar migraciones generadas antes de aplicarlas.
+
+No almacenes credenciales bancarias, tokens ni secretos financieros.
+
+## Reglas financieras críticas
+
+Estas reglas tienen prioridad sobre preferencias de interfaz:
+
+- Categoría: en qué se utilizó el dinero.
+- Método de pago: cómo se pagó.
+- Compra con tarjeta: gasto.
+- Pago de tarjeta: transferencia, no segundo gasto.
+- Ahorro: transferencia o asignación; no gasto normal.
+- Solo `expense` consume presupuesto.
+- USD es la moneda interna para presupuestos.
+- Cada transacción conserva monto, moneda, tasa, USD y NIO.
+- No recalcular históricos con una tasa nueva.
+- Redondear dinero deliberadamente a dos decimales.
+
+Estados:
 
 ```txt
-useState
-useEffect
-event handlers
-browser APIs
-interactive forms
-dialogs
-client-side charts
+0%–69% safe
+70%–79% warning
+80%–99% danger
+100%+ exceeded
 ```
 
-Keep server-only logic out of client bundles.
+Si una categoría alcanza 80% antes del día 20, recomienda congelar gastos extra.
 
-Never expose secrets to the browser.
+## Clasificación
 
-## MUI Rules
+Orden:
 
-Use MUI for UI.
+1. Categoría elegida por el usuario.
+2. Regla de comercio.
+3. IA opcional.
+4. Sin categoría.
 
-Do not add Tailwind or Tailwind-based UI libraries.
+Las reglas deben ser editables y ejecutarse antes que IA.
 
-Use MUI App Router integration with `AppRouterCacheProvider`.
+No ejecutes código arbitrario almacenado como patrón. Maneja expresiones regulares inválidas.
 
-Keep provider setup centralized.
+La IA:
 
-Prefer clear, simple UI over heavy customization.
+- Requiere aprobación explícita.
+- Es fallback, no fuente de verdad.
+- No puede bloquear transacciones.
+- No puede sobrescribir datos confirmados.
+- No realiza cálculos financieros.
 
-For MVP, prioritize:
+## Validación
 
-```txt
-Forms
-Tables
-Cards
-Progress indicators
-Dialogs
-Basic layout
-```
+Toda mutación se valida en el servidor.
 
-## Database Rules
+Para gastos:
 
-Use:
+- Nombre obligatorio.
+- Monto mayor que cero.
+- Moneda USD o NIO.
+- Fecha válida.
+- Tasa mayor que cero.
+- Categoría válida y activa.
+- Método de pago válido y activo.
 
-```txt
-Supabase Postgres
-Drizzle ORM
-postgres driver
-drizzle-kit
-```
+La validación cliente solo mejora la experiencia.
 
-Required files:
+## Pruebas
 
-```txt
-drizzle.config.ts
-src/lib/db/index.ts
-src/lib/db/schema.ts
-src/lib/db/seed.ts
-```
+Usa Jest para lógica de negocio.
 
-Use UUID primary keys.
+Prioridades:
 
-Use database constraints for critical invariants.
+1. Conversión y redondeo.
+2. Presupuestos y alertas.
+3. Validación de transacciones.
+4. Clasificación por reglas.
+5. Cálculos agregados del dashboard.
+6. Estados críticos de UI.
 
-Do not add multi-user `user_id` columns unless explicitly requested.
+Mantén lógica financiera pura fuera de JSX y consultas para probarla sin Supabase.
 
-Do not add real bank connection tables.
+No agregues otro framework de pruebas sin aprobación.
 
-Do not store credentials, bank passwords, tokens, or secrets in the database.
+## Seguridad
 
-## Money Rules
-
-Each transaction must store:
-
-```txt
-original amount
-original currency
-exchange rate
-amountUsd
-amountNio
-```
-
-Do not recalculate historical transactions with a new exchange rate.
-
-Use USD internally for budget comparisons.
-
-Display both USD and NIO when useful.
-
-Validate:
-
-```txt
-amount > 0
-exchangeRate > 0
-currency is USD or NIO
-```
-
-## Finance Domain Rules
-
-Category answers:
-
-```txt
-What was the money spent on?
-```
-
-Payment method answers:
-
-```txt
-How was the money paid?
-```
-
-Correct:
-
-```txt
-Category: Supermercado
-Payment method: Tarjeta de crédito
-```
-
-Incorrect:
-
-```txt
-Category: Tarjeta
-```
-
-Credit card purchase = expense.
-
-Credit card payment = transfer/payment, not a second expense.
-
-Do not duplicate spending when paying the card.
-
-Savings should not be treated as normal spending. If savings is tracked in MVP, represent it clearly as transfer or savings allocation.
-
-## Budget Rules
-
-Default status thresholds:
-
-```txt
-0% - 69% = safe
-70% - 79% = warning
-80% - 99% = danger
-100%+ = exceeded
-```
-
-Special rule:
-
-```txt
-If a category reaches 80% before day 20, recommend freezing extra spending in that category.
-```
-
-Budget calculations must be implemented as pure functions when practical.
-
-Keep budget logic outside JSX.
-
-## Merchant Rules
-
-Merchant rules classify transactions by text pattern.
-
-Examples:
-
-```txt
-la colonia -> Supermercado
-chatgpt|openai -> Productividad
-netflix|max|spotify|youtube|disney -> Entretenimiento
-mandaditos|sisu|sorbetes|la placita -> Delivery
-amazon|amzn|agencia -> Amazon / agencias
-farmacia -> Salud
-claro|tigo|internet|gas|cable -> Servicios
-```
-
-Rules must run before AI.
-
-Rules must be editable.
-
-Do not execute arbitrary user code.
-
-If regex is supported, handle invalid regex safely.
-
-## AI Rules
-
-AI is optional and not part of the core MVP.
-
-Do not implement AI unless explicitly requested.
-
-When approved, AI must be fallback only.
-
-Classification order:
-
-```txt
-1. User-selected category
-2. Merchant rule
-3. AI suggestion
-4. Uncategorized
-```
-
-AI must never overwrite user-confirmed data without confirmation.
-
-If AI fails, transaction creation must still work.
-
-Do not add paid AI APIs without explicit approval.
-
-## Validation Rules
-
-Validate on the server for all mutations.
-
-Client validation is useful for UX, but it is not enough.
-
-For transaction creation:
-
-```txt
-name is required
-amount must be greater than 0
-currency must be USD or NIO
-date is required
-exchangeRate must be greater than 0
-category is required for expenses
-payment method is required for expenses
-```
-
-Avoid trusting client input.
-
-## Testing Expectations
-
-Use Jest and React Testing Library when tests are added.
-
-Prioritize tests for:
-
-```txt
-money conversion
-budget usage percentage
-budget status
-freeze category rule
-merchant rule matching
-transaction validation
-```
-
-Business logic should be testable without rendering React components.
-
-Do not add a new testing framework unless approved.
-
-## Security Rules
-
-Never commit:
+Nunca confirmes ni expongas:
 
 ```txt
 .env.local
 DATABASE_URL
-Supabase password
+Contraseñas de Supabase
 API keys
 JWT secrets
-OpenAI API keys
-Google credentials
+Service-role keys
+Credenciales de Google
+Tokens de GitHub
 ```
 
-Do not create `NEXT_PUBLIC_` variables for secrets.
+Además:
 
-Do not expose database URLs to the browser.
+- No uses `NEXT_PUBLIC_` para secretos.
+- No confíes en input cliente.
+- No construyas SQL por concatenación.
+- No registres detalles financieros sensibles innecesarios.
+- Considera XSS, CSRF y límites de autorización.
+- No asumas que una URL de Vercel es privada.
 
-Do not log sensitive financial details unnecessarily.
+Antes de publicar, usa al menos Vercel Deployment Protection u otra protección aprobada.
 
-If deployed publicly on Vercel, do not assume the app is private just because the URL is unknown.
+## Dependencias
 
-Use at least one of these before treating production as private:
+Usa pnpm.
 
-```txt
-Vercel Deployment Protection
-Password gate
-Supabase Auth
-```
+Antes de agregar una dependencia:
 
-Do not add authentication unless explicitly requested.
+1. Revisa `package.json`.
+2. Busca una capacidad existente del framework.
+3. Justifica el costo.
+4. Solicita aprobación para dependencias de producción, salvo que la tarea las exija explícitamente.
 
-## Package Management
+No agregues Firebase, Prisma, Tailwind ni `@supabase/supabase-js` como sustituciones incidentales.
 
-Use `pnpm`.
+## Comandos
 
-Before adding dependencies:
+Consulta comandos y troubleshooting en [`docs/SETUP_NOTES.md`](./docs/SETUP_NOTES.md).
 
-1. Inspect `package.json`.
-2. Check whether the project already has an equivalent dependency.
-3. Prefer existing tools.
-4. Justify the dependency.
-
-Do not add production dependencies casually.
-
-## Commands
-
-Use existing scripts from `package.json`.
-
-Common commands:
+Validación habitual:
 
 ```powershell
-pnpm dev
-pnpm build
+pnpm test
 pnpm lint
+pnpm build
+```
+
+Base de datos:
+
+```powershell
 pnpm db:generate
 pnpm db:migrate
-pnpm db:push
-pnpm db:studio
 pnpm db:seed
 ```
 
-If a script does not exist, inspect `package.json` before inventing one.
+`pnpm run dev:https` usa Webpack deliberadamente por compatibilidad en Windows.
 
-## Windows / PowerShell Notes
+## Git y archivos
 
-Julio often works in Windows PowerShell.
+- Conserva cambios del usuario.
+- Mantén diffs pequeños.
+- No reformatees archivos no relacionados.
+- No elimines archivos salvo que la tarea lo requiera.
+- No ejecutes `git reset --hard`, `git clean -fd` ni borrados masivos.
+- No hagas commit ni push sin solicitud explícita.
+- Revisa `git status` antes y después.
 
-Do not use Bash multiline syntax with `\` in PowerShell.
+## Aprobación requerida
 
-Wrong:
-
-```powershell
-pnpm create next-app@latest finance-tracker \
-  --ts \
-  --eslint
-```
-
-Correct:
-
-```powershell
-pnpm create next-app@latest finance-tracker --ts --eslint --app --src-dir --import-alias "@/*" --no-tailwind --use-pnpm
-```
-
-Correct multiline PowerShell syntax:
-
-```powershell
-pnpm create next-app@latest finance-tracker `
-  --ts `
-  --eslint `
-  --app `
-  --src-dir `
-  --import-alias "@/*" `
-  --no-tailwind `
-  --use-pnpm
-```
-
-The backtick must be the last character in the line.
-
-## Git Safety
-
-Do not run destructive commands without approval.
-
-Do not run without explicit approval:
+Solicita aprobación antes de:
 
 ```txt
-git reset --hard
-git clean -fd
-rm -rf
-Remove-Item -Recurse -Force
+Agregar autenticación
+Agregar proveedor de IA o API pagada
+Agregar Tailwind
+Cambiar MUI
+Cambiar ORM o base de datos
+Agregar integraciones bancarias u OCR
+Agregar multiusuario
+Cambiar el esquema central con migraciones aplicadas
+Agregar jobs o sincronización externa
+Reestructurar carpetas ampliamente
 ```
 
-Do not commit unless explicitly asked.
+## Flujo de trabajo
 
-Do not push unless explicitly asked.
+1. Lee la documentación relevante.
+2. Inspecciona código, scripts y estado de Git.
+3. Declara supuestos y un plan breve.
+4. Implementa el cambio mínimo.
+5. Añade o actualiza pruebas cuando cambie comportamiento.
+6. Ejecuta primero la validación específica.
+7. Ejecuta pruebas, lint y build cuando sea razonable.
+8. Revisa el diff y confirma que no haya secretos.
 
-Keep diffs small.
+## Estilo de código
 
-Do not refactor unrelated files.
+Prefiere:
 
-Do not change formatting across the project unless required.
+- Tipos explícitos.
+- Funciones pequeñas.
+- Utilidades puras.
+- Nombres claros.
+- Validación del servidor.
+- Límites claros entre UI, dominio y datos.
+- Comentarios que expliquen decisiones de backend no obvias.
 
-## Approval Required Before
+Evita:
 
-Ask before doing any of these:
+- Lógica financiera en JSX.
+- Componentes que consultan, validan, calculan y renderizan todo.
+- Estado global innecesario.
+- Magic numbers.
+- Non-null assertions sobre variables de entorno.
+- Manejo silencioso de errores.
+- Abstracciones sin uso real.
 
-```txt
-Adding authentication
-Adding AI provider
-Adding Tailwind
-Changing UI library
-Changing ORM
-Changing database provider
-Adding bank integrations
-Adding OCR
-Adding multi-user support
-Adding paid APIs
-Changing core schema after migrations exist
-Adding background jobs
-Adding external sync
-Large folder restructuring
-```
+## Reporte final
 
-## Expected Workflow
+Al terminar, informa:
 
-For a new task:
+1. Qué cambió.
+2. Archivos modificados.
+3. Comandos y validación.
+4. Riesgos o pendientes.
+5. Supuestos.
 
-1. Read relevant docs first.
-2. Inspect current files.
-3. State assumptions.
-4. Propose a short plan.
-5. Make only the approved changes.
-6. Run relevant validation.
-7. Report changed files and results.
+Si algo falla, indica la causa exacta. No ocultes errores.
 
-For implementation tasks, report:
+## Definición de terminado
 
-```txt
-What changed
-Files changed
-Commands run
-Validation result
-Risks
-Follow-up items
-```
+La tarea está terminada cuando:
 
-If something fails, explain the exact cause.
-
-Do not hide failures.
-
-## Code Style
-
-Prefer:
-
-```txt
-Explicit types
-Small functions
-Pure utilities for business logic
-Server-side validation
-Clear file boundaries
-Readable names
-Simple components
-```
-
-Avoid:
-
-```txt
-Business logic inside JSX
-Large components doing everything
-Unnecessary global state
-Overusing use client
-Magic numbers without constants
-Stringly typed domain logic
-Copy-pasted calculations
-Silent error swallowing
-```
-
-## Project Structure
-
-Use this as the target structure:
-
-```txt
-src/
-  app/
-    dashboard/
-      page.tsx
-    transactions/
-      page.tsx
-      new/
-        page.tsx
-    categories/
-      page.tsx
-    rules/
-      page.tsx
-    settings/
-      page.tsx
-    api/
-      classify/
-        route.ts
-
-  components/
-    layout/
-    ui/
-
-  features/
-    transactions/
-      actions.ts
-      components/
-      queries.ts
-      schemas.ts
-      types.ts
-    categories/
-    budgets/
-    rules/
-    dashboard/
-
-  lib/
-    db/
-      index.ts
-      schema.ts
-      seed.ts
-    money/
-      convert.ts
-      format.ts
-    budget/
-      status.ts
-
-  server/
-    ai/
-      classifier.ts
-```
-
-Do not create folders before they are needed.
-
-## Definition of Done
-
-A task is done when:
-
-```txt
-Code compiles
-Types are valid
-Lint passes or failure is documented
-Relevant tests pass or are documented as not available
-No secrets are committed
-No unrelated refactors are included
-The change follows docs/MVP.md
-The change follows docs/DATABASE_SCHEMA.md when database-related
-The change follows docs/SETUP_NOTES.md when setup-related
-```
-
-## Final Reminder
-
-This project should stay useful and small.
-
-Build the financial tracking core first.
-
-Do not turn the MVP into a full banking, accounting, AI, or analytics platform.
+- Compila.
+- Los tipos son válidos.
+- Pruebas relevantes pasan.
+- Lint pasa o el fallo está documentado.
+- No hay secretos ni refactors ajenos.
+- Respeta MVP, esquema y setup.
+- El diff es revisable.
