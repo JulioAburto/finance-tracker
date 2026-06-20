@@ -1,4 +1,4 @@
-import { Paper, Stack } from "@mui/material";
+import { Card, CardContent, Stack } from "@mui/material";
 import { PageHeader } from "@/components/layout/page-header";
 import { createTransactionAction } from "@/features/transactions/actions";
 import { TransactionForm } from "@/features/transactions/components/transaction-form";
@@ -24,25 +24,27 @@ export default async function NewTransactionPage() {
         title="Agregar transacción"
         description="Registra un gasto, ingreso o transferencia con su tasa histórica."
       />
-      <Paper sx={{ p: { xs: 2, md: 3 }, maxWidth: 720 }}>
-        <TransactionForm
-          action={createTransactionAction}
-          categories={options.categories}
-          paymentMethods={options.paymentMethods}
-          initialValues={{
-            name: "",
-            amount: "",
-            currency: options.settings.defaultCurrency,
-            exchangeRate: options.settings.defaultExchangeRate,
-            date: getTodayInNicaragua(),
-            type: "expense",
-            categoryId: "",
-            paymentMethodId: "",
-            note: "",
-          }}
-          submitLabel="Guardar transacción"
-        />
-      </Paper>
+      <Card sx={{ maxWidth: 760 }}>
+        <CardContent sx={{ p: { xs: 2, md: 3.5 } }}>
+          <TransactionForm
+            action={createTransactionAction}
+            categories={options.categories}
+            paymentMethods={options.paymentMethods}
+            initialValues={{
+              name: "",
+              amount: "",
+              currency: options.settings.defaultCurrency,
+              exchangeRate: options.settings.defaultExchangeRate,
+              date: getTodayInNicaragua(),
+              type: "expense",
+              categoryId: "",
+              paymentMethodId: "",
+              note: "",
+            }}
+            submitLabel="Guardar transacción"
+          />
+        </CardContent>
+      </Card>
     </Stack>
   );
 }

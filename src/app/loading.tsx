@@ -1,4 +1,4 @@
-import { Box, Paper, Skeleton, Stack } from "@mui/material";
+import { Box, Card, CardContent, Skeleton, Stack } from "@mui/material";
 
 export default function Loading() {
   return (
@@ -16,20 +16,24 @@ export default function Loading() {
         }}
       >
         {[0, 1, 2, 3].map((item) => (
-          <Paper key={item} sx={{ p: 2 }}>
-            <Skeleton variant="text" width="55%" />
-            <Skeleton variant="text" width="75%" height={40} />
-          </Paper>
+          <Card key={item}>
+            <CardContent>
+              <Skeleton variant="text" width="55%" />
+              <Skeleton variant="text" width="75%" height={40} />
+            </CardContent>
+          </Card>
         ))}
       </Box>
 
-      <Paper sx={{ p: 2 }}>
-        <Stack spacing={1}>
-          {[0, 1, 2, 3].map((item) => (
-            <Skeleton key={item} variant="rounded" height={44} />
-          ))}
-        </Stack>
-      </Paper>
+      <Card>
+        <CardContent>
+          <Stack spacing={1}>
+            {[0, 1, 2, 3].map((item) => (
+              <Skeleton key={item} variant="rounded" height={44} />
+            ))}
+          </Stack>
+        </CardContent>
+      </Card>
     </Stack>
   );
 }

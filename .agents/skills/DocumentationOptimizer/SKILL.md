@@ -1,32 +1,29 @@
 ---
-
 name: documentation-optimizer
-description: Use when auditing, cleaning, deduplicating, restructuring, or updating Markdown documentation for the Finance Tracker project, especially docs/*.md, AGENTS.md, and project context documents. This skill does not generate new technical documentation by reverse engineering code; it optimizes existing documentation and flags stale content.
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+description: Audit, deduplicate, restructure, and update Markdown documentation for the Finance Tracker project. Use for AGENTS.md, README.md, docs/*.md, .agents/skills/**/SKILL.md, and documentation-like environment examples when Codex needs to find stale claims, broken references, duplicated guidance, contradictory decisions, unsafe examples, or unclear document ownership. Optimize existing documentation without inventing implementation facts or changing product scope.
+---
 
-# Documentation Optimizer - Finance Tracker
+# Documentation Optimizer
 
-## Identity
+## Purpose
 
-You are the Documentation Optimizer for the Finance Tracker project.
+Keep Finance Tracker documentation concise, accurate, non-redundant, and useful to both Julio and Codex.
 
-Your goal is to keep the documentation clean, useful, non-redundant, and aligned with the current MVP.
+Use this skill to:
 
-You do not create new technical documentation by reverse engineering the codebase. That is a separate task.
+```txt
+Audit documentation structure
+Remove unnecessary duplication
+Consolidate overlapping guidance
+Fix stale routes, paths, commands, and versions
+Identify contradictions and scope creep
+Improve Markdown structure and readability
+Preserve critical security and finance rules
+```
 
-You optimize existing docs by:
+Do not reverse-engineer undocumented technical behavior and present it as fact. When documentation and code disagree, report the mismatch unless the user explicitly asks which side to update.
 
-* Deduplicating repeated information.
-* Consolidating overlapping sections.
-* Updating stale routes, commands, filenames, versions, and decisions.
-* Flagging contradictions.
-* Removing obsolete content after approval.
-* Preserving useful historical context.
-* Keeping Codex-facing docs actionable and concise.
-
-## Project Context
-
-This project is a personal finance tracker for Julio Aburto.
+## Project Boundaries
 
 Current stack:
 
@@ -40,125 +37,29 @@ Vercel
 pnpm
 ```
 
-Current MVP goal:
-
-```txt
-Track expenses
-Categorize expenses
-Compare spending against monthly budgets
-Show usage percentages by category
-Generate budget alerts
-Use merchant rules before AI
-Use AI only as optional fallback later
-```
-
-Primary documentation files:
+Included:
 
 ```txt
 AGENTS.md
-docs/MVP.md
-docs/DATABASE_SCHEMA.md
-docs/SETUP_NOTES.md
-docs/PROJECT_CONTEXT.md
-```
-
-Optional skills docs may exist in:
-
-```txt
-.agents/skills/**/SKILL.md
-```
-
-## Scope
-
-### Included
-
-Audit and optimize:
-
-```txt
-AGENTS.md
+README.md
 docs/*.md
 .agents/skills/**/SKILL.md
-README.md if it exists
-.env.example if it exists and is documentation-like
+.env.example when treated as documentation
 ```
 
-### Excluded
-
-Do not modify:
+Excluded unless explicitly requested:
 
 ```txt
+Source code
+Database migrations
+Lockfiles
 .env.local
-node_modules/**
-.next/**
-drizzle generated migrations unless explicitly requested
-package-lock.json
-pnpm-lock.yaml unless dependency changes require it
+Secrets or production credentials
 ```
 
-Do not modify source code unless the user explicitly asks for documentation-driven code cleanup.
+## Source Priority
 
-Do not modify secrets.
-
-Do not create or infer production credentials.
-
-## Hard Rules
-
-1. Always inspect before editing.
-2. Always present an optimization plan before modifying docs.
-3. Do not overwrite user-owned docs casually.
-4. Do not invent technical facts.
-5. Do not generate implementation docs by reverse engineering code unless explicitly asked.
-6. Do not remove historical decisions if they are useful.
-7. Do not expand documentation just to make it longer.
-8. Prefer fewer, clearer docs over many overlapping docs.
-9. Keep Codex instructions imperative and actionable.
-10. Keep product docs separate from setup docs and schema docs.
-
-## Boundary With Other Workflows
-
-### This Skill Does
-
-```txt
-Clean docs
-Merge duplicate sections
-Fix outdated commands
-Fix broken internal references
-Update file paths
-Flag stale implementation claims
-Improve Markdown structure
-Improve Codex usability
-```
-
-### This Skill Does Not
-
-```txt
-Implement features
-Change database schema
-Generate code from docs
-Add dependencies
-Create new product scope
-Add AI providers
-Add auth
-Run migrations
-```
-
-If docs are outdated because the implementation changed, report it.
-
-Do not rewrite technical details from assumptions.
-
-Example:
-
-```txt
-docs/DATABASE_SCHEMA.md mentions alerts table, but src/lib/db/schema.ts does not contain alerts.
-
-Action:
-Flag mismatch and ask whether docs or schema should be source of truth.
-Do not invent the correct implementation.
-```
-
-## Documentation Priority
-
-When documents conflict, use this priority:
+When documentation conflicts, use:
 
 ```txt
 1. AGENTS.md
@@ -167,755 +68,308 @@ When documents conflict, use this priority:
 4. docs/SETUP_NOTES.md
 5. docs/PROJECT_CONTEXT.md
 6. README.md
-7. Other docs
+7. Task-specific skills and other docs
 ```
 
-If source code conflicts with docs, report the conflict.
+Do not silently resolve conflicts that affect architecture, schema, security, or MVP scope.
 
-Do not silently choose one if the decision affects architecture, database, security, or MVP scope.
-
-## Process
-
-## Step 1: Inventory
-
-Inventory documentation files.
-
-Use PowerShell-friendly commands.
-
-Recommended commands:
-
-```powershell
-Get-ChildItem -Path . -Filter "*.md" -File
-Get-ChildItem -Path docs -Filter "*.md" -File -ErrorAction SilentlyContinue
-Get-ChildItem -Path .agents\skills -Filter "SKILL.md" -Recurse -File -ErrorAction SilentlyContinue
-```
-
-Generate an inventory table:
-
-```md
-| File | Lines | Last Modified | Apparent Purpose | Status |
-| ---- | ----- | ------------- | ---------------- | ------ |
-| docs/MVP.md | X | YYYY-MM-DD | Product scope | Active |
-```
-
-Line count command:
-
-```powershell
-(Get-Content docs\MVP.md | Measure-Object -Line).Lines
-```
-
-## Step 2: Structure Analysis
-
-For each document, identify:
-
-```txt
-Title
-Main sections
-Purpose
-Audience
-Whether it is product, setup, database, context, or agent instruction
-Internal references
-Date/version references
-Duplicate sections
-Stale assumptions
-```
-
-Find headings:
-
-```powershell
-Select-String -Path docs\*.md, AGENTS.md -Pattern '^(#{1,3})\s+'
-```
-
-If `.agents/skills` exists:
-
-```powershell
-Select-String -Path .agents\skills\**\SKILL.md -Pattern '^(#{1,3})\s+'
-```
-
-## Step 3: Detect Problems
-
-### 3.1 Duplication
-
-Look for repeated content across:
-
-```txt
-AGENTS.md
-docs/MVP.md
-docs/DATABASE_SCHEMA.md
-docs/SETUP_NOTES.md
-docs/PROJECT_CONTEXT.md
-.agents/skills/**/SKILL.md
-```
-
-Common expected duplicates to reduce:
-
-```txt
-Full stack list repeated too many times
-Initial categories repeated in too many files
-Supabase connection steps repeated in too many files
-Codex setup history repeated outside PROJECT_CONTEXT.md
-Rules about no Firebase/no Tailwind repeated too verbosely
-```
-
-Not all repetition is bad.
-
-Preserve repetition when it prevents dangerous mistakes, for example:
-
-```txt
-Do not commit .env.local
-Do not expose DATABASE_URL
-Do not use Firebase
-Do not treat credit card payment as expense
-```
-
-### 3.2 Stale Paths
-
-Check documented paths against actual files.
-
-Patterns to inspect:
-
-```powershell
-Select-String -Path docs\*.md, AGENTS.md -Pattern 'src/[\w/.-]+' -AllMatches
-Select-String -Path docs\*.md, AGENTS.md -Pattern 'docs/[\w/.-]+' -AllMatches
-Select-String -Path docs\*.md, AGENTS.md -Pattern '\.agents/skills/[\w/.-]+' -AllMatches
-```
-
-If paths do not exist, report them.
-
-Do not automatically remove planned future paths if they are clearly marked as target structure.
-
-### 3.3 Stale Commands
-
-Check commands in docs against `package.json`.
-
-Examples:
-
-```txt
-pnpm lint
-pnpm build
-pnpm db:generate
-pnpm db:migrate
-pnpm db:seed
-pnpm db:studio
-```
-
-If a command appears in docs but not in `package.json`, report it.
-
-If the command is intended to be added later, mark it as planned.
-
-### 3.4 Version Conflicts
-
-Compare docs against `package.json`.
-
-Check mentions of:
-
-```txt
-Next.js
-React
-MUI
-Drizzle
-Supabase
-Node
-pnpm
-Codex model names
-```
-
-Use:
-
-```powershell
-Select-String -Path docs\*.md, AGENTS.md -Pattern 'Next\.js|React|MUI|Drizzle|Supabase|pnpm|gpt-|codex'
-```
-
-If exact versions are mentioned, verify against `package.json` or flag as potentially stale.
-
-Avoid hardcoding versions in docs unless needed.
-
-### 3.5 Scope Creep
-
-Flag docs that instruct Codex to implement excluded MVP features:
-
-```txt
-Firebase
-OCR
-Bank integrations
-AI-first entry
-Multi-user support
-Full account reconciliation
-Advanced reports
-Recurring transactions
-Google Sheets sync
-CSV import
-Auth
-```
-
-These should either be in “Excluded” or require explicit approval.
-
-### 3.6 Security Issues
-
-Search for secrets or risky placeholders.
-
-Patterns:
-
-```powershell
-Select-String -Path docs\*.md, AGENTS.md, .env.example -Pattern 'DATABASE_URL|service_role|JWT|OPENAI_API_KEY|password|postgresql://'
-```
-
-Allowed:
-
-```txt
-.env.example with placeholders
-Docs explaining not to commit secrets
-```
-
-Not allowed:
-
-```txt
-Real DATABASE_URL
-Real password
-Real API key
-Service role key
-JWT secret
-```
-
-### 3.7 Contradictions
-
-Look for conflicting decisions.
-
-Examples:
-
-```txt
-Supabase Postgres vs Firebase
-MUI vs Tailwind
-Drizzle vs Prisma
-No auth vs implement Supabase Auth
-AI later vs AI in MVP foundation
-master vs main
-workspace-write on-request vs approval never
-```
-
-Report contradictions before editing.
-
-## Step 4: Generate Analysis Report
-
-Before editing, produce:
-
-```md
-# Documentation Optimization Report - YYYY-MM-DD
-
-## Inventory
-
-| File | Lines | Sections | Purpose | Status |
-| ---- | ----- | -------- | ------- | ------ |
-
-## Problems Detected
-
-### Duplication
-
-| Content | File A | File B | Recommendation |
-| ------- | ------ | ------ | -------------- |
-
-### Stale Paths or Commands
-
-| File | Problem | Evidence | Recommendation |
-| ---- | ------- | -------- | -------------- |
-
-### Conflicts
-
-| Topic | File A Says | File B Says | Recommendation |
-| ----- | ----------- | ----------- | -------------- |
-
-### Scope Creep
-
-| File | Content | Risk | Recommendation |
-| ---- | ------- | ---- | -------------- |
-
-### Security Concerns
-
-| File | Finding | Risk | Recommendation |
-| ---- | ------- | ---- | -------------- |
-
-### Candidates for Removal
-
-| File | Reason | Safe to Remove? |
-| ---- | ------ | --------------- |
-
-## Recommended Plan
-
-### Files to Update
-
-| File | Change |
-| ---- | ------ |
-
-### Files to Merge
-
-| Source | Destination | Sections |
-| ------ | ----------- | -------- |
-
-### Files to Delete
-
-| File | Reason |
-| ---- | ------ |
-
-### Files to Preserve
-
-| File | Reason |
-| ---- | ------ |
-
-## Approval Required
-
-Do you approve this documentation optimization plan?
-```
-
-Stop after the report unless the user already explicitly approved edits.
-
-## Step 5: Optimization Plan
-
-When presenting the plan, classify each action:
-
-```txt
-KEEP
-UPDATE
-MERGE
-DELETE
-FLAG ONLY
-```
-
-Definitions:
-
-```txt
-KEEP = no changes needed
-UPDATE = edit existing doc
-MERGE = move useful content into another doc, then optionally delete source
-DELETE = remove obsolete doc after approval
-FLAG ONLY = report mismatch but do not edit
-```
-
-## Step 6: Execute After Approval
-
-Only after approval:
-
-1. Update Markdown files.
-2. Preserve useful context.
-3. Remove duplicate content.
-4. Fix broken internal links.
-5. Update stale paths/commands.
-6. Move one-time setup history into `docs/PROJECT_CONTEXT.md`.
-7. Keep `MVP.md` focused on product scope.
-8. Keep `DATABASE_SCHEMA.md` focused on schema.
-9. Keep `SETUP_NOTES.md` focused on setup.
-10. Keep `AGENTS.md` focused on Codex behavior.
-
-## Markdown Standards
-
-### General
-
-Use:
-
-```md
-# Single H1
-
-> Optional short description.
-
-## H2 sections
-
-### H3 subsections
-```
-
-Avoid multiple H1s in one file.
-
-Use fenced code blocks with language tags:
-
-```ts
-const value = 1;
-```
-
-Use relative links when linking docs:
-
-```md
-[Database Schema](./DATABASE_SCHEMA.md)
-```
-
-Do not use raw external URLs unless necessary.
-
-### Tables
-
-Use simple Markdown tables:
-
-```md
-| Column A | Column B |
-| -------- | -------- |
-| Value    | Value    |
-```
-
-### Status Indicators
-
-Allowed status markers:
-
-```txt
-✅ Done
-⏳ Pending
-⚠️ Risk
-❌ Blocked
-```
-
-Do not overuse emojis.
-
-### Dates
-
-Use ISO dates:
-
-```txt
-2026-06-19
-```
-
-## Recommended Doc Responsibilities
+## Document Responsibilities
 
 ### `AGENTS.md`
 
-Should contain:
+Keep:
 
 ```txt
-Codex behavior rules
+Agent behavior
 Stack constraints
-Security rules
-Approval rules
-Task workflow
-Pointers to docs
+Security and approval rules
+Engineering workflow
+Pointers to authoritative docs
 ```
 
-Should not contain:
+Avoid:
 
 ```txt
 Long setup history
-Full database schema explanation
+Full schema copies
 Detailed product backlog
-Long copied chat context
 ```
 
 ### `docs/MVP.md`
 
-Should contain:
+Keep:
 
 ```txt
 Product goal
-MVP scope
-Non-goals
-Core user flows
-Screens
+Included and excluded scope
+Domain rules
+Routes and user flows
+Implementation status
 Success criteria
-Implementation phases
 ```
 
-Should not contain:
-
-```txt
-Full Drizzle schema
-Long Git troubleshooting
-Codex model troubleshooting
-Supabase UI troubleshooting
-```
+Avoid detailed schema and environment troubleshooting.
 
 ### `docs/DATABASE_SCHEMA.md`
 
-Should contain:
+Keep:
 
 ```txt
-Tables
-Columns
-Constraints
-Indexes
-Domain invariants
-Seed requirements
-Future schema notes
+Tables and columns
+Constraints and indexes
+Persistence invariants
+Seed contract
+Migration rules
 ```
 
-Should not contain:
-
-```txt
-UI design guidance
-Codex sandbox troubleshooting
-GitHub SSH setup
-```
+Avoid UI guidance and general development history.
 
 ### `docs/SETUP_NOTES.md`
 
-Should contain:
+Keep:
 
 ```txt
-Installation commands
-PowerShell notes
-Dependencies
-Environment variables
-Drizzle config
-MUI setup
+Requirements
+Environment setup
+Installation and run commands
+Database preparation
 Validation commands
+Troubleshooting
 ```
 
-Should not contain:
-
-```txt
-Detailed product strategy
-All historical decisions
-Repeated full schema
-```
+Avoid product strategy and duplicated schema details.
 
 ### `docs/PROJECT_CONTEXT.md`
 
-Should contain:
+Keep:
 
 ```txt
-Decision history
-Known setup issues
-Codex model/sandbox notes
-GitHub remote context
-Supabase project context
+Current decisions
+Known issues
+Relevant technical history
 Current implementation state
+Next priorities
 ```
 
-Should not contain:
+Do not turn it into a complete duplicate of the other documents.
+
+### `README.md`
+
+Keep it as a concise entry point:
 
 ```txt
-Secrets
-Full duplicated MVP
-Full duplicated schema
+Project purpose
+Current high-level status
+Minimal local setup
+Available routes
+Links to authoritative docs
+Security warning
 ```
 
 ### `.agents/skills/**/SKILL.md`
 
-Should contain:
+Keep:
 
 ```txt
+Clear trigger description
 Task-specific workflow
-Focused instructions
-Validation steps
+Critical domain constraints
+Validation guidance
 Common mistakes
-Output/report format
+Expected report format when useful
 ```
 
-Should not contain:
+Do not duplicate complete project documents inside a skill.
+
+## Preservation Rules
+
+Do not remove these rules merely because they appear in more than one document:
 
 ```txt
-Full duplicated project docs
-Unrelated global behavior rules
-```
-
-## Finance Tracker Specific Preservation Rules
-
-Preserve these domain rules even if repeated in multiple places:
-
-```txt
-Category is what money was spent on.
+Category is what the money was used for.
 Payment method is how it was paid.
-Credit card purchase is an expense.
-Credit card payment is a transfer/payment, not a second expense.
-Store original amount, currency, exchangeRate, amountUsd, amountNio.
-Do not recalculate historical transactions with new exchange rates.
-Rules run before AI.
-AI is optional fallback.
-Do not use Firebase.
-Do not expose DATABASE_URL.
+A credit-card purchase is an expense.
+A credit-card payment is a transfer, not a second expense.
+Historical exchange rates must be preserved.
+Transactions store original, USD, and NIO values.
+Merchant rules run before optional AI.
+Do not expose DATABASE_URL or commit .env.local.
+Do not introduce Firebase, Tailwind, or unrelated architecture.
 ```
 
-These repetitions are acceptable because they prevent high-risk mistakes.
+Repetition is acceptable when it prevents financial, security, or architectural errors.
 
-## When to Delegate Instead of Editing
+## Workflow
 
-If docs claim a feature exists but code does not confirm it:
+### 1. Inventory
 
-```txt
-Do not rewrite the implementation detail from assumptions.
-Flag the mismatch.
-Ask whether docs should be updated or code should be implemented.
-```
+List the documentation in scope and identify each file’s purpose, size, and status.
 
-If docs describe a future target structure:
-
-```txt
-Keep it if clearly labeled as target/recommended.
-```
-
-If docs describe an old setup issue already resolved:
-
-```txt
-Move it to PROJECT_CONTEXT.md or summarize it.
-```
-
-## Commands
-
-Use PowerShell-compatible commands.
-
-Inventory docs:
+Useful PowerShell commands:
 
 ```powershell
 Get-ChildItem -Path docs -Filter "*.md" -File
-Get-ChildItem -Path .agents\skills -Filter "SKILL.md" -Recurse -File -ErrorAction SilentlyContinue
-```
-
-Find headings:
-
-```powershell
-Select-String -Path docs\*.md, AGENTS.md -Pattern '^(#{1,3})\s+'
-```
-
-Count lines:
-
-```powershell
+Get-ChildItem -Path .agents\skills -Filter "SKILL.md" -Recurse -File
 (Get-Content docs\MVP.md | Measure-Object -Line).Lines
 ```
 
-Check package scripts:
+### 2. Inspect Structure
 
-```powershell
-Get-Content package.json
-```
-
-Check git status:
-
-```powershell
-git status --short
-```
-
-Do not use Bash-only commands like:
+For each file, identify:
 
 ```txt
-grep
-find
-comm
-/tmp
-rm -rf
+Audience and purpose
+Heading structure
+Internal links
+Paths and commands
+Version references
+Repeated content
+Stale implementation claims
 ```
 
-unless running in a proper Unix shell and explicitly appropriate.
+### 3. Detect Problems
 
-## Approval Required Before
-
-Ask approval before:
+Check for:
 
 ```txt
-Deleting docs
-Merging docs
-Renaming docs
-Changing AGENTS.md
-Changing skill descriptions
-Removing historical context
-Changing MVP scope
-Changing database decisions
-Changing setup commands
+Duplicate sections
+Broken or planned paths presented as existing
+Commands absent from package.json
+Version claims inconsistent with package.json
+Scope creep outside the MVP
+Real secrets or unsafe credential examples
+Contradictory stack or product decisions
+Malformed skill frontmatter
+Multiple H1 headings outside fenced examples
 ```
 
-Small typo fixes may be made if the user explicitly requested direct cleanup.
+Treat placeholders such as `[PASSWORD]` as documentation, not exposed secrets.
 
-## Final Report Format
+### 4. Propose a Plan
 
-After approved optimization, report:
+Before editing, classify each proposed action:
 
-```md
-# Documentation Optimization Complete - YYYY-MM-DD
-
-## Summary
-
-- Analyzed: X
-- Updated: X
-- Merged: X
-- Deleted: X
-- Preserved: X
-- Flagged: X
-
-## Changes Made
-
-### Updated
-
-| File | Changes |
-| ---- | ------- |
-
-### Merged
-
-| Source | Destination | Content |
-| ------ | ----------- | ------- |
-
-### Deleted
-
-| File | Reason |
-| ---- | ------ |
-
-### Flagged for Follow-up
-
-| File | Issue |
-| ---- | ----- |
-
-## Validation
-
-| Check | Result |
-| ----- | ------ |
-| Links reviewed | Pass/Fail |
-| Commands checked | Pass/Fail |
-| No secrets found | Pass/Fail |
-| Git status reviewed | Pass/Fail |
-
-## Next Suggested Review
-
-YYYY-MM-DD
+```txt
+KEEP: no change needed
+UPDATE: edit the existing document
+MERGE: consolidate overlapping content
+DELETE: remove only with explicit approval
+FLAG ONLY: report a mismatch without choosing a source of truth
 ```
 
-## Common Mistakes to Avoid
+If the user already explicitly requested direct optimization, state the plan briefly and continue. Otherwise, stop for approval.
+
+### 5. Edit Conservatively
+
+While editing:
+
+```txt
+Preserve product scope and historical context that remains useful.
+Keep diffs focused.
+Use imperative language for agent instructions.
+Prefer links to authoritative docs over copied sections.
+Do not alter code, schema, dependencies, or commands incidentally.
+Do not mark a feature complete from unvalidated local changes.
+```
+
+### 6. Validate Documentation
+
+Review:
+
+```txt
+Heading hierarchy
+Relative links
+Documented paths
+Commands against package.json
+Dates and version references
+Skill frontmatter
+Accidental secrets
+Final diff and Git status
+```
+
+Do not run application tests or builds for documentation-only work unless documentation generation or formatting requires them.
+
+## Markdown Standards
+
+Use:
+
+```txt
+One H1 per file
+H2 for primary sections
+H3 for subsections
+Fenced code blocks with language tags
+Relative links for repository documents
+Simple tables
+ISO dates: YYYY-MM-DD
+```
+
+For skills, frontmatter must begin and end with `---` and include a valid `name` and `description`.
+
+Avoid decorative separators, excessive examples, and headings inside example blocks that make structure analysis ambiguous.
+
+## Scope and Security Checks
+
+Flag documentation that presents these as approved MVP work:
+
+```txt
+Bank integrations
+OCR
+AI-first entry
+Multi-user support
+Advanced reconciliation or reports
+Recurring transactions
+CSV or Google Sheets imports
+Authentication or role systems
+```
+
+Allowed security examples must use obvious placeholders. Never write or reproduce real:
+
+```txt
+DATABASE_URL values
+Passwords
+API keys
+JWT secrets
+Service-role keys
+Tokens
+```
+
+## Final Report
+
+Report:
+
+```txt
+Documents analyzed
+Files updated
+Sections consolidated
+Stale claims or conflicts flagged
+Links, commands, and security checks performed
+Anything intentionally left unchanged
+```
+
+## Common Mistakes
 
 Do not:
 
 ```txt
-Turn PROJECT_CONTEXT.md into a full duplicate of all docs
-Move database schema details into MVP.md
-Move setup troubleshooting into MVP.md
-Delete docs without approval
-Invent implementation details
-Treat planned files as stale without checking wording
-Remove security warnings because they are repeated
-Add new product scope while cleaning docs
-Use Bash-only commands in PowerShell
-Commit secrets
+Expand documentation merely to make it longer.
+Duplicate full stack and schema descriptions everywhere.
+Move setup troubleshooting into MVP.md.
+Move UI guidance into DATABASE_SCHEMA.md.
+Delete documentation without approval.
+Invent implementation details.
+Treat planned files as broken without checking context.
+Remove repeated safety rules indiscriminately.
+Change product scope during cleanup.
+Use Bash-only commands in PowerShell examples.
 ```
 
-## Good Example Task Prompts
+## Final Standard
 
-### Audit only
-
-```txt
-Use the $documentation-optimizer skill.
-
-Audit AGENTS.md, docs/*.md, and .agents/skills/**/SKILL.md.
-Do not modify files.
-Return an optimization report and plan.
-```
-
-### Optimize after approval
-
-```txt
-Use the $documentation-optimizer skill.
-
-Apply the approved documentation optimization plan.
-Do not change MVP scope.
-Do not delete files unless explicitly listed.
-Report all changes.
-```
-
-### Check one file
-
-```txt
-Use the $documentation-optimizer skill.
-
-Review docs/PROJECT_CONTEXT.md for duplication and stale setup notes.
-Do not edit yet.
-Return recommendations.
-```
-
-## Final Reminder
-
-Documentation should make Codex and Julio faster, not heavier.
-
-The best docs for this project are:
+Documentation should be:
 
 ```txt
 Short enough to read
-Specific enough to prevent bad decisions
+Specific enough to prevent mistakes
 Structured enough for Codex to follow
-Strict enough to avoid scope creep
+Accurate enough to serve as a source of truth
 ```

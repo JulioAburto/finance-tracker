@@ -1,6 +1,6 @@
 # Finance Tracker
 
-Aplicación personal para registrar gastos, convertir montos entre USD y NIO y comparar el consumo mensual contra presupuestos por categoría.
+Aplicación personal para registrar transacciones, conservar su tasa de cambio histórica y comparar los gastos mensuales contra presupuestos por categoría.
 
 ## Estado actual
 
@@ -19,7 +19,7 @@ Pendiente dentro del MVP:
 - Gestión de reglas de comercios.
 - Configuración editable desde la interfaz.
 
-Consulta el alcance completo en [docs/MVP.md](./docs/MVP.md).
+El alcance y estado detallados están en [docs/MVP.md](./docs/MVP.md).
 
 ## Stack
 
@@ -30,14 +30,7 @@ Consulta el alcance completo en [docs/MVP.md](./docs/MVP.md).
 - Jest.
 - pnpm.
 
-## Requisitos
-
-- Node.js compatible con Next.js 16.
-- pnpm.
-- Proyecto de Supabase con una base Postgres.
-- `DATABASE_URL` del transaction pooler de Supabase.
-
-## Configuración local
+## Inicio rápido
 
 1. Instala las dependencias:
 
@@ -51,26 +44,20 @@ Consulta el alcance completo en [docs/MVP.md](./docs/MVP.md).
    DATABASE_URL="postgresql://postgres.[PROJECT_REF]:[PASSWORD]@[HOST]:6543/postgres"
    ```
 
-3. Aplica la migración y carga los datos iniciales:
+3. Prepara la base:
 
    ```powershell
    pnpm db:migrate
    pnpm db:seed
    ```
 
-4. Inicia el servidor:
+4. Inicia la aplicación:
 
    ```powershell
    pnpm dev
    ```
 
-   También puedes usar HTTPS local:
-
-   ```powershell
-   pnpm run dev:https
-   ```
-
-El certificado HTTPS es autofirmado. El navegador puede solicitar confirmación la primera vez.
+Para requisitos, HTTPS local, scripts y solución de problemas, consulta [docs/SETUP_NOTES.md](./docs/SETUP_NOTES.md).
 
 ## Rutas disponibles
 
@@ -83,28 +70,16 @@ El certificado HTTPS es autofirmado. El navegador puede solicitar confirmación 
 
 La ruta `/` redirige a `/dashboard`.
 
-## Comandos
-
-| Comando | Propósito |
-| --- | --- |
-| `pnpm dev` | Desarrollo local con Turbopack |
-| `pnpm run dev:https` | Desarrollo HTTPS con Webpack |
-| `pnpm test` | Pruebas unitarias |
-| `pnpm lint` | ESLint |
-| `pnpm build` | Build y validación de TypeScript |
-| `pnpm db:generate` | Generar migraciones desde el esquema |
-| `pnpm db:migrate` | Aplicar migraciones pendientes |
-| `pnpm db:seed` | Insertar o sincronizar datos iniciales |
-| `pnpm db:studio` | Abrir Drizzle Studio |
-
 ## Reglas financieras esenciales
 
 - Una categoría indica en qué se gastó el dinero.
 - Un método de pago indica cómo se pagó.
 - Una compra con tarjeta de crédito es un gasto.
 - El pago de la tarjeta es una transferencia, no un segundo gasto.
-- Cada transacción conserva su monto, moneda y tipo de cambio originales.
+- Cada transacción conserva monto original, moneda, tasa, USD y NIO.
+- Solo los gastos consumen presupuesto.
 - El ahorro no se cuenta como gasto normal.
+- Las reglas de comercios se evalúan antes que cualquier IA opcional.
 
 ## Documentación
 

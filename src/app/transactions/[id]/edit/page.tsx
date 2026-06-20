@@ -1,4 +1,4 @@
-import { Alert, Paper, Stack } from "@mui/material";
+import { Alert, Card, CardContent, Stack } from "@mui/material";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/layout/page-header";
 import { updateTransactionAction } from "@/features/transactions/actions";
@@ -38,25 +38,27 @@ export default async function EditTransactionPage({
         La tasa guardada pertenece a esta transacción. Modifícala solo si el
         valor original fue registrado incorrectamente.
       </Alert>
-      <Paper sx={{ p: { xs: 2, md: 3 }, maxWidth: 720 }}>
-        <TransactionForm
-          action={action}
-          categories={options.categories}
-          paymentMethods={options.paymentMethods}
-          initialValues={{
-            name: transaction.name,
-            amount: transaction.amount,
-            currency: transaction.currency,
-            exchangeRate: transaction.exchangeRate,
-            date: transaction.date,
-            type: transaction.type,
-            categoryId: transaction.categoryId ?? "",
-            paymentMethodId: transaction.paymentMethodId ?? "",
-            note: transaction.note ?? "",
-          }}
-          submitLabel="Actualizar transacción"
-        />
-      </Paper>
+      <Card sx={{ maxWidth: 760 }}>
+        <CardContent sx={{ p: { xs: 2, md: 3.5 } }}>
+          <TransactionForm
+            action={action}
+            categories={options.categories}
+            paymentMethods={options.paymentMethods}
+            initialValues={{
+              name: transaction.name,
+              amount: transaction.amount,
+              currency: transaction.currency,
+              exchangeRate: transaction.exchangeRate,
+              date: transaction.date,
+              type: transaction.type,
+              categoryId: transaction.categoryId ?? "",
+              paymentMethodId: transaction.paymentMethodId ?? "",
+              note: transaction.note ?? "",
+            }}
+            submitLabel="Actualizar transacción"
+          />
+        </CardContent>
+      </Card>
     </Stack>
   );
 }

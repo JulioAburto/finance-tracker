@@ -7,8 +7,10 @@ import { deleteTransactionAction } from "../actions";
 
 export function DeleteTransactionButton({
   transactionId,
+  fullWidth = false,
 }: {
   transactionId: string;
+  fullWidth?: boolean;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -28,6 +30,7 @@ export function DeleteTransactionButton({
       size="small"
       onClick={handleDelete}
       disabled={pending}
+      fullWidth={fullWidth}
     >
       {pending ? "Eliminando..." : "Eliminar"}
     </Button>

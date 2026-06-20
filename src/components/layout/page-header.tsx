@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
 type PageHeaderProps = {
@@ -21,15 +21,21 @@ export function PageHeader({
         alignItems: { sm: "center" },
       }}
     >
-      <div>
+      <Box sx={{ maxWidth: 720 }}>
         <Typography variant="h4" component="h1">
           {title}
         </Typography>
         {description ? (
-          <Typography color="text.secondary">{description}</Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.75 }}>
+            {description}
+          </Typography>
         ) : null}
-      </div>
-      {action}
+      </Box>
+      {action ? (
+        <Box sx={{ width: { xs: "100%", sm: "auto" }, flexShrink: 0 }}>
+          {action}
+        </Box>
+      ) : null}
     </Stack>
   );
 }

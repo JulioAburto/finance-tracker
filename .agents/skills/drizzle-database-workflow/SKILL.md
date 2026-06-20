@@ -3,8 +3,6 @@ name: finance-tracker-database-workflow
 description: Use when creating, reviewing, or modifying the Finance Tracker database layer, including Drizzle schema, Supabase Postgres connection, migrations, seed data, database scripts, relations, constraints, indexes, and money-related persistence rules.
 ---
 
----
-
 # Finance Tracker Database Workflow Skill
 
 ## Purpose

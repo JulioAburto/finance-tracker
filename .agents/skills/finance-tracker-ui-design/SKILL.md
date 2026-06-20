@@ -3,36 +3,33 @@ name: finance-tracker-ui-design
 description: Audit, design, and implement UI/UX for the single-user Finance Tracker MVP built with Next.js App Router, TypeScript, and MUI. Use for route or component work involving /dashboard, /transactions, /transactions/new, /categories, /rules, /settings, AppShell/providers/theme, transaction forms and lists, category budgets, merchant rules, settings, financial summaries, alerts and status labels, empty/loading/error states, mobile responsiveness, accessibility, Spanish financial copy, and consistent money/date/percentage display. Apply the project rules for category versus payment method, credit-card payments as transfers, expense-only budget usage, and historical exchange rates; flag UI scope creep such as Tailwind, bank integrations, OCR, authentication, or AI-first flows.
 ---
 
----
-
-# Finance Tracker UI Design Skill
+# Finance Tracker UI Design
 
 ## Purpose
 
-Use this skill when working on UI/UX, layout, interaction design, visual hierarchy, MUI components, accessibility, or responsive behavior for the Finance Tracker project.
+Use this skill to audit, design, or implement UI for:
 
-This skill applies to:
+```txt
+/dashboard
+/transactions
+/transactions/new
+/categories
+/rules
+/settings
+App shell and navigation
+MUI theme and providers
+Forms, tables, cards, alerts, and status indicators
+Empty, loading, error, and not-found states
+Responsive and accessible behavior
+```
 
-- `/dashboard`
-- `/transactions`
-- `/transactions/new`
-- `/categories`
-- `/rules`
-- `/settings`
-- Shared layout components
-- Form components
-- Financial cards
-- Tables
-- Alert states
-- Empty states
-- Loading states
-- Error states
+The UI must help Julio understand what happened, whether it is healthy, and what to do next. It is a personal financial control tool, not a generic dashboard, accounting suite, or banking platform.
 
-Do not use this skill to change database schema, business logic, authentication, AI providers, or deployment configuration unless the UI task explicitly requires a small related change.
+Do not use this skill to introduce database changes, authentication, AI providers, deployment changes, or features outside the documented MVP unless explicitly requested.
 
 ## Required Context
 
-Before making design or UI changes, read:
+Before making UI decisions, read:
 
 ```txt
 AGENTS.md
@@ -42,42 +39,50 @@ docs/SETUP_NOTES.md
 docs/PROJECT_CONTEXT.md
 ```
 
-Then inspect the existing app structure and current components.
+Then inspect the existing routes, components, theme, providers, and UI conventions. Do not assume a design system exists unless it is present in the repository.
 
-Do not assume a design system already exists unless it is present in the repo.
+## Product and Finance Rules
 
-## Product Design Goal
-
-The UI must help Julio answer quickly:
+The interface must make these questions easy to answer:
 
 ```txt
-How much have I spent this month?
-Which categories are healthy?
-Which categories are risky?
-Which categories are exceeded?
-What should I stop spending on?
-What expenses still need categorization?
-Am I protecting my savings goal?
+How much did I spend this month?
+How much budget remains?
+Which categories are healthy, risky, or exceeded?
+What spending should I reduce or freeze?
+Which expenses remain uncategorized?
+Am I protecting the expected savings?
 ```
 
-The app is not a generic finance dashboard. It is a personal financial control tool.
+Preserve these rules in labels, forms, summaries, and recommendations:
 
-The dashboard should be actionable, not decorative.
+```txt
+Category means what the money was used for.
+Payment method means how it was paid.
+A credit-card purchase is an expense.
+A credit-card payment is a transfer, not a second expense.
+Savings is a transfer or allocation, not a normal expense.
+Only expense transactions consume budget.
+USD is the internal budget currency.
+Each transaction preserves its original amount, currency, exchange rate, USD, and NIO values.
+Historical transactions are not recalculated with a new exchange rate.
+Manual selection and merchant rules take precedence over optional AI.
+```
 
 ## Design Principles
 
-1. Clarity over decoration.
-2. Mobile-friendly from the start.
-3. Fast expense entry.
-4. Financial state must be obvious.
-5. Alerts must be actionable.
-6. Avoid visual noise.
-7. Prefer simple MUI components before custom UI.
-8. Use consistent spacing and typography.
-9. Keep business logic out of JSX when possible.
-10. Avoid over-designing before the core flow works.
+1. Prioritize clarity over decoration.
+2. Design mobile-first.
+3. Keep transaction entry fast.
+4. Make financial state immediately understandable.
+5. Make warnings actionable.
+6. Use consistent spacing, typography, and status language.
+7. Prefer standard MUI components before custom UI.
+8. Keep financial calculations and classification logic outside JSX.
+9. Avoid visual noise and premature abstraction.
+10. Keep the interface fully useful without AI.
 
-## Stack and UI Constraints
+## Stack and UI Boundaries
 
 Use:
 
@@ -85,145 +90,83 @@ Use:
 Next.js App Router
 TypeScript
 MUI
-CSS Modules only if needed
+CSS Modules only when justified
 ```
 
-Do not use:
+Do not add:
 
 ```txt
 Tailwind
 shadcn/ui
 DaisyUI
-Headless UI unless already justified
-New chart libraries without approval
-New icon libraries without approval
+Headless UI
+Chart libraries without approval
+Icon libraries without approval
 Animation libraries without approval
+Redux or Zustand without a demonstrated need
 ```
 
-Preferred MUI components:
+## Modern Finance App Direction
+
+The product should feel:
 
 ```txt
-Box
-Container
-Stack
-Grid
-Card
-CardContent
-Typography
-Button
-TextField
-Select
-MenuItem
-FormControl
-InputLabel
-Dialog
-Alert
-Chip
-LinearProgress
-Table
-TableHead
-TableBody
-TableRow
-TableCell
-Skeleton
-```
-
-## Visual Tone
-
-The app should feel:
-
-```txt
-Clean
-Calm
-Practical
-Personal
-Financially serious
-Not corporate-heavy
-Not flashy
-Not gamified
-```
-
-Avoid overly complex visuals.
-
-Do not make the dashboard look like a crypto trading terminal.
-## Modern Finance App Design Direction
-
-The Finance Tracker UI should feel like a modern personal finance app:
-
-```txt
+Modern
 Elegant
 Calm
 Trustworthy
-Premium but not flashy
+Personal
+Financially serious
 Data-focused
-Mobile-friendly
 Fast to use
+Premium without being flashy
 ```
 
-The visual style should avoid looking like:
+Combine:
 
 ```txt
-A bank enterprise admin panel
+Soft neutral backgrounds
+Clear light surfaces
+Strong financial hierarchy
+Generous but efficient spacing
+Readable cards, lists, and tables
+Semantic status accents
+Action-oriented alerts
+```
+
+Avoid making it resemble:
+
+```txt
+A corporate banking admin panel
 A crypto trading terminal
-A colorful gamified app
+A gamified finance app
 A generic SaaS dashboard
 A spreadsheet clone
 ```
 
-The design should combine:
+Elegance comes from hierarchy, restraint, consistency, and ease of use. Do not use unnecessary gradients, animation, charts, or decorative elements to manufacture a modern appearance.
+
+## Palette and MUI Theme
+
+Use the centralized MUI theme as the source of truth for palette, typography, spacing, shape, shadows, and component defaults.
+
+Prefer a calm finance-oriented palette:
 
 ```txt
-Soft neutral backgrounds
-Clear cards
-Financial status colors
-Strong typography hierarchy
-Generous spacing
-Readable tables/lists
-Mobile-first forms
-Action-oriented alerts
-```
-
-Modern and elegant does not mean adding unnecessary animations, gradients, charts, or icon libraries.
-
-Elegance means that the user can understand their financial state quickly and act with confidence.
-
-## Palette and Theme Rules
-
-Use MUI theme tokens as the source of truth.
-
-Do not scatter hardcoded colors across components.
-
-Prefer defining palette, spacing, shape, and typography in a centralized theme file, for example:
-
-```txt
-src/app/theme.ts
-src/theme/index.ts
-src/lib/theme.ts
-```
-
-Use the actual project structure if a theme file already exists.
-
-### Recommended Visual Palette
-
-Use a calm finance-oriented palette.
-
-Suggested direction:
-
-```txt
-Primary: deep navy / financial blue
-Secondary: emerald / money green
+Primary: deep navy or financial blue
+Secondary: restrained emerald or teal
 Background: warm off-white or soft gray
-Surface: white or near-white cards
-Text primary: near-black / deep slate
+Surface: white or near-white
+Text primary: near-black or deep slate
 Text secondary: muted slate
 Divider: soft gray
 Success: green
 Warning: amber
-Error/Danger: red
+Error: red
 Info: blue
 ```
 
-Suggested color intent, not mandatory exact values:
+Possible direction, not mandatory exact values:
 
 ```txt
 Primary: #123047 or #0F2A3D
@@ -234,92 +177,100 @@ Text primary: #17202A
 Text secondary: #667085
 Success: #16A34A
 Warning: #D97706
-Danger/Error: #DC2626
+Error: #DC2626
 Info: #2563EB
 ```
 
 Rules:
 
-1. Prefer MUI palette tokens over inline hex values.
-2. Centralize custom colors in the theme.
-3. Use semantic colors for status.
-4. Do not use color as the only status indicator.
-5. Ensure text contrast is readable.
-6. Avoid saturated backgrounds for large sections.
-7. Use status color accents, not full-screen color blocks.
-8. Avoid more than one strong accent color per screen.
+1. Prefer theme tokens and semantic component props over inline hex values.
+2. Centralize custom colors instead of redefining them in pages.
+3. Use status colors as accents, not large saturated backgrounds.
+4. Use no more than one strong accent color per screen.
+5. Maintain readable contrast.
+6. Never communicate status through color alone.
+7. Keep component defaults restrained; avoid replacing all MUI behavior globally.
 
-### Status Color Mapping
-
-Use this mapping consistently:
+Use consistent status mapping:
 
 ```txt
-Sano / Safe: success
-Cuidado / Warning: warning
-Alerta / Danger: error or warning depending severity
-Excedido / Exceeded: error
-Sin clasificar / Uncategorized: default or info
+Sano: success
+Cuidado: warning
+Alerta: error or warning according to severity
+Excedido: error
+Sin clasificar: default or info
 ```
 
-Budget states must include both color and text.
+Every financial status must include a visible text label and, when useful, a direct recommendation.
 
-Good:
+## Typography and Spacing
 
-```txt
-Chip: "Alerta"
-Color: warning/error
-Text: "Delivery está al 83%. Congelá pedidos esta semana."
-```
-
-Bad:
+Create hierarchy through typography:
 
 ```txt
-Only a red progress bar with no label.
-```
-
-## Typography and Spacing Rules
-
-Use typography to create financial hierarchy.
-
-Recommended hierarchy:
-
-```txt
-Page title: clear and short
+Page title: short and prominent
 Section title: descriptive
 Metric label: small and muted
 Metric value: large and strong
-Helper text: muted and concise
+Helper text: concise and secondary
 Alert text: direct and action-oriented
 ```
 
-Examples:
+Example:
 
 ```txt
-Title: Resumen del mes
-Metric label: Gastado
-Metric value: US$420.50
-Context: 49.4% del presupuesto usado
-Action: Agregar gasto
+Resumen del mes
+Gastado
+US$420.50
+49.4% del presupuesto usado
+Agregar gasto
 ```
 
-Spacing:
+Use consistent page padding, card padding, gaps, and section spacing. Keep a sensible maximum content width on desktop. Avoid both spreadsheet-like density and oversized empty layouts.
+
+## App Shell and Navigation
+
+For the MVP, prefer a simple top app bar with:
 
 ```txt
-Mobile page padding: compact but breathable
-Desktop page max width: avoid full-width stretched content
-Cards: consistent padding
-Sections: clear vertical separation
+Product identity
+Current-route indication
+Clear navigation labels
+Visible primary action
+Constrained main content
+Responsive mobile navigation
 ```
 
-Avoid dense layouts that feel like spreadsheets.
+Use consistent Spanish labels:
 
-Avoid huge empty desktop layouts with tiny cards.
+```txt
+Resumen
+Transacciones
+Agregar gasto
+Categorías
+Reglas
+Configuración
+```
 
-## Dashboard Visual Design Requirements
+Keep `Agregar gasto` visible on desktop instead of hiding it in a menu. On mobile, use a prominent full-width action, an accessible bottom action area, or a floating action button only when it does not obstruct content or accessibility.
 
-The dashboard should look modern, but it must remain actionable.
+Do not introduce a complex sidebar, nested navigation, or route structure before the MVP requires it.
 
-It should answer in the first screen:
+Each page should follow:
+
+```txt
+Page title
+Short helper text
+Primary action
+Main content
+Secondary or advanced content
+```
+
+## Dashboard Layout and Hierarchy
+
+The dashboard must prioritize action over decoration.
+
+The first viewport should answer:
 
 ```txt
 How much did I spend?
@@ -328,46 +279,44 @@ Which categories require action?
 What should I do next?
 ```
 
-### Recommended Dashboard Layout
+### Recommended Order
 
-Mobile order:
+Mobile:
 
 ```txt
-1. Month selector / current month
+1. Month selector
 2. Main financial health card
-3. Primary action: Agregar gasto
+3. Agregar gasto action
 4. Critical alerts
 5. Category usage cards
 6. Latest transactions
 7. Uncategorized expenses
 ```
 
-Desktop order:
+Desktop:
 
 ```txt
-1. Header with month and Add Transaction action
+1. Header with month and Agregar gasto
 2. Summary card grid
 3. Critical alert panel
-4. Category usage table/cards
+4. Category usage table or cards
 5. Latest transactions and uncategorized panel
 ```
 
-### Main Financial Health Card
+### Financial Health and Summary Cards
 
-Create one primary card that summarizes the month.
-
-It may include:
+Use one primary card when it improves comprehension:
 
 ```txt
 Total spent
 Spendable budget
-Budget used percentage
+Budget-used percentage
 Expected savings
-Financial status
+Current status
 Short recommendation
 ```
 
-Example copy:
+Example:
 
 ```txt
 Resumen de junio
@@ -377,77 +326,38 @@ Estado: Sano
 Vas bien. Mantené el ritmo y protegé el ahorro.
 ```
 
-### Summary Cards
-
-Summary cards should be visually consistent.
-
-Each card should include:
-
-```txt
-Short label
-Main value
-Secondary context
-Optional status chip
-```
-
-Good cards:
+Use 4–6 high-value summary cards at most:
 
 ```txt
 Gastado este mes
 Presupuesto usado
+Monto restante
 Ahorro esperado
 Categorías en alerta
 Gastos sin clasificar
 ```
 
-Avoid too many cards. Prefer 4-6 high-value cards.
+Each card should have a short label, primary value, useful context, and optional status chip.
 
-### Category Usage Design
-
-Category usage should be easy to scan.
+### Category Usage
 
 For each category show:
 
 ```txt
 Category name
-Spent / budget
+Spent and budget amounts
 Remaining amount
 Usage percentage
-Progress bar
-Status chip
-Action recommendation when needed
+Progress indicator
+Text status
+Recommendation when action is needed
 ```
 
-Mobile:
+Use stacked cards on mobile and a readable table or compact cards on desktop. Give higher visual priority to warning, danger, exceeded, and uncategorized items.
 
-```txt
-Use stacked cards.
-Avoid wide tables.
-Show the most important numbers first.
-```
+### Alerts
 
-Desktop:
-
-```txt
-Use table or compact cards.
-Keep columns readable.
-Avoid too many decorative elements.
-```
-
-### Alert Panel Design
-
-Alerts should feel important without causing panic.
-
-Use:
-
-```txt
-Alert severity
-Short title
-Action recommendation
-Related category
-```
-
-Good:
+Alerts should be important without being alarmist:
 
 ```txt
 Delivery en alerta
@@ -455,280 +365,272 @@ US$58.70 de US$70.00 usados.
 Congelá delivery esta semana.
 ```
 
-Bad:
+Use the documented thresholds:
 
 ```txt
-You are overspending.
+0%–69%: Sano
+70%–79%: Cuidado
+80%–99%: Alerta
+100%+: Excedido
 ```
 
-### Dashboard Anti-Patterns
+At 80% or more before day 20, recommend freezing extras. Do not show vague or guilt-heavy warnings.
 
-Do not:
+## Transaction Form UX
 
-```txt
-Add charts before cards/tables work
-Make the dashboard decorative but not actionable
-Use too many colors
-Hide the Add Transaction action
-Show all categories with equal visual priority when some need action
-Put budget calculations directly in JSX
-Depend on AI to render the dashboard
-```
+`/transactions/new` is a primary workflow. Optimize for fast daily entry.
 
-## Modern Form UX Rules
-
-Forms should feel fast, clean, and low-friction.
-
-The `/transactions/new` screen is one of the most important screens in the app.
-
-### Transaction Form Priority
-
-The form should prioritize:
+Required data:
 
 ```txt
+Name or merchant
 Amount
-Name/merchant
+Currency
+Date
 Category
 Payment method
-Date
-Currency/exchange rate
-Note
+Transaction type
+Exchange rate
+Optional note
 ```
 
-Recommended grouping:
+Defaults:
 
 ```txt
-1. Main expense details
-2. Classification
-3. Payment details
-4. Optional note
+Date: today
+Type: expense
+Currency: settings value
+Exchange rate: settings value
 ```
 
-### Mobile Form Layout
+Prioritize:
 
-Mobile must be first-class.
+```txt
+1. Amount and merchant
+2. Category
+3. Payment method
+4. Date and type
+5. Currency and exchange rate
+6. Optional note
+```
 
-Rules:
+Group related fields and keep optional information visually secondary. Do not create a multi-step wizard for the MVP.
+
+Mobile:
 
 ```txt
 Single column
-Large tappable fields
-Primary action full width
-Sticky or clearly visible save action if form is long
-Avoid cramped side-by-side fields
-Use native-friendly input types when possible
+Large tappable controls
+No cramped side-by-side fields
+Native-friendly input types
+Full-width primary action
+Save action visible without ambiguity
 ```
 
-Good mobile order:
+Desktop may use two columns only when grouping remains obvious.
+
+Validation rules:
 
 ```txt
-Monto
-Moneda
-Descripción
-Categoría
-Método de pago
-Fecha
-Tipo
-Nota
-Guardar gasto
+Place specific errors next to the affected field.
+Connect errors to fields where practical.
+Disable the submit action while saving.
+Show a clear pending label.
+Keep server-side validation authoritative.
+Adapt category and payment-method requirements to transaction type.
+Explain that credit-card payments and savings are transfers.
 ```
 
-### Desktop Form Layout
-
-Desktop can use two columns only when it improves clarity.
-
-Recommended desktop grouping:
-
-```txt
-Left: amount, currency, date, type
-Right: name, category, payment method, note
-```
-
-Do not create complex multi-step forms for MVP.
-
-### Form Visual Style
-
-Use:
-
-```txt
-Clear section labels
-Consistent TextField sizes
-Helper text where useful
-Error text close to the field
-Disabled save state while submitting
-Loading state on submit
-```
-
-Avoid:
-
-```txt
-Generic "Invalid input"
-Unlabeled selects
-Too many optional fields visible as primary
-Multiple competing submit buttons
-Dense spreadsheet-like forms
-```
-
-### Validation Copy
-
-Use Spanish user-facing validation.
-
-Examples:
+Good validation copy:
 
 ```txt
 El monto debe ser mayor que 0.
-La descripción es requerida.
+El nombre es obligatorio.
 Seleccioná una categoría.
 Seleccioná un método de pago.
 El tipo de cambio debe ser mayor que 0.
 No se pudo guardar la transacción. Revisá los datos e intentá de nuevo.
 ```
 
-## Responsive and Mobile Design Rules
+Avoid generic errors, unlabeled fields, multiple competing submit actions, and presenting invalid financial combinations as normal choices.
 
-Design mobile-first, then enhance for tablet and desktop.
+## Transaction List
 
-Breakpoints should follow MUI conventions where practical.
-
-### Mobile
-
-Mobile screens should use:
+Support fast scanning. Show:
 
 ```txt
-Single-column layout
-Compact header
-Clear page title
-Primary action visible
+Date
+Name
+Category
+Payment method
+Original amount and currency
+Converted amount when useful
+Transaction type
+Uncategorized status when applicable
+Actions
+```
+
+Use cards or a compact list on mobile instead of forcing a wide table. Desktop may use a MUI table with readable columns and deliberate horizontal overflow only as a fallback.
+
+Translate domain values into Spanish labels. Do not expose `expense`, `income`, or `transfer` directly in user-facing UI.
+
+## Management Screens
+
+### Categories
+
+Show:
+
+```txt
+Category name
+Monthly budget
+Essential flag
+Active state
+Thresholds when editable
+Actions
+```
+
+Use simple forms, rows, cards, or dialogs. Do not add advanced budget templates without approval.
+
+### Merchant Rules
+
+Show:
+
+```txt
+Pattern
+Target category
+Priority
+Active state
+Actions
+```
+
+Only describe or validate regex behavior when it is implemented. Never execute arbitrary user code.
+
+### Settings
+
+Include:
+
+```txt
+Default currency
+Default exchange rate
+Credit-card mode
+Approved credit-card settings
+```
+
+Always warn:
+
+```txt
+Cambiar la tasa predeterminada no recalcula transacciones históricas.
+```
+
+## Responsive Design
+
+Design mobile-first and enhance progressively using MUI breakpoints.
+
+Mobile:
+
+```txt
+Single-column layouts
+Compact app header
+Visible primary action
 Cards instead of wide tables
 Readable money values
-Bottom spacing for comfortable scrolling
 Full-width primary buttons
+Comfortable bottom spacing
 ```
 
-Avoid:
+Tablet:
 
 ```txt
-Horizontal scrolling tables
-Tiny chips/buttons
-Dense multi-column forms
-Navigation that wraps badly
-Cards with too much text
-```
-
-### Tablet
-
-Tablet can use:
-
-```txt
-Two-column summary cards
+Two-column summary grids
 Compact category cards
-Split layout only when readable
+Split layouts only when readable
 ```
 
-### Desktop
-
-Desktop can use:
+Desktop:
 
 ```txt
-Grid summary cards
-Table for transaction list
-Side-by-side dashboard sections
-Persistent top navigation or simple sidebar if already implemented
+Summary-card grids
+Tables where scanning benefits
+Side-by-side secondary sections
+Constrained content width
 ```
 
-Do not stretch content across the full viewport if it hurts readability.
+Avoid horizontal scrolling, tiny controls, dense multi-column forms, wrapped navigation, and overly verbose cards on mobile.
 
-Use a sensible max width for page content.
-
-## App Shell and Navigation Design
-
-The app shell should be simple and modern.
-
-For MVP, prefer:
-
-```txt
-Top app bar
-Clean navigation links
-Primary action button: Agregar gasto
-Responsive mobile menu if needed
-```
-
-Navigation labels in Spanish:
-
-```txt
-Dashboard or Resumen
-Transacciones
-Agregar gasto
-Categorías
-Reglas
-Configuración
-```
-
-Keep labels consistent across all screens.
-
-The primary action should usually be:
-
-```txt
-Agregar gasto
-```
-
-Do not hide the most common action inside a menu on desktop.
-
-For mobile, the primary action can appear as:
-
-```txt
-Full-width button near top
-Floating action button only if it does not hurt accessibility
-Bottom action area if already part of the design
-```
-
-Do not add complex navigation patterns before the MVP routes work.
-
-## Elegant MUI Component Rules
-
-Use MUI components cleanly.
+## MUI Component Styling
 
 Prefer:
 
 ```txt
-Card with subtle border/shadow
+Container for content width
 Stack for spacing
-Container for page width
-Grid for dashboard cards
-Chip for status
+Grid or CSS grid for summaries
+Card or Paper with subtle border/shadow
+Chip for text status
 Alert for actionable warnings
 LinearProgress for budget usage
-Table for desktop transaction list
-Dialog for confirmation/edit flows
-Skeleton for loading states
+Table for desktop data
+Dialog for confirmations
+Skeleton for loading
+TextField, Select, and FormControl for forms
 ```
 
-Avoid:
+Rules:
+
+1. Keep `sx` objects small and readable.
+2. Move repeated visual decisions into theme tokens or a small shared component.
+3. Use subtle elevation and borders.
+4. Avoid heavy shadows, nested cards, repeated inline colors, gradients, and excessive decoration.
+5. Reuse components only when a pattern is shared or clearly valuable.
+6. Do not build a large design system before the MVP needs it.
+
+Useful focused components may include:
 
 ```txt
-Over-customized components
-Large inline sx objects repeated everywhere
-Hardcoded colors in every component
-Nested Cards inside Cards without reason
-Heavy shadows everywhere
-Overuse of gradients
+PageHeader
+SummaryCard
+BudgetStatusChip
+CategoryUsageCard
+TransactionForm
+TransactionList
+EmptyState
 ```
 
-If using `sx`, keep it readable.
+## States and Accessibility
 
-If a style repeats across several components, move it into:
+Every major route should provide useful states.
+
+Empty-state examples:
 
 ```txt
-Theme tokens
-Small reusable component
-Shared style helper
+No hay transacciones todavía.
+Registrá tu primer gasto para comenzar.
+[Agregar gasto]
+
+No hay alertas de presupuesto.
+Tus categorías están dentro de sus límites.
+
+Todas las transacciones están clasificadas.
 ```
 
-Do not create a large design system prematurely.
+Use skeleton cards or rows for loading. Disable submit actions while saving. Explain failures in plain language without exposing raw database errors or secrets.
 
-## Finance UI Microcopy
+Accessibility requirements:
 
-Use Spanish copy that is calm, clear, and action-oriented.
+```txt
+Use semantic elements where practical.
+Give every input a visible label.
+Use clear button text.
+Keep keyboard navigation intact.
+Give dialogs clear titles and actions.
+Maintain sufficient contrast.
+Do not rely on color alone.
+Keep touch targets usable on mobile.
+```
+
+## Finance Microcopy and Data Display
+
+Use calm, direct, action-oriented Spanish. Guide behavior without judgment.
 
 Good:
 
@@ -740,7 +642,7 @@ Te quedan US$11.30 en esta categoría.
 El ahorro esperado no debe tocarse.
 ```
 
-Avoid guilt-heavy copy:
+Avoid:
 
 ```txt
 Estás manejando mal tu dinero.
@@ -748,494 +650,7 @@ Fallaste tu presupuesto.
 Tus finanzas están mal.
 ```
 
-The app should guide behavior, not shame the user.
-
-## Design Implementation Checklist
-
-Before finishing any UI change, verify:
-
-```txt
-Does the screen look modern without becoming decorative?
-Is the palette coming from the MUI theme?
-Are status colors consistent?
-Is the dashboard actionable?
-Is the Add Transaction action obvious?
-Is the form fast to complete on mobile?
-Are fields readable and tappable on a phone?
-Are cards/tables readable on desktop?
-Are empty/loading/error states handled?
-Are money, percentages, and dates formatted consistently?
-Is status understandable without color?
-Did we avoid Tailwind and unnecessary UI dependencies?
-Did we avoid adding charts or icons without approval?
-```
-
-## Approval Required Before Visual Expansion
-
-Ask for approval before:
-
-```txt
-Adding a chart library
-Adding a new icon library
-Adding animations
-Creating a large custom theme
-Changing the entire app shell/navigation
-Adding dark mode
-Adding glassmorphism/neumorphism/heavy gradients
-Replacing MUI defaults globally
-Introducing a dashboard chart system
-```
-
-A small MUI theme with palette, typography, shape, and component defaults is allowed if the task is UI foundation or dashboard design.
-
-
-## Layout Rules
-
-### App Shell
-
-Use a simple layout:
-
-```txt
-Top navigation or side navigation
-Main content container
-Clear page title
-Primary action visible
-Consistent spacing
-```
-
-For MVP, a top nav is acceptable and simpler than a full sidebar.
-
-Recommended top-level navigation:
-
-```txt
-Dashboard
-Transactions
-New Transaction
-Categories
-Rules
-Settings
-```
-
-### Page Layout
-
-Each page should follow this pattern:
-
-```txt
-Page title
-Short helper text
-Primary action
-Main content
-Secondary/advanced content
-```
-
-Example:
-
-```txt
-Title: Dashboard
-Helper: Monthly spending overview and budget alerts.
-Primary action: Add transaction
-```
-
-### Responsive Behavior
-
-Mobile matters.
-
-Use responsive layouts:
-
-```txt
-Mobile: single column
-Tablet: two columns where useful
-Desktop: cards + tables
-```
-
-Do not build desktop-only screens.
-
-Forms must be usable on a phone.
-
-## Dashboard Design Requirements
-
-The dashboard must prioritize action.
-
-Required sections:
-
-```txt
-Monthly summary cards
-Budget usage overview
-Category status table/list
-Alert cards
-Latest transactions
-Uncategorized transactions
-```
-
-Recommended order:
-
-```txt
-1. Month selector/current month
-2. Financial health summary
-3. Critical alerts
-4. Category usage
-5. Latest transactions
-6. Uncategorized transactions
-```
-
-### Summary Cards
-
-Use cards for:
-
-```txt
-Total spent
-Total budget
-Budget used percentage
-Expected savings
-Categories in danger
-Uncategorized expenses
-```
-
-Each card should have:
-
-```txt
-Label
-Main value
-Short context
-Status indicator if relevant
-```
-
-Example:
-
-```txt
-Total spent
-US$420.50 / US$850.00
-49.4% of spendable budget used
-```
-
-### Category Usage
-
-Each category row/card should show:
-
-```txt
-Category name
-Spent amount
-Budget amount
-Remaining amount
-Usage percentage
-Status
-Recommendation
-Progress indicator
-```
-
-Example:
-
-```txt
-Delivery
-US$58.70 / US$70.00
-83.8%
-Status: Danger
-Recommendation: Freeze delivery this week.
-```
-
-### Alert States
-
-Use the documented thresholds:
-
-```txt
-safe: 0% - 69%
-warning: 70% - 79%
-danger: 80% - 99%
-exceeded: 100%+
-```
-
-Special rule:
-
-```txt
-If usage >= 80% before day 20, show freeze recommendation.
-```
-
-Alert copy should be direct and action-oriented.
-
-Good:
-
-```txt
-Delivery is at 83% before day 20. Freeze delivery this week.
-```
-
-Bad:
-
-```txt
-Your financial behavior has changed significantly.
-```
-
-## Status Language
-
-Use consistent status labels:
-
-```txt
-Safe
-Warning
-Danger
-Exceeded
-Uncategorized
-```
-
-Spanish UI labels are preferred for user-facing screens unless the existing app is in English.
-
-Recommended Spanish labels:
-
-```txt
-Sano
-Cuidado
-Alerta
-Excedido
-Sin clasificar
-```
-
-Do not mix Spanish and English in user-facing UI unless the rest of the app already does.
-
-## Color and Status Rules
-
-Do not hardcode many custom colors across components.
-
-Prefer MUI theme palette and semantic component props where possible:
-
-```tsx
-<Alert severity="warning" />
-<Chip color="warning" />
-<LinearProgress color="warning" />
-```
-
-If custom status colors are needed, centralize them.
-
-Do not use color as the only signal. Include text labels/icons where appropriate.
-
-Accessibility requirement:
-
-```txt
-Status must be understandable without color.
-```
-
-## Transaction Form Design
-
-The transaction creation flow must be fast.
-
-Required fields:
-
-```txt
-Name
-Amount
-Currency
-Date
-Category
-Payment method
-Type
-Optional note
-```
-
-Recommended UX:
-
-```txt
-Default date to today
-Default type to expense
-Default currency from settings
-Default exchange rate from settings
-Make amount prominent
-Make category and payment method easy to select
-Keep optional note visually secondary
-```
-
-Validation messages should be clear.
-
-Good:
-
-```txt
-Amount must be greater than 0.
-```
-
-Bad:
-
-```txt
-Invalid input.
-```
-
-Spanish version:
-
-```txt
-El monto debe ser mayor que 0.
-```
-
-### Form Layout
-
-Mobile:
-
-```txt
-Single column
-Primary button full width
-```
-
-Desktop:
-
-```txt
-Two-column form is acceptable
-Primary button aligned clearly
-```
-
-Do not bury the save button.
-
-## Transaction List Design
-
-The transaction list should support scanning.
-
-Each row/card should show:
-
-```txt
-Date
-Name
-Category
-Payment method
-Original amount
-Converted amount if useful
-Type
-Status if uncategorized
-```
-
-Mobile may use cards instead of a dense table.
-
-Desktop may use MUI Table.
-
-Do not show too many fields at once if it hurts readability.
-
-## Categories Page Design
-
-The categories page should show:
-
-```txt
-Category name
-Monthly budget
-Essential flag
-Active/inactive state
-Thresholds if editable
-Actions
-```
-
-Prefer simple editable rows or dialogs.
-
-Do not implement advanced budget templates in MVP unless requested.
-
-## Rules Page Design
-
-The rules page should show:
-
-```txt
-Pattern
-Target category
-Priority
-Active/inactive state
-Actions
-```
-
-Warn if regex-like patterns are invalid only if regex validation is implemented.
-
-Do not execute arbitrary user code.
-
-## Settings Page Design
-
-Settings should be simple.
-
-Include:
-
-```txt
-Default currency
-Default exchange rate
-Credit card mode toggle
-Optional credit card settings
-```
-
-Warn clearly:
-
-```txt
-Changing the default exchange rate does not recalculate historical transactions.
-```
-
-This warning is important because historical transaction exchange rates must be preserved.
-
-## Empty States
-
-Every major screen should have useful empty states.
-
-Examples:
-
-### No transactions
-
-```txt
-No transactions yet.
-Start by registering your first expense.
-[Add transaction]
-```
-
-### No alerts
-
-```txt
-No budget alerts right now.
-Your categories are within their limits.
-```
-
-### No rules
-
-```txt
-No merchant rules yet.
-Create rules to classify repeated expenses automatically.
-```
-
-### No uncategorized expenses
-
-```txt
-All expenses are categorized.
-```
-
-## Loading States
-
-Use simple loading states:
-
-```txt
-Skeleton cards
-Skeleton rows
-Disabled submit button while saving
-```
-
-Do not add complex spinners everywhere.
-
-## Error States
-
-Errors should explain what failed and what the user can do.
-
-Good:
-
-```txt
-Could not save transaction. Check the required fields and try again.
-```
-
-If the error is technical, keep technical details out of the main UI and log server-side.
-
-Do not expose secrets or raw database errors in UI.
-
-## Accessibility Requirements
-
-For every UI change:
-
-- Use semantic elements where practical.
-- Buttons must have clear text.
-- Inputs must have labels.
-- Form errors must be connected to fields where practical.
-- Status must not rely on color alone.
-- Dialogs must have clear titles and actions.
-- Keyboard navigation should not be broken.
-- Avoid low contrast text.
-
-Do not remove accessibility features from MUI components.
-
-## Copywriting Rules
-
-Prefer direct Spanish copy for user-facing text.
-
-Examples:
+Use consistent terminology:
 
 ```txt
 Agregar gasto
@@ -1248,246 +663,104 @@ Sin clasificar
 Congelar extras
 ```
 
-Use friendly but direct recommendations.
-
-Good:
-
-```txt
-Delivery está al 83%. Congelá pedidos esta semana.
-```
-
-Avoid guilt-heavy copy.
-
-Bad:
-
-```txt
-Estás manejando mal tu dinero.
-```
-
-## Data Display Rules
-
-Money formatting:
+Format consistently:
 
 ```txt
 USD: US$1,300.00
 NIO: C$47,611.59
+Percentage: 83.8%
+Date: 15 jul 2026 or another single documented format
 ```
 
-Percentages:
+Use shared formatting utilities. Do not calculate money or budget state inside JSX.
 
-```txt
-83.8%
-```
-
-Dates:
-
-Use a consistent format for Nicaragua/Spanish UI.
-
-Examples:
-
-```txt
-15 jul 2026
-2026-07-15
-```
-
-Choose one and be consistent.
-
-Do not perform money calculations inside JSX. Use utilities.
-
-## Component Design Rules
-
-Prefer small components:
-
-```txt
-SummaryCard
-CategoryUsageCard
-CategoryUsageTable
-BudgetStatusChip
-TransactionForm
-TransactionList
-EmptyState
-PageHeader
-```
-
-Avoid huge page files with all UI and logic inline.
-
-Do not prematurely create a large design system.
-
-Create reusable components only after the pattern appears at least twice, unless it is obviously shared.
-
-## Server/Client Component Rules
+## Server and Client Boundaries
 
 Default to Server Components.
 
-Use Client Components for:
+Use Client Components only for:
 
 ```txt
-Forms
+Interactive forms
 Dialogs
-Interactive filters
 Client-side validation UX
-Charts if added later
+Interactive filters
+Browser APIs
 ```
 
-Keep database reads in Server Components or server-side query functions.
-
-Keep mutations in Server Actions unless a Route Handler is more appropriate.
-
-Do not fetch database data directly from Client Components.
-
-## Performance Rules
-
-Avoid expensive client-side computation when it can be done server-side.
-
-For MVP:
-
-```txt
-Server-side aggregate queries are preferred
-Simple tables/lists are enough
-Avoid heavy chart libraries
-Avoid unnecessary global state
-```
-
-Do not add Redux/Zustand for MVP UI unless there is a clear need.
-
-## Design Review Checklist
-
-Before finishing a UI task, check:
-
-```txt
-Does the screen answer the user’s financial question?
-Is the primary action obvious?
-Is mobile usable?
-Are required fields clear?
-Are errors understandable?
-Are statuses understandable without color?
-Is money formatted consistently?
-Are budget thresholds shown correctly?
-Is business logic outside JSX where practical?
-Did we avoid unnecessary dependencies?
-```
+Keep database reads in Server Components or server-only query modules. Keep mutations in Server Actions unless a Route Handler is clearly more appropriate. Never import database clients or secrets into Client Components.
 
 ## Implementation Workflow
 
-When asked to design or implement UI:
+1. Read the required project documents.
+2. Inspect existing UI conventions and routes.
+3. State assumptions and propose a focused plan.
+4. Implement only the approved scope.
+5. Keep business logic in domain utilities, queries, and server validation.
+6. Add or update tests when behavior changes.
+7. Run the relevant tests, lint, and build commands available in `package.json`.
+8. Review responsive behavior, accessibility, secrets, and scope.
+9. Report changed files, validation, risks, and assumptions.
 
-1. Read required docs.
-2. Inspect existing UI conventions.
-3. State assumptions.
-4. Propose a small plan.
-5. Implement only the requested UI scope.
-6. Keep business logic in utilities/query functions.
-7. Run relevant validation.
-8. Report changed files, validation, risks, and follow-ups.
+## Review Checklist
 
-## Commands
+Before finishing, verify:
 
-Use available commands from package.json.
-
-Common expected commands:
-
-```powershell
-pnpm lint
-pnpm build
+```txt
+Does the screen answer a real financial question?
+Is the next action obvious?
+Does the visual direction feel modern without becoming decorative?
+Does the palette come from the MUI theme?
+Are status colors and labels consistent?
+Is mobile genuinely usable?
+Is transaction entry fast?
+Are required fields and errors clear?
+Are empty, loading, error, and not-found states handled?
+Are money, percentages, and dates consistent?
+Is status understandable without color?
+Are finance domain rules preserved?
+Did the implementation avoid unnecessary dependencies and scope creep?
 ```
 
-If tests exist:
-
-```powershell
-pnpm test
-```
-
-Do not invent scripts without checking package.json.
-
-## Approval Required Before
+## Approval Required
 
 Ask before:
 
 ```txt
-Adding a chart library
-Adding icon library
-Changing UI library
-Adding Tailwind
-Adding animations library
-Adding auth UI
-Adding AI UI
-Adding OCR/import UI
+Adding chart, icon, or animation libraries
+Changing the UI library
+Adding Tailwind or Tailwind-derived libraries
 Creating a large custom theme
-Redesigning all pages at once
+Replacing MUI defaults globally
+Redesigning the entire navigation
+Adding dark mode
+Adding glassmorphism, neumorphism, or heavy gradients
+Adding auth, AI, OCR, import, or bank-integration UI
 ```
 
-## Common Mistakes to Avoid
+A small centralized MUI theme using palette, typography, spacing, shape, and restrained component defaults is acceptable when the approved task requires UI foundation work.
+
+## Common Mistakes
 
 Do not:
 
 ```txt
-Make the dashboard decorative but not actionable
-Build desktop-only UI
-Hide the add transaction action
-Use category as payment method
-Use payment method as category
-Show status only with color
-Put budget calculations directly in JSX
-Add charts before basic cards/tables work
-Add AI classification UI before merchant rules work
-Add too many pages at once
-Over-customize MUI components too early
+Make the dashboard decorative but not actionable.
+Build desktop-only screens.
+Hide the primary transaction action.
+Confuse category with payment method.
+Treat a credit-card payment as a new expense.
+Use color as the only status signal.
+Put financial calculations directly in JSX.
+Show raw enum values in user-facing UI.
+Add charts before cards and lists work.
+Add AI-first classification before merchant rules.
+Over-customize MUI or create a large design system prematurely.
 ```
 
-## Example Good Dashboard Copy
+## Final Standard
 
-```txt
-Resumen del mes
-
-Gastado:
-US$420.50 de US$850.00
-
-Presupuesto usado:
-49.4%
-
-Alertas:
-Delivery está al 83% antes del día 20. Congelá pedidos esta semana.
-
-Sin clasificar:
-2 gastos necesitan categoría.
-```
-
-## Example Good Transaction Form Flow
-
-```txt
-Agregar gasto
-
-Nombre:
-La Colonia
-
-Monto:
-C$850
-
-Moneda:
-NIO
-
-Categoría:
-Supermercado
-
-Método de pago:
-Débito
-
-Fecha:
-Hoy
-
-Nota:
-Compra de comida para la casa
-
-[Guardar gasto]
-```
-
-## Final Reminder
-
-The UI should help Julio act.
-
-A successful screen is not one that looks impressive.
-
-A successful screen makes it obvious:
+A successful screen makes three things obvious:
 
 ```txt
 What happened?

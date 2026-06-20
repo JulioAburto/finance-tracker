@@ -3,8 +3,6 @@ name: finance-tracker-testing-review
 description: Use when writing, reviewing, or improving tests and quality checks for the Finance Tracker app, especially money conversion, budget usage, budget alerts, transaction validation, merchant rule matching, security-sensitive flows, and regression prevention.
 ---
 
----
-
 # Finance Tracker Testing and Review Skill
 
 ## Purpose

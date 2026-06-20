@@ -1,8 +1,10 @@
 import {
   Box,
   Button,
+  Card,
+  CardContent,
+  Chip,
   MenuItem,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -11,8 +13,10 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import { PageHeader } from "@/components/layout/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { DeleteTransactionButton } from "@/features/transactions/components/delete-transaction-button";
 import {
   getTransactionFormOptions,
@@ -28,6 +32,12 @@ const transactionTypeLabels = {
   expense: "Gasto",
   income: "Ingreso",
   transfer: "Transferencia",
+} as const;
+
+const transactionTypeColors = {
+  expense: "error",
+  income: "success",
+  transfer: "info",
 } as const;
 
 type SearchParams = Promise<{
@@ -56,13 +66,17 @@ export default async function TransactionsPage({
         title="Transacciones"
         description="Montos convertidos con la tasa guardada en cada registro."
         action={
-          <Button href="/transactions/new" variant="contained">
-            Agregar transacción
+          <Button
+            href="/transactions/new"
+            variant="contained"
+            sx={{ width: { xs: "100%", sm: "auto" } }}
+          >
+            Agregar gasto
           </Button>
         }
       />
 
-      <Paper component="form" method="get" sx={{ p: 2 }}>
+      <Card component="form" method="get" sx={{ p: 2 }}>
         <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
           <TextField
             name="month"
@@ -99,42 +113,115 @@ export default async function TransactionsPage({
               </MenuItem>
             ))}
           </TextField>
-          <Button type="submit" variant="outlined">
+          <Button
+            type="submit"
+            variant="outlined"
+            sx={{ width: { xs: "100%", md: "auto" } }}
+          >
             Filtrar
           </Button>
         </Stack>
-      </Paper>
+      </Card>
 
-      <TableContainer component={Paper}>
-        <Table size="small" sx={{ minWidth: 900 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Categoría</TableCell>
-              <TableCell>Método</TableCell>
-              <TableCell align="right">USD</TableCell>
-              <TableCell align="right">NIO</TableCell>
-              <TableCell align="right">Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={8}>
-                  <Box sx={{ py: 3, textAlign: "center" }}>
-                    <Stack spacing={1} sx={{ alignItems: "center" }}>
-                      <span>No hay transacciones para estos filtros.</span>
-                      <Button href="/transactions/new" variant="contained">
-                        Agregar transacción
-                      </Button>
+      {rows.length === 0 ? (
+        <Card>
+          <EmptyState
+            title="No hay transacciones"
+            description="No encontramos movimientos para los filtros seleccionados."
+            actionHref="/transactions/new"
+            actionLabel="Agregar gasto"
+          />
+        </Card>
+      ) : (
+        <>
+          <Stack spacing={1.5} sx={{ display: { xs: "flex", md: "none" } }}>
+            {rows.map((transaction) => (
+              <Card key={transaction.id}>
+                <CardContent>
+                  <Stack spacing={1.5}>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{ justifyContent: "space-between", alignItems: "center" }}
+                    >
+                      <Typography color="text.secondary" variant="body2">
+                        {formatDisplayDate(transaction.date)}
+                      </Typography>
+                      <Chip
+                        size="small"
+                        label={transactionTypeLabels[transaction.type]}
+                        color={transactionTypeColors[transaction.type]}
+                      />
                     </Stack>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ) : (
-              rows.map((transaction) => (
+
+                    <div>
+                      <Typography variant="h6">{transaction.name}</Typography>
+                      <Typography color="text.secondary" variant="body2">
+                        {transaction.categoryName ?? "Sin categoría"} ·{" "}
+                        {transaction.paymentMethodName ?? "Sin método"}
+                      </Typography>
+                    </div>
+
+                    <Stack
+                      direction="row"
+                      sx={{ justifyContent: "space-between", alignItems: "end" }}
+                    >
+                      <div>
+                        <Typography color="text.secondary" variant="caption">
+                          Monto original
+                        </Typography>
+                        <Typography fontWeight={800}>
+                          {transaction.currency === "USD"
+                            ? formatUsd(Number(transaction.amount))
+                            : formatNio(Number(transaction.amount))}
+                        </Typography>
+                      </div>
+                      <Typography color="text.secondary" variant="body2">
+                        {formatUsd(Number(transaction.amountUsd))}
+                      </Typography>
+                    </Stack>
+
+                    <Stack direction="row" spacing={1}>
+                      <Button
+                        href={`/transactions/${transaction.id}/edit`}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                      >
+                        Editar
+                      </Button>
+                      <Box sx={{ flex: 1 }}>
+                        <DeleteTransactionButton
+                          transactionId={transaction.id}
+                          fullWidth
+                        />
+                      </Box>
+                    </Stack>
+                  </Stack>
+                </CardContent>
+              </Card>
+            ))}
+          </Stack>
+
+          <TableContainer
+            component={Card}
+            sx={{ display: { xs: "none", md: "block" } }}
+          >
+            <Table size="small" sx={{ minWidth: 900 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Fecha</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Tipo</TableCell>
+                  <TableCell>Categoría</TableCell>
+                  <TableCell>Método</TableCell>
+                  <TableCell align="right">USD</TableCell>
+                  <TableCell align="right">NIO</TableCell>
+                  <TableCell align="right">Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((transaction) => (
                 <TableRow key={transaction.id} hover>
                   <TableCell>{formatDisplayDate(transaction.date)}</TableCell>
                   <TableCell>{transaction.name}</TableCell>
@@ -163,11 +250,12 @@ export default async function TransactionsPage({
                     />
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      )}
     </Stack>
   );
 }

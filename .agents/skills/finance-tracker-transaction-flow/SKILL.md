@@ -3,8 +3,6 @@ name: finance-tracker-transaction-flow
 description: Use when implementing or reviewing the Finance Tracker transaction flow, including create/edit/delete transactions, transaction forms, server actions, validation, money conversion, category/payment method handling, merchant rule classification, and transaction list behavior.
 ---
 
----
-
 # Finance Tracker Transaction Flow Skill
 
 ## Purpose
@@ -399,8 +397,9 @@ src/features/transactions/actions.ts
 src/features/transactions/queries.ts
 src/features/transactions/schemas.ts
 src/features/transactions/types.ts
-src/features/transactions/components/TransactionForm.tsx
-src/features/transactions/components/TransactionList.tsx
+src/features/transactions/components/transaction-form.tsx
+src/features/transactions/components/submit-button.tsx
+src/features/transactions/components/delete-transaction-button.tsx
 ```
 
 Do not create all files if not needed yet.
