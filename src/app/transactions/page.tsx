@@ -11,17 +11,24 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
 } from "@mui/material";
+import { PageHeader } from "@/components/layout/page-header";
 import { DeleteTransactionButton } from "@/features/transactions/components/delete-transaction-button";
 import {
   getTransactionFormOptions,
   getTransactions,
 } from "@/features/transactions/queries";
 import { normalizeMonth } from "@/lib/date/month";
+import { formatDisplayDate } from "@/lib/date/month";
 import { formatNio, formatUsd } from "@/lib/money/format";
 
 export const dynamic = "force-dynamic";
+
+const transactionTypeLabels = {
+  expense: "Gasto",
+  income: "Ingreso",
+  transfer: "Transferencia",
+} as const;
 
 type SearchParams = Promise<{
   month?: string;
@@ -45,23 +52,15 @@ export default async function TransactionsPage({
 
   return (
     <Stack spacing={3}>
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={2}
-        sx={{ justifyContent: "space-between", alignItems: { sm: "center" } }}
-      >
-        <div>
-          <Typography variant="h4" component="h1">
-            Transacciones
-          </Typography>
-          <Typography color="text.secondary">
-            Montos convertidos con la tasa guardada en cada registro.
-          </Typography>
-        </div>
-        <Button href="/transactions/new" variant="contained">
-          Nueva transacción
-        </Button>
-      </Stack>
+      <PageHeader
+        title="Transacciones"
+        description="Montos convertidos con la tasa guardada en cada registro."
+        action={
+          <Button href="/transactions/new" variant="contained">
+            Agregar transacción
+          </Button>
+        }
+      />
 
       <Paper component="form" method="get" sx={{ p: 2 }}>
         <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
@@ -107,7 +106,7 @@ export default async function TransactionsPage({
       </Paper>
 
       <TableContainer component={Paper}>
-        <Table>
+        <Table size="small" sx={{ minWidth: 900 }}>
           <TableHead>
             <TableRow>
               <TableCell>Fecha</TableCell>
@@ -125,16 +124,21 @@ export default async function TransactionsPage({
               <TableRow>
                 <TableCell colSpan={8}>
                   <Box sx={{ py: 3, textAlign: "center" }}>
-                    No hay transacciones para estos filtros.
+                    <Stack spacing={1} sx={{ alignItems: "center" }}>
+                      <span>No hay transacciones para estos filtros.</span>
+                      <Button href="/transactions/new" variant="contained">
+                        Agregar transacción
+                      </Button>
+                    </Stack>
                   </Box>
                 </TableCell>
               </TableRow>
             ) : (
               rows.map((transaction) => (
                 <TableRow key={transaction.id} hover>
-                  <TableCell>{transaction.date}</TableCell>
+                  <TableCell>{formatDisplayDate(transaction.date)}</TableCell>
                   <TableCell>{transaction.name}</TableCell>
-                  <TableCell>{transaction.type}</TableCell>
+                  <TableCell>{transactionTypeLabels[transaction.type]}</TableCell>
                   <TableCell>
                     {transaction.categoryName ?? "Sin categoría"}
                   </TableCell>

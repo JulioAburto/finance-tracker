@@ -26,6 +26,10 @@ export function isUuid(value: string): boolean {
   return UUID_PATTERN.test(value);
 }
 
+export function isSavingsCategoryName(value: string): boolean {
+  return value.trim().toLocaleLowerCase("es") === "ahorro";
+}
+
 function isValidDate(value: string): boolean {
   if (!DATE_PATTERN.test(value)) return false;
 

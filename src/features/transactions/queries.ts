@@ -24,7 +24,11 @@ export async function getTransactionFormOptions() {
       .where(eq(categories.isActive, true))
       .orderBy(categories.sortOrder, categories.name),
     db
-      .select({ id: paymentMethods.id, name: paymentMethods.name })
+      .select({
+        id: paymentMethods.id,
+        name: paymentMethods.name,
+        type: paymentMethods.type,
+      })
       .from(paymentMethods)
       .where(eq(paymentMethods.isActive, true))
       .orderBy(paymentMethods.name),

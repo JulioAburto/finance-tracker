@@ -1,4 +1,7 @@
-import { validateTransactionInput } from "./schemas";
+import {
+  isSavingsCategoryName,
+  validateTransactionInput,
+} from "./schemas";
 
 const validExpense = {
   name: "La Colonia",
@@ -70,5 +73,11 @@ describe("transaction validation", () => {
       expect(result.fieldErrors.exchangeRate).toBeDefined();
       expect(result.fieldErrors.date).toBeDefined();
     }
+  });
+
+  it("identifica la categoría de ahorro sin depender de mayúsculas", () => {
+    expect(isSavingsCategoryName(" Ahorro ")).toBe(true);
+    expect(isSavingsCategoryName("AHORRO")).toBe(true);
+    expect(isSavingsCategoryName("Supermercado")).toBe(false);
   });
 });

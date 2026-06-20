@@ -6,16 +6,22 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { categories, paymentMethods, transactions } from "@/lib/db/schema";
 import { convertMoney } from "@/lib/money/convert";
-import { readTransactionFormData, validateTransactionInput } from "./schemas";
+import {
+  isSavingsCategoryName,
+  readTransactionFormData,
+  validateTransactionInput,
+} from "./schemas";
 import type { TransactionFormState, TransactionInput } from "./types";
 
-async function referencesExist(input: TransactionInput): Promise<boolean> {
+async function validateReferences(
+  input: TransactionInput,
+): Promise<TransactionFormState | null> {
   // La validación de IDs no termina en el navegador: comprobamos que las
   // referencias existan y estén activas antes de escribir la transacción.
   const [categoryRows, paymentRows] = await Promise.all([
     input.categoryId
       ? db
-          .select({ id: categories.id })
+          .select({ id: categories.id, name: categories.name })
           .from(categories)
           .where(
             and(
@@ -39,10 +45,34 @@ async function referencesExist(input: TransactionInput): Promise<boolean> {
       : Promise.resolve([]),
   ]);
 
-  return (
-    (!input.categoryId || categoryRows.length === 1) &&
-    (!input.paymentMethodId || paymentRows.length === 1)
-  );
+  const categoryExists = !input.categoryId || categoryRows.length === 1;
+  const paymentMethodExists =
+    !input.paymentMethodId || paymentRows.length === 1;
+
+  if (!categoryExists || !paymentMethodExists) {
+    return {
+      status: "error",
+      message:
+        "La categoría o el método de pago ya no existe o está inactivo.",
+    };
+  }
+
+  const selectedCategory = categoryRows[0];
+  if (
+    input.type === "expense" &&
+    selectedCategory &&
+    isSavingsCategoryName(selectedCategory.name)
+  ) {
+    return {
+      status: "error",
+      message: "Revisa los campos marcados.",
+      fieldErrors: {
+        categoryId: "Ahorro debe registrarse como transferencia.",
+      },
+    };
+  }
+
+  return null;
 }
 
 function toDatabaseValues(input: TransactionInput) {
@@ -87,14 +117,11 @@ async function parseAndValidate(formData: FormData): Promise<
     };
   }
 
-  if (!(await referencesExist(validation.data))) {
+  const referenceError = await validateReferences(validation.data);
+  if (referenceError) {
     return {
       success: false,
-      state: {
-        status: "error",
-        message:
-          "La categoría o el método de pago ya no existe o está inactivo.",
-      },
+      state: referenceError,
     };
   }
 

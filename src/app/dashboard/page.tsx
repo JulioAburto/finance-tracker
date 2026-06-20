@@ -15,8 +15,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { PageHeader } from "@/components/layout/page-header";
 import { getDashboardData } from "@/features/dashboard/queries";
 import { normalizeMonth } from "@/lib/date/month";
+import { formatDisplayDate } from "@/lib/date/month";
 import { formatUsd } from "@/lib/money/format";
 
 export const dynamic = "force-dynamic";
@@ -57,33 +59,38 @@ export default async function DashboardPage({
 
   return (
     <Stack spacing={3}>
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={2}
-        sx={{ justifyContent: "space-between", alignItems: { sm: "center" } }}
-      >
-        <div>
-          <Typography variant="h4" component="h1">
-            Dashboard
-          </Typography>
-          <Typography color="text.secondary">
-            Salud financiera del mes seleccionado.
-          </Typography>
-        </div>
-        <Box component="form" method="get" sx={{ display: "flex", gap: 1 }}>
-          <TextField
-            name="month"
-            label="Mes"
-            type="month"
-            defaultValue={month}
-            size="small"
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
-          <Button type="submit" variant="outlined">
-            Ver
+      <PageHeader
+        title="Resumen"
+        description="Salud financiera del mes seleccionado."
+        action={
+          <Button href="/transactions/new" variant="contained">
+            Agregar transacción
           </Button>
-        </Box>
-      </Stack>
+        }
+      />
+      <Box
+        component="form"
+        method="get"
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 1,
+          alignItems: { sm: "center" },
+          alignSelf: "flex-start",
+        }}
+      >
+        <TextField
+          name="month"
+          label="Mes"
+          type="month"
+          defaultValue={month}
+          size="small"
+          slotProps={{ inputLabel: { shrink: true } }}
+        />
+        <Button type="submit" variant="outlined">
+          Ver mes
+        </Button>
+      </Box>
 
       {!data.hasBudget ? (
         <Alert severity="warning">
@@ -219,7 +226,7 @@ export default async function DashboardPage({
                 }}
               >
                 <span>
-                  {transaction.date} · {transaction.name}
+                  {formatDisplayDate(transaction.date)} · {transaction.name}
                 </span>
                 <strong>{formatUsd(transaction.amountUsd)}</strong>
               </Stack>

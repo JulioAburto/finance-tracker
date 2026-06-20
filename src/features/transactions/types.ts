@@ -36,6 +36,19 @@ export type TransactionFormOption = {
   name: string;
 };
 
+export type PaymentMethodType =
+  | "cash"
+  | "debit"
+  | "credit_card"
+  | "bank_transfer"
+  | "prepaid"
+  | "agency"
+  | "other";
+
+export type PaymentMethodFormOption = TransactionFormOption & {
+  type: PaymentMethodType;
+};
+
 export type TransactionFormValues = {
   name: string;
   amount: string;

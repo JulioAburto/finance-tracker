@@ -9,11 +9,14 @@ import {
   TextField,
 } from "@mui/material";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { isSavingsCategoryName } from "../schemas";
 import type {
+  PaymentMethodFormOption,
   TransactionFormOption,
   TransactionFormState,
   TransactionFormValues,
+  TransactionType,
 } from "../types";
 import { SubmitButton } from "./submit-button";
 
@@ -25,7 +28,7 @@ type TransactionFormProps = {
     formData: FormData,
   ) => Promise<TransactionFormState>;
   categories: TransactionFormOption[];
-  paymentMethods: TransactionFormOption[];
+  paymentMethods: PaymentMethodFormOption[];
   initialValues: TransactionFormValues;
   submitLabel: string;
 };
@@ -38,8 +41,19 @@ export function TransactionForm({
   submitLabel,
 }: TransactionFormProps) {
   const [state, formAction] = useActionState(action, initialState);
+  const [transactionType, setTransactionType] = useState<TransactionType>(
+    initialValues.type,
+  );
+  const [paymentMethodId, setPaymentMethodId] = useState(
+    initialValues.paymentMethodId,
+  );
   const error = (field: keyof NonNullable<typeof state.fieldErrors>) =>
     state.fieldErrors?.[field];
+  const isExpense = transactionType === "expense";
+  const selectedPaymentMethod = paymentMethods.find(
+    (method) => method.id === paymentMethodId,
+  );
+  const isCreditCard = selectedPaymentMethod?.type === "credit_card";
 
   return (
     <Box component="form" action={formAction} noValidate>
@@ -63,7 +77,9 @@ export function TransactionForm({
             label="Monto"
             type="number"
             defaultValue={initialValues.amount}
-            slotProps={{ htmlInput: { min: 0.01, step: 0.01 } }}
+            slotProps={{
+              htmlInput: { min: 0.01, step: 0.01, inputMode: "decimal" },
+            }}
             required
             fullWidth
             error={Boolean(error("amount"))}
@@ -113,12 +129,15 @@ export function TransactionForm({
           select
           name="type"
           label="Tipo"
-          defaultValue={initialValues.type}
+          value={transactionType}
+          onChange={(event) =>
+            setTransactionType(event.target.value as TransactionType)
+          }
           required
           error={Boolean(error("type"))}
           helperText={
             error("type") ??
-            "Los pagos de tarjeta y ahorros deben registrarse como transferencias."
+            "Una compra es un gasto; los pagos de tarjeta y el ahorro son transferencias."
           }
         >
           <MenuItem value="expense">Gasto</MenuItem>
@@ -131,12 +150,24 @@ export function TransactionForm({
           name="categoryId"
           label="Categoría"
           defaultValue={initialValues.categoryId}
+          required={isExpense}
           error={Boolean(error("categoryId"))}
-          helperText={error("categoryId")}
+          helperText={
+            error("categoryId") ??
+            (isExpense
+              ? "Indica en qué se utilizó el dinero."
+              : "Opcional para ingresos y transferencias.")
+          }
         >
-          <MenuItem value="">Sin categoría</MenuItem>
+          <MenuItem value="">
+            {isExpense ? "Selecciona una categoría" : "Sin categoría"}
+          </MenuItem>
           {categories.map((category) => (
-            <MenuItem key={category.id} value={category.id}>
+            <MenuItem
+              key={category.id}
+              value={category.id}
+              disabled={isExpense && isSavingsCategoryName(category.name)}
+            >
               {category.name}
             </MenuItem>
           ))}
@@ -146,17 +177,36 @@ export function TransactionForm({
           select
           name="paymentMethodId"
           label="Método de pago"
-          defaultValue={initialValues.paymentMethodId}
+          value={paymentMethodId}
+          onChange={(event) => setPaymentMethodId(event.target.value)}
+          required={isExpense}
           error={Boolean(error("paymentMethodId"))}
-          helperText={error("paymentMethodId")}
+          helperText={
+            error("paymentMethodId") ??
+            (isExpense
+              ? "Indica cómo se pagó."
+              : "Opcional para ingresos y transferencias.")
+          }
         >
-          <MenuItem value="">Sin método de pago</MenuItem>
+          <MenuItem value="">
+            {isExpense
+              ? "Selecciona un método de pago"
+              : "Sin método de pago"}
+          </MenuItem>
           {paymentMethods.map((method) => (
             <MenuItem key={method.id} value={method.id}>
               {method.name}
             </MenuItem>
           ))}
         </TextField>
+
+        {isCreditCard ? (
+          <Alert severity="info">
+            {isExpense
+              ? "Esta compra contará como gasto. Cuando pagues la tarjeta, registra el pago como transferencia."
+              : "El pago de la tarjeta no contará como un gasto nuevo."}
+          </Alert>
+        ) : null}
 
         <TextField
           name="note"
@@ -168,9 +218,13 @@ export function TransactionForm({
           helperText={error("note")}
         />
 
-        <Stack direction="row" spacing={1}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
           <SubmitButton label={submitLabel} />
-          <Button component={Link} href="/transactions">
+          <Button
+            component={Link}
+            href="/transactions"
+            sx={{ width: { xs: "100%", sm: "auto" } }}
+          >
             Cancelar
           </Button>
         </Stack>

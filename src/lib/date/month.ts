@@ -26,3 +26,15 @@ export function getMonthRange(month: string): {
     budgetDate: `${month}-01`,
   };
 }
+
+export function formatDisplayDate(value: string): string {
+  const date = new Date(`${value}T00:00:00.000Z`);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat("es-NI", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+}

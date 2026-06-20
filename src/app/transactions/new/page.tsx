@@ -1,4 +1,5 @@
-import { Paper, Stack, Typography } from "@mui/material";
+import { Paper, Stack } from "@mui/material";
+import { PageHeader } from "@/components/layout/page-header";
 import { createTransactionAction } from "@/features/transactions/actions";
 import { TransactionForm } from "@/features/transactions/components/transaction-form";
 import { getTransactionFormOptions } from "@/features/transactions/queries";
@@ -19,14 +20,10 @@ export default async function NewTransactionPage() {
 
   return (
     <Stack spacing={3}>
-      <div>
-        <Typography variant="h4" component="h1">
-          Nueva transacción
-        </Typography>
-        <Typography color="text.secondary">
-          El servidor validará y convertirá el monto antes de guardarlo.
-        </Typography>
-      </div>
+      <PageHeader
+        title="Agregar transacción"
+        description="Registra un gasto, ingreso o transferencia con su tasa histórica."
+      />
       <Paper sx={{ p: { xs: 2, md: 3 }, maxWidth: 720 }}>
         <TransactionForm
           action={createTransactionAction}

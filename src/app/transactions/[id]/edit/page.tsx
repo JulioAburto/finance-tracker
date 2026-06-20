@@ -1,5 +1,6 @@
-import { Paper, Stack, Typography } from "@mui/material";
+import { Alert, Paper, Stack } from "@mui/material";
 import { notFound } from "next/navigation";
+import { PageHeader } from "@/components/layout/page-header";
 import { updateTransactionAction } from "@/features/transactions/actions";
 import { TransactionForm } from "@/features/transactions/components/transaction-form";
 import {
@@ -29,9 +30,14 @@ export default async function EditTransactionPage({
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h4" component="h1">
-        Editar transacción
-      </Typography>
+      <PageHeader
+        title="Editar transacción"
+        description="Actualiza los datos sin recalcular otras transacciones históricas."
+      />
+      <Alert severity="info">
+        La tasa guardada pertenece a esta transacción. Modifícala solo si el
+        valor original fue registrado incorrectamente.
+      </Alert>
       <Paper sx={{ p: { xs: 2, md: 3 }, maxWidth: 720 }}>
         <TransactionForm
           action={action}

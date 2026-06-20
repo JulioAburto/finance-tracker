@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body>
+      <body className="google-sans">
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>
