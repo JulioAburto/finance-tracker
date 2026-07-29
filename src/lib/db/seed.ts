@@ -1,4 +1,5 @@
 import { db, databaseClient } from "./index";
+import { convertMoney } from "../money/convert";
 import {
   appSettings,
   categories,
@@ -6,6 +7,7 @@ import {
   monthlyBudgetCategories,
   monthlyBudgets,
   paymentMethods,
+  transactions,
 } from "./schema";
 
 const categorySeed = [
@@ -84,6 +86,203 @@ const merchantRuleSeed = [
   },
 ] as const;
 
+type MockTransactionSeed = {
+  id: string;
+  name: string;
+  amount: number;
+  currency: "USD" | "NIO";
+  exchangeRate: number;
+  date: string;
+  type: "income" | "expense" | "transfer";
+  categoryName?: string;
+  paymentMethodName?: string;
+  note?: string;
+};
+
+const mockTransactionSeed: MockTransactionSeed[] = [
+  {
+    id: "00000000-0000-4000-8000-000000000101",
+    name: "Salario julio",
+    amount: 1300,
+    currency: "USD",
+    exchangeRate: 36.6243,
+    date: "2026-07-01",
+    type: "income",
+    paymentMethodName: "Transferencia",
+    note: "Ingreso base del mes para el dashboard.",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000102",
+    name: "Internet hogar Tigo",
+    amount: 1950,
+    currency: "NIO",
+    exchangeRate: 36.6243,
+    date: "2026-07-02",
+    type: "expense",
+    categoryName: "Servicios",
+    paymentMethodName: "Débito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000103",
+    name: "Supermercado La Colonia",
+    amount: 2550,
+    currency: "NIO",
+    exchangeRate: 36.6243,
+    date: "2026-07-04",
+    type: "expense",
+    categoryName: "Supermercado",
+    paymentMethodName: "Tarjeta de crédito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000104",
+    name: "Netflix julio",
+    amount: 15,
+    currency: "USD",
+    exchangeRate: 36.6243,
+    date: "2026-07-05",
+    type: "expense",
+    categoryName: "Entretenimiento",
+    paymentMethodName: "Tarjeta de crédito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000105",
+    name: "ChatGPT Plus",
+    amount: 28,
+    currency: "USD",
+    exchangeRate: 36.6243,
+    date: "2026-07-06",
+    type: "expense",
+    categoryName: "Productividad",
+    paymentMethodName: "Tarjeta de crédito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000106",
+    name: "Mandaditos almuerzo",
+    amount: 340,
+    currency: "NIO",
+    exchangeRate: 36.6243,
+    date: "2026-07-08",
+    type: "expense",
+    categoryName: "Delivery",
+    paymentMethodName: "Débito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000107",
+    name: "Farmacia familiar",
+    amount: 620,
+    currency: "NIO",
+    exchangeRate: 36.6243,
+    date: "2026-07-10",
+    type: "expense",
+    categoryName: "Salud",
+    paymentMethodName: "Tarjeta de crédito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000108",
+    name: "Caja chica semanal",
+    amount: 90,
+    currency: "USD",
+    exchangeRate: 36.6243,
+    date: "2026-07-12",
+    type: "expense",
+    categoryName: "Efectivo operativo",
+    paymentMethodName: "Efectivo",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000109",
+    name: "Cena y regalo aniversario",
+    amount: 98,
+    currency: "USD",
+    exchangeRate: 36.6243,
+    date: "2026-07-15",
+    type: "expense",
+    categoryName: "Novia / salidas / regalos",
+    paymentMethodName: "Tarjeta de crédito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000110",
+    name: "Gasolina quincena",
+    amount: 1200,
+    currency: "NIO",
+    exchangeRate: 36.6243,
+    date: "2026-07-18",
+    type: "expense",
+    categoryName: "Transporte",
+    paymentMethodName: "Débito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000111",
+    name: "Amazon accesorios home office",
+    amount: 52,
+    currency: "USD",
+    exchangeRate: 36.6243,
+    date: "2026-07-20",
+    type: "expense",
+    categoryName: "Amazon / agencias",
+    paymentMethodName: "Tarjeta de crédito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000112",
+    name: "Camisa oficina",
+    amount: 42,
+    currency: "USD",
+    exchangeRate: 36.6243,
+    date: "2026-07-21",
+    type: "expense",
+    categoryName: "Ropa",
+    paymentMethodName: "Débito",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000113",
+    name: "Aporte ahorro julio",
+    amount: 200,
+    currency: "USD",
+    exchangeRate: 36.6243,
+    date: "2026-07-23",
+    type: "transfer",
+    categoryName: "Ahorro",
+    paymentMethodName: "Transferencia",
+    note: "Transferencia hacia ahorro planificado.",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000114",
+    name: "Pago tarjeta principal",
+    amount: 350,
+    currency: "USD",
+    exchangeRate: 36.6243,
+    date: "2026-07-25",
+    type: "transfer",
+    paymentMethodName: "Transferencia",
+    note: "Pago de tarjeta registrado como transferencia.",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000115",
+    name: "Ferreteria y varios hogar",
+    amount: 650,
+    currency: "NIO",
+    exchangeRate: 36.6243,
+    date: "2026-07-27",
+    type: "expense",
+    categoryName: "Varios",
+    paymentMethodName: "Efectivo",
+  },
+];
+
+function toStoredMoneyValues(transaction: MockTransactionSeed) {
+  const { amountUsd, amountNio } = convertMoney({
+    amount: transaction.amount,
+    currency: transaction.currency,
+    exchangeRate: transaction.exchangeRate,
+  });
+
+  return {
+    amount: transaction.amount.toFixed(2),
+    exchangeRate: transaction.exchangeRate.toFixed(4),
+    amountUsd: amountUsd.toFixed(2),
+    amountNio: amountNio.toFixed(2),
+  };
+}
+
 async function seed() {
   // Los upserts permiten repetir el seed sin duplicar datos. También sincronizan
   // cambios deliberados en los valores iniciales del proyecto.
@@ -105,6 +304,7 @@ async function seed() {
     });
 
   const categoryIds = new Map<string, string>();
+  const paymentMethodIds = new Map<string, string>();
 
   // Conservamos los UUID devueltos por PostgreSQL para crear después las
   // relaciones de presupuesto y reglas sin depender de IDs hardcodeados.
@@ -127,7 +327,7 @@ async function seed() {
   }
 
   for (const paymentMethod of paymentMethodSeed) {
-    await db
+    const [savedPaymentMethod] = await db
       .insert(paymentMethods)
       .values(paymentMethod)
       .onConflictDoUpdate({
@@ -136,7 +336,10 @@ async function seed() {
           type: paymentMethod.type,
           updatedAt: new Date(),
         },
-      });
+      })
+      .returning({ id: paymentMethods.id, name: paymentMethods.name });
+
+    paymentMethodIds.set(savedPaymentMethod.name, savedPaymentMethod.id);
   }
 
   const [monthlyBudget] = await db
@@ -203,6 +406,57 @@ async function seed() {
           categoryId,
           priority: rule.priority,
           isActive: true,
+          updatedAt: new Date(),
+        },
+      });
+  }
+
+  for (const transaction of mockTransactionSeed) {
+    const categoryId = transaction.categoryName
+      ? categoryIds.get(transaction.categoryName)
+      : null;
+    const paymentMethodId = transaction.paymentMethodName
+      ? paymentMethodIds.get(transaction.paymentMethodName)
+      : null;
+
+    if (transaction.categoryName && !categoryId) {
+      throw new Error(
+        `Mock transaction category was not found: ${transaction.categoryName}`,
+      );
+    }
+
+    if (transaction.paymentMethodName && !paymentMethodId) {
+      throw new Error(
+        `Mock transaction payment method was not found: ${transaction.paymentMethodName}`,
+      );
+    }
+
+    await db
+      .insert(transactions)
+      .values({
+        id: transaction.id,
+        name: transaction.name,
+        currency: transaction.currency,
+        date: transaction.date,
+        type: transaction.type,
+        categoryId,
+        paymentMethodId,
+        note: transaction.note,
+        rawInput: "seed:mock-july-2026",
+        ...toStoredMoneyValues(transaction),
+      })
+      .onConflictDoUpdate({
+        target: transactions.id,
+        set: {
+          name: transaction.name,
+          currency: transaction.currency,
+          date: transaction.date,
+          type: transaction.type,
+          categoryId,
+          paymentMethodId,
+          note: transaction.note,
+          rawInput: "seed:mock-july-2026",
+          ...toStoredMoneyValues(transaction),
           updatedAt: new Date(),
         },
       });

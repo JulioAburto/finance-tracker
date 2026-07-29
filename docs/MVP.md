@@ -219,6 +219,7 @@ El seed crea:
 - Presupuesto para julio de 2026.
 - Presupuestos por categoría.
 - 7 reglas de comercios.
+- 15 transacciones mock de julio de 2026 para poblar dashboard y listados.
 
 Los importes y columnas exactos están en [`DATABASE_SCHEMA.md`](./DATABASE_SCHEMA.md).
 

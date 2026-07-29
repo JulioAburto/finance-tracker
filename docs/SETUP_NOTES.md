@@ -142,7 +142,7 @@ pnpm build
 | `pnpm db:migrate` | Aplicar migraciones |
 | `pnpm db:push` | Sincronización directa; usar con cautela |
 | `pnpm db:studio` | Drizzle Studio |
-| `pnpm db:seed` | Cargar datos iniciales |
+| `pnpm db:seed` | Cargar catálogos iniciales y transacciones mock |
 
 ## Archivos principales
 
@@ -194,7 +194,7 @@ Detén el servidor anterior antes de iniciar otro. Next solo permite un servidor
 
 ### Presupuesto vacío en el dashboard
 
-El seed inicial crea julio de 2026. Selecciona `2026-07` o crea el presupuesto del mes correspondiente cuando exista la interfaz de gestión.
+El seed inicial crea julio de 2026 y también transacciones mock para ese mes. Selecciona `2026-07` o crea el presupuesto del mes correspondiente cuando exista la interfaz de gestión.
 
 ## Seguridad antes de desplegar
 

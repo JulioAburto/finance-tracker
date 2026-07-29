@@ -95,7 +95,7 @@ Las consultas se ejecutan desde Server Components o módulos exclusivos del serv
 
 ## Presupuesto inicial
 
-El seed crea un presupuesto para `2026-07-01` con salario de USD 1,300 y ahorro esperado de USD 450.
+El seed crea un presupuesto para `2026-07-01` con salario de USD 1,300, ahorro esperado de USD 450 y 15 transacciones mock para poblar el mes.
 
 El dashboard selecciona el mes actual por defecto. Para revisar el seed inicial, selecciona julio de 2026.
 

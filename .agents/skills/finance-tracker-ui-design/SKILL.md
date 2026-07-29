@@ -1,769 +1,585 @@
----
-name: finance-tracker-ui-design
-description: Audit, design, and implement UI/UX for the single-user Finance Tracker MVP built with Next.js App Router, TypeScript, and MUI. Use for route or component work involving /dashboard, /transactions, /transactions/new, /categories, /rules, /settings, AppShell/providers/theme, transaction forms and lists, category budgets, merchant rules, settings, financial summaries, alerts and status labels, empty/loading/error states, mobile responsiveness, accessibility, Spanish financial copy, and consistent money/date/percentage display. Apply the project rules for category versus payment method, credit-card payments as transfers, expense-only budget usage, and historical exchange rates; flag UI scope creep such as Tailwind, bank integrations, OCR, authentication, or AI-first flows.
----
+## Mobile Responsive Excellence
 
-# Finance Tracker UI Design
+Mobile responsiveness is a release requirement, not a visual enhancement.
 
-## Purpose
+A route is not considered complete until its core workflow works comfortably on a small phone without horizontal scrolling, hidden actions, clipped content, inaccessible controls, or keyboard obstruction.
 
-Use this skill to audit, design, or implement UI for:
+## Mobile Quality Standard
+
+Every route must satisfy:
 
 ```txt
-/dashboard
-/transactions
-/transactions/new
-/categories
-/rules
-/settings
-App shell and navigation
-MUI theme and providers
-Forms, tables, cards, alerts, and status indicators
-Empty, loading, error, and not-found states
-Responsive and accessible behavior
+No horizontal page scrolling at 320px width
+No clipped money values, labels, chips, or actions
+No hover-only interaction
+No required action hidden inside an inaccessible menu
+No fixed-width component that exceeds its container
+No form action blocked by the virtual keyboard
+No table used as the only mobile representation
+No status communicated only by color
+No content hidden without an equivalent accessible path
 ```
 
-The UI must help Julio understand what happened, whether it is healthy, and what to do next. It is a personal financial control tool, not a generic dashboard, accounting suite, or banking platform.
+Responsive behavior must be intentional at component level. Do not rely only on a global breakpoint or `display: none`.
 
-Do not use this skill to introduce database changes, authentication, AI providers, deployment changes, or features outside the documented MVP unless explicitly requested.
+## Required Viewport Matrix
 
-## Required Context
-
-Before making UI decisions, read:
+Review every affected route at these viewport widths:
 
 ```txt
-AGENTS.md
-docs/MVP.md
-docs/DATABASE_SCHEMA.md
-docs/SETUP_NOTES.md
-docs/PROJECT_CONTEXT.md
+320px: narrow mobile
+360px: common Android mobile
+390px: common modern mobile
+412px: large Android mobile
+768px: tablet portrait
+1024px: tablet landscape / small desktop
 ```
 
-Then inspect the existing routes, components, theme, providers, and UI conventions. Do not assume a design system exists unless it is present in the repository.
-
-## Product and Finance Rules
-
-The interface must make these questions easy to answer:
+Also review:
 
 ```txt
-How much did I spend this month?
-How much budget remains?
-Which categories are healthy, risky, or exceeded?
-What spending should I reduce or freeze?
-Which expenses remain uncategorized?
-Am I protecting the expected savings?
+Mobile portrait
+Mobile landscape
+Browser zoom at 200%
+Long Spanish labels
+Large monetary values
+Empty states
+Loading states
+Validation errors
+Virtual keyboard open
 ```
 
-Preserve these rules in labels, forms, summaries, and recommendations:
+Do not declare a responsive task complete after checking only one desktop browser emulation size.
+
+## Breakpoint Contract
+
+Use the existing MUI breakpoint system.
+
+Expected progression:
 
 ```txt
-Category means what the money was used for.
-Payment method means how it was paid.
-A credit-card purchase is an expense.
-A credit-card payment is a transfer, not a second expense.
-Savings is a transfer or allocation, not a normal expense.
-Only expense transactions consume budget.
-USD is the internal budget currency.
-Each transaction preserves its original amount, currency, exchange rate, USD, and NIO values.
-Historical transactions are not recalculated with a new exchange rate.
-Manual selection and merchant rules take precedence over optional AI.
-```
-
-## Design Principles
-
-1. Prioritize clarity over decoration.
-2. Design mobile-first.
-3. Keep transaction entry fast.
-4. Make financial state immediately understandable.
-5. Make warnings actionable.
-6. Use consistent spacing, typography, and status language.
-7. Prefer standard MUI components before custom UI.
-8. Keep financial calculations and classification logic outside JSX.
-9. Avoid visual noise and premature abstraction.
-10. Keep the interface fully useful without AI.
-
-## Stack and UI Boundaries
-
-Use:
-
-```txt
-Next.js App Router
-TypeScript
-MUI
-CSS Modules only when justified
-```
-
-Do not add:
-
-```txt
-Tailwind
-shadcn/ui
-DaisyUI
-Headless UI
-Chart libraries without approval
-Icon libraries without approval
-Animation libraries without approval
-Redux or Zustand without a demonstrated need
-```
-
-## Modern Finance App Direction
-
-The product should feel:
-
-```txt
-Modern
-Elegant
-Calm
-Trustworthy
-Personal
-Financially serious
-Data-focused
-Fast to use
-Premium without being flashy
-```
-
-Combine:
-
-```txt
-Soft neutral backgrounds
-Clear light surfaces
-Strong financial hierarchy
-Generous but efficient spacing
-Readable cards, lists, and tables
-Semantic status accents
-Action-oriented alerts
-```
-
-Avoid making it resemble:
-
-```txt
-A corporate banking admin panel
-A crypto trading terminal
-A gamified finance app
-A generic SaaS dashboard
-A spreadsheet clone
-```
-
-Elegance comes from hierarchy, restraint, consistency, and ease of use. Do not use unnecessary gradients, animation, charts, or decorative elements to manufacture a modern appearance.
-
-## Palette and MUI Theme
-
-Use the centralized MUI theme as the source of truth for palette, typography, spacing, shape, shadows, and component defaults.
-
-Prefer a calm finance-oriented palette:
-
-```txt
-Primary: deep navy or financial blue
-Secondary: restrained emerald or teal
-Background: warm off-white or soft gray
-Surface: white or near-white
-Text primary: near-black or deep slate
-Text secondary: muted slate
-Divider: soft gray
-Success: green
-Warning: amber
-Error: red
-Info: blue
-```
-
-Possible direction, not mandatory exact values:
-
-```txt
-Primary: #123047 or #0F2A3D
-Secondary: #0F766E or #168A6F
-Background: #F6F8FA or #F7F5F0
-Surface: #FFFFFF
-Text primary: #17202A
-Text secondary: #667085
-Success: #16A34A
-Warning: #D97706
-Error: #DC2626
-Info: #2563EB
-```
-
-Rules:
-
-1. Prefer theme tokens and semantic component props over inline hex values.
-2. Centralize custom colors instead of redefining them in pages.
-3. Use status colors as accents, not large saturated backgrounds.
-4. Use no more than one strong accent color per screen.
-5. Maintain readable contrast.
-6. Never communicate status through color alone.
-7. Keep component defaults restrained; avoid replacing all MUI behavior globally.
-
-Use consistent status mapping:
-
-```txt
-Sano: success
-Cuidado: warning
-Alerta: error or warning according to severity
-Excedido: error
-Sin clasificar: default or info
-```
-
-Every financial status must include a visible text label and, when useful, a direct recommendation.
-
-## Typography and Spacing
-
-Create hierarchy through typography:
-
-```txt
-Page title: short and prominent
-Section title: descriptive
-Metric label: small and muted
-Metric value: large and strong
-Helper text: concise and secondary
-Alert text: direct and action-oriented
-```
-
-Example:
-
-```txt
-Resumen del mes
-Gastado
-US$420.50
-49.4% del presupuesto usado
-Agregar gasto
-```
-
-Use consistent page padding, card padding, gaps, and section spacing. Keep a sensible maximum content width on desktop. Avoid both spreadsheet-like density and oversized empty layouts.
-
-## App Shell and Navigation
-
-For the MVP, prefer a simple top app bar with:
-
-```txt
-Product identity
-Current-route indication
-Clear navigation labels
-Visible primary action
-Constrained main content
-Responsive mobile navigation
-```
-
-Use consistent Spanish labels:
-
-```txt
-Resumen
-Transacciones
-Agregar gasto
-Categorías
-Reglas
-Configuración
-```
-
-Keep `Agregar gasto` visible on desktop instead of hiding it in a menu. On mobile, use a prominent full-width action, an accessible bottom action area, or a floating action button only when it does not obstruct content or accessibility.
-
-Do not introduce a complex sidebar, nested navigation, or route structure before the MVP requires it.
-
-Each page should follow:
-
-```txt
-Page title
-Short helper text
-Primary action
-Main content
-Secondary or advanced content
-```
-
-## Dashboard Layout and Hierarchy
-
-The dashboard must prioritize action over decoration.
-
-The first viewport should answer:
-
-```txt
-How much did I spend?
-How much budget remains?
-Which categories require action?
-What should I do next?
-```
-
-### Recommended Order
-
-Mobile:
-
-```txt
-1. Month selector
-2. Main financial health card
-3. Agregar gasto action
-4. Critical alerts
-5. Category usage cards
-6. Latest transactions
-7. Uncategorized expenses
-```
-
-Desktop:
-
-```txt
-1. Header with month and Agregar gasto
-2. Summary card grid
-3. Critical alert panel
-4. Category usage table or cards
-5. Latest transactions and uncategorized panel
-```
-
-### Financial Health and Summary Cards
-
-Use one primary card when it improves comprehension:
-
-```txt
-Total spent
-Spendable budget
-Budget-used percentage
-Expected savings
-Current status
-Short recommendation
-```
-
-Example:
-
-```txt
-Resumen de junio
-US$420.50 gastados de US$850.00
-49.4% usado
-Estado: Sano
-Vas bien. Mantené el ritmo y protegé el ahorro.
-```
-
-Use 4–6 high-value summary cards at most:
-
-```txt
-Gastado este mes
-Presupuesto usado
-Monto restante
-Ahorro esperado
-Categorías en alerta
-Gastos sin clasificar
-```
-
-Each card should have a short label, primary value, useful context, and optional status chip.
-
-### Category Usage
-
-For each category show:
-
-```txt
-Category name
-Spent and budget amounts
-Remaining amount
-Usage percentage
-Progress indicator
-Text status
-Recommendation when action is needed
-```
-
-Use stacked cards on mobile and a readable table or compact cards on desktop. Give higher visual priority to warning, danger, exceeded, and uncategorized items.
-
-### Alerts
-
-Alerts should be important without being alarmist:
-
-```txt
-Delivery en alerta
-US$58.70 de US$70.00 usados.
-Congelá delivery esta semana.
-```
-
-Use the documented thresholds:
-
-```txt
-0%–69%: Sano
-70%–79%: Cuidado
-80%–99%: Alerta
-100%+: Excedido
-```
-
-At 80% or more before day 20, recommend freezing extras. Do not show vague or guilt-heavy warnings.
-
-## Transaction Form UX
-
-`/transactions/new` is a primary workflow. Optimize for fast daily entry.
-
-Required data:
-
-```txt
-Name or merchant
-Amount
-Currency
-Date
-Category
-Payment method
-Transaction type
-Exchange rate
-Optional note
-```
-
-Defaults:
-
-```txt
-Date: today
-Type: expense
-Currency: settings value
-Exchange rate: settings value
-```
-
-Prioritize:
-
-```txt
-1. Amount and merchant
-2. Category
-3. Payment method
-4. Date and type
-5. Currency and exchange rate
-6. Optional note
-```
-
-Group related fields and keep optional information visually secondary. Do not create a multi-step wizard for the MVP.
-
-Mobile:
-
-```txt
-Single column
-Large tappable controls
-No cramped side-by-side fields
-Native-friendly input types
-Full-width primary action
-Save action visible without ambiguity
-```
-
-Desktop may use two columns only when grouping remains obvious.
-
-Validation rules:
-
-```txt
-Place specific errors next to the affected field.
-Connect errors to fields where practical.
-Disable the submit action while saving.
-Show a clear pending label.
-Keep server-side validation authoritative.
-Adapt category and payment-method requirements to transaction type.
-Explain that credit-card payments and savings are transfers.
-```
-
-Good validation copy:
-
-```txt
-El monto debe ser mayor que 0.
-El nombre es obligatorio.
-Seleccioná una categoría.
-Seleccioná un método de pago.
-El tipo de cambio debe ser mayor que 0.
-No se pudo guardar la transacción. Revisá los datos e intentá de nuevo.
-```
-
-Avoid generic errors, unlabeled fields, multiple competing submit actions, and presenting invalid financial combinations as normal choices.
-
-## Transaction List
-
-Support fast scanning. Show:
-
-```txt
-Date
-Name
-Category
-Payment method
-Original amount and currency
-Converted amount when useful
-Transaction type
-Uncategorized status when applicable
-Actions
-```
-
-Use cards or a compact list on mobile instead of forcing a wide table. Desktop may use a MUI table with readable columns and deliberate horizontal overflow only as a fallback.
-
-Translate domain values into Spanish labels. Do not expose `expense`, `income`, or `transfer` directly in user-facing UI.
-
-## Management Screens
-
-### Categories
-
-Show:
-
-```txt
-Category name
-Monthly budget
-Essential flag
-Active state
-Thresholds when editable
-Actions
-```
-
-Use simple forms, rows, cards, or dialogs. Do not add advanced budget templates without approval.
-
-### Merchant Rules
-
-Show:
-
-```txt
-Pattern
-Target category
-Priority
-Active state
-Actions
-```
-
-Only describe or validate regex behavior when it is implemented. Never execute arbitrary user code.
-
-### Settings
-
-Include:
-
-```txt
-Default currency
-Default exchange rate
-Credit-card mode
-Approved credit-card settings
-```
-
-Always warn:
-
-```txt
-Cambiar la tasa predeterminada no recalcula transacciones históricas.
-```
-
-## Responsive Design
-
-Design mobile-first and enhance progressively using MUI breakpoints.
-
-Mobile:
-
-```txt
-Single-column layouts
-Compact app header
-Visible primary action
-Cards instead of wide tables
-Readable money values
-Full-width primary buttons
-Comfortable bottom spacing
-```
-
-Tablet:
-
-```txt
-Two-column summary grids
-Compact category cards
-Split layouts only when readable
-```
-
-Desktop:
-
-```txt
-Summary-card grids
-Tables where scanning benefits
-Side-by-side secondary sections
+xs:
+Single-column content
+Mobile navigation
+Cards or compact lists
+Full-width primary actions
+Full-screen or near-full-screen dialogs
+
+sm:
+More horizontal breathing room
+Two-column layouts only when each field remains readable
+Compact summary grids
+
+md:
+Desktop-style navigation may appear
+Tables may replace mobile cards when useful
+Forms may use deliberate two-column grouping
+
+lg and above:
 Constrained content width
+Multi-column dashboard sections
+No uncontrolled stretching across wide screens
 ```
 
-Avoid horizontal scrolling, tiny controls, dense multi-column forms, wrapped navigation, and overly verbose cards on mobile.
+Do not create custom breakpoints unless the existing MUI breakpoints cannot express a real design requirement.
 
-## MUI Component Styling
+Avoid JavaScript viewport checks for layout when responsive MUI or CSS rules can solve the problem.
+
+## Layout and Overflow Rules
+
+Use fluid layouts.
 
 Prefer:
 
 ```txt
-Container for content width
-Stack for spacing
-Grid or CSS grid for summaries
-Card or Paper with subtle border/shadow
-Chip for text status
-Alert for actionable warnings
-LinearProgress for budget usage
-Table for desktop data
-Dialog for confirmations
-Skeleton for loading
-TextField, Select, and FormControl for forms
-```
-
-Rules:
-
-1. Keep `sx` objects small and readable.
-2. Move repeated visual decisions into theme tokens or a small shared component.
-3. Use subtle elevation and borders.
-4. Avoid heavy shadows, nested cards, repeated inline colors, gradients, and excessive decoration.
-5. Reuse components only when a pattern is shared or clearly valuable.
-6. Do not build a large design system before the MVP needs it.
-
-Useful focused components may include:
-
-```txt
-PageHeader
-SummaryCard
-BudgetStatusChip
-CategoryUsageCard
-TransactionForm
-TransactionList
-EmptyState
-```
-
-## States and Accessibility
-
-Every major route should provide useful states.
-
-Empty-state examples:
-
-```txt
-No hay transacciones todavía.
-Registrá tu primer gasto para comenzar.
-[Agregar gasto]
-
-No hay alertas de presupuesto.
-Tus categorías están dentro de sus límites.
-
-Todas las transacciones están clasificadas.
-```
-
-Use skeleton cards or rows for loading. Disable submit actions while saving. Explain failures in plain language without exposing raw database errors or secrets.
-
-Accessibility requirements:
-
-```txt
-Use semantic elements where practical.
-Give every input a visible label.
-Use clear button text.
-Keep keyboard navigation intact.
-Give dialogs clear titles and actions.
-Maintain sufficient contrast.
-Do not rely on color alone.
-Keep touch targets usable on mobile.
-```
-
-## Finance Microcopy and Data Display
-
-Use calm, direct, action-oriented Spanish. Guide behavior without judgment.
-
-Good:
-
-```txt
-Vas bien. Mantené el ritmo.
-Delivery está al 83%. Congelá pedidos esta semana.
-Este gasto está sin clasificar.
-Te quedan US$11.30 en esta categoría.
-El ahorro esperado no debe tocarse.
+width: 100%
+max-width constraints
+responsive padding
+CSS grid with minmax where appropriate
+flex wrapping
+min-width: 0 on flex/grid children
+overflow-wrap for long content
 ```
 
 Avoid:
 
 ```txt
-Estás manejando mal tu dinero.
-Fallaste tu presupuesto.
-Tus finanzas están mal.
+Fixed page widths
+Fixed card widths
+Fixed heights for variable content
+Absolute positioning for core layout
+Horizontal page overflow
+Truncating essential financial information
 ```
 
-Use consistent terminology:
+Every flex or grid child containing money, labels, or actions must be able to shrink safely.
+
+Long values such as:
 
 ```txt
+C$1,234,567.89
+Novia / salidas / regalos
+Transferencia bancaria
+```
+
+must not break the layout.
+
+Truncation is allowed only when the complete value remains available through an accessible detail view or tooltip that also works without hover.
+
+## Mobile Page Spacing
+
+Use consistent responsive spacing.
+
+Recommended project direction:
+
+```txt
+Mobile horizontal page padding: 16px
+Larger mobile/tablet padding: 20px–24px
+Desktop padding: 24px–32px
+Minimum vertical gap between major sections: 24px
+Minimum gap between related controls: 12px–16px
+```
+
+Use MUI theme spacing instead of scattered hardcoded values.
+
+Do not reduce spacing so aggressively that controls become difficult to scan or tap.
+
+## Safe Areas and Mobile Viewport
+
+Account for devices with notches, rounded corners, and bottom gesture areas.
+
+When using fixed or sticky mobile elements, include safe-area spacing where relevant:
+
+```css
+padding-bottom: max(16px, env(safe-area-inset-bottom));
+padding-left: max(16px, env(safe-area-inset-left));
+padding-right: max(16px, env(safe-area-inset-right));
+```
+
+Prefer dynamic viewport units for full-height layouts:
+
+```txt
+100dvh
+```
+
+Do not depend only on `100vh` for screens affected by mobile browser chrome.
+
+Sticky or fixed actions must not overlap:
+
+```txt
+Form fields
+Snackbar messages
+Bottom navigation
+Mobile browser controls
+Device gesture areas
+```
+
+## Touch Interaction Standard
+
+Interactive targets should be comfortable for one-handed mobile use.
+
+Project target:
+
+```txt
+Minimum preferred touch area: 44px × 44px
+Minimum visible gap between adjacent icon actions: 8px
+Primary mobile buttons: full width when practical
+```
+
+Apply this to:
+
+```txt
+Buttons
+Icon buttons
+Menu triggers
+Delete/edit actions
+Date controls
+Select controls
+Navigation items
+Filter controls
+```
+
+Do not place multiple small icon-only actions next to each other without sufficient spacing and accessible labels.
+
+Every icon-only button must have an accessible name.
+
+Do not require hover to discover an action or explanation.
+
+## Mobile Typography
+
+Use fluid but controlled typography.
+
+Rules:
+
+```txt
+Body text must remain comfortably readable.
+Input text should be at least 16px on mobile.
+Money values may scale responsively but must not overflow.
+Page titles may wrap to two lines without breaking layout.
+Secondary text must retain sufficient contrast.
+```
+
+Do not use very small text to force content into one line.
+
+Do not reduce critical financial values below a comfortably readable size.
+
+Use line clamping only for non-essential descriptive content.
+
+## Mobile Navigation
+
+The active route and primary action must remain obvious.
+
+For mobile, choose one clear pattern:
+
+```txt
+Compact top app bar with accessible menu
+Bottom navigation for the most important routes
+Top app bar plus prominent page-level primary action
+```
+
+Do not combine several competing navigation patterns.
+
+If bottom navigation is used:
+
+```txt
+Keep the number of primary destinations limited.
+Respect the bottom safe area.
+Do not cover page content.
+Keep Agregar gasto visually prominent.
+Provide accessible text labels.
+```
+
+If a drawer is used:
+
+```txt
+Close it after navigation.
+Trap focus correctly.
+Restore focus to the menu trigger.
+Keep all route labels visible.
+```
+
+The user must reach `Agregar gasto` with at most one clear interaction from any primary route.
+
+## Dashboard Mobile Contract
+
+The first mobile viewport should prioritize:
+
+```txt
+Current month
+Primary financial state
+Most important amount
 Agregar gasto
-Guardar transacción
-Categoría
-Método de pago
-Presupuesto usado
-Monto restante
-Sin clasificar
-Congelar extras
+Critical alert when one exists
 ```
 
-Format consistently:
+Do not place six equal summary cards before the first actionable information.
+
+Mobile dashboard rules:
 
 ```txt
-USD: US$1,300.00
-NIO: C$47,611.59
-Percentage: 83.8%
-Date: 15 jul 2026 or another single documented format
+Use one primary financial-health card.
+Show secondary metrics in a compact grid or horizontally scrollable region only if scrolling is obvious and non-essential.
+Place critical alerts before healthy category detail.
+Use stacked category cards.
+Collapse secondary explanations when necessary.
+Keep amounts and status labels visible.
 ```
 
-Use shared formatting utilities. Do not calculate money or budget state inside JSX.
-
-## Server and Client Boundaries
-
-Default to Server Components.
-
-Use Client Components only for:
+Avoid:
 
 ```txt
-Interactive forms
-Dialogs
-Client-side validation UX
-Interactive filters
-Browser APIs
+Dense desktop card grids compressed into mobile
+Four tiny cards in one row
+Charts that require horizontal scrolling
+Repeated headings that consume the first viewport
 ```
 
-Keep database reads in Server Components or server-only query modules. Keep mutations in Server Actions unless a Route Handler is clearly more appropriate. Never import database clients or secrets into Client Components.
+## Transaction Form Mobile Contract
 
-## Implementation Workflow
+The transaction form must be optimized for one-handed, fast daily entry.
 
-1. Read the required project documents.
-2. Inspect existing UI conventions and routes.
-3. State assumptions and propose a focused plan.
-4. Implement only the approved scope.
-5. Keep business logic in domain utilities, queries, and server validation.
-6. Add or update tests when behavior changes.
-7. Run the relevant tests, lint, and build commands available in `package.json`.
-8. Review responsive behavior, accessibility, secrets, and scope.
-9. Report changed files, validation, risks, and assumptions.
-
-## Review Checklist
-
-Before finishing, verify:
+Mobile field order:
 
 ```txt
-Does the screen answer a real financial question?
-Is the next action obvious?
-Does the visual direction feel modern without becoming decorative?
-Does the palette come from the MUI theme?
-Are status colors and labels consistent?
-Is mobile genuinely usable?
-Is transaction entry fast?
-Are required fields and errors clear?
-Are empty, loading, error, and not-found states handled?
-Are money, percentages, and dates consistent?
-Is status understandable without color?
-Are finance domain rules preserved?
-Did the implementation avoid unnecessary dependencies and scope creep?
+1. Monto
+2. Moneda
+3. Nombre o comercio
+4. Categoría
+5. Método de pago
+6. Fecha
+7. Tipo de transacción
+8. Tasa de cambio when relevant
+9. Nota opcional
 ```
 
-## Approval Required
-
-Ask before:
+Rules:
 
 ```txt
-Adding chart, icon, or animation libraries
-Changing the UI library
-Adding Tailwind or Tailwind-derived libraries
-Creating a large custom theme
-Replacing MUI defaults globally
-Redesigning the entire navigation
-Adding dark mode
-Adding glassmorphism, neumorphism, or heavy gradients
-Adding auth, AI, OCR, import, or bank-integration UI
+Use a single-column layout on mobile.
+Use appropriate inputMode values for numeric and decimal fields.
+Use native-friendly date input behavior where practical.
+Keep labels visible; do not rely only on placeholders.
+Keep validation messages next to their field.
+Move focus to the first invalid field after failed submission when practical.
+Preserve entered values after a server validation failure.
+Disable duplicate submission.
+Show a clear saving state.
 ```
 
-A small centralized MUI theme using palette, typography, spacing, shape, and restrained component defaults is acceptable when the approved task requires UI foundation work.
+The primary submit action should be:
 
-## Common Mistakes
+```txt
+Full width on mobile
+Visually dominant
+Reachable when the keyboard is open
+Separated from destructive or secondary actions
+```
+
+A sticky submit area is allowed when:
+
+```txt
+It does not cover content.
+It respects safe-area insets.
+The complete form remains reachable.
+It does not compete with bottom navigation.
+```
+
+Do not use two-column form layouts below the breakpoint where both controls remain comfortably readable.
+
+## Virtual Keyboard Behavior
+
+Test forms with the mobile keyboard open.
+
+Verify:
+
+```txt
+Focused fields remain visible.
+The page can scroll to every field.
+The submit action remains reachable.
+Validation errors are not hidden behind the keyboard.
+Sticky elements do not create overlapping layers.
+Numeric fields open an appropriate keyboard when possible.
+```
+
+Do not lock the page height in a way that prevents scrolling while the keyboard is open.
+
+Avoid automatic focus that unexpectedly opens the keyboard on initial page load unless the workflow clearly benefits from it.
+
+## Mobile Transaction List Contract
+
+Do not compress the desktop table into an unreadable mobile table.
+
+Use a mobile-specific card or compact-list representation showing:
+
+```txt
+Merchant or transaction name
+Primary amount
+Date
+Category
+Payment method
+Transaction type or status
+Edit/delete action
+```
+
+Information priority:
+
+```txt
+1. Name
+2. Amount
+3. Category/status
+4. Date
+5. Payment method
+6. Secondary converted amount
+```
+
+Secondary information may be placed in:
+
+```txt
+A details row
+Expandable content
+A transaction detail view
+```
+
+Do not hide category, amount, or transaction status merely to fit the screen.
+
+Filtering on mobile should use:
+
+```txt
+A compact filter summary
+A Drawer or bottom sheet
+Clear Apply and Clear actions
+Visible active-filter count
+```
+
+Do not render a long desktop filter toolbar squeezed into one row.
+
+## Categories, Rules, and Settings on Mobile
+
+Management routes should use cards or compact rows.
+
+Each mobile item should keep:
+
+```txt
+Primary name or pattern
+Most important value
+Current status
+One obvious edit action
+```
+
+Move secondary actions into an accessible overflow menu only when their meaning remains clear.
+
+For create/edit flows:
+
+```txt
+Use full-screen dialogs on small screens when the form is long.
+Use normal dialogs on larger breakpoints.
+Keep dialog title and actions visible.
+Allow content scrolling inside the dialog.
+Prevent actions from being hidden by the keyboard.
+```
+
+Do not fit desktop management tables into mobile through horizontal scrolling as the default solution.
+
+## Mobile Dialogs, Drawers, and Menus
+
+Responsive overlays must follow these rules:
+
+```txt
+Long forms: full-screen dialog on small screens
+Filters: bottom drawer or full-screen dialog
+Confirmation: compact modal dialog
+Navigation: side drawer or bottom navigation
+```
+
+All overlays must:
+
+```txt
+Have a visible title
+Have a clear close action
+Trap keyboard focus correctly
+Restore focus when closed
+Allow internal scrolling
+Respect safe areas
+Avoid nested modal layers
+```
+
+Do not open a dialog from inside another dialog unless there is no simpler interaction.
+
+## Responsive Content Priority
+
+Responsive design is not only resizing.
+
+At smaller widths:
+
+```txt
+Keep primary financial information.
+Keep the main action.
+Keep status and recommendation.
+Reduce decorative content.
+Move secondary metadata into detail views.
+Shorten helper copy without changing meaning.
+```
+
+Do not remove essential finance context to make a layout fit.
+
+When mobile and desktop need structurally different representations, share the same data and domain logic but allow separate presentation components.
+
+## Performance and Visual Stability
+
+Mobile UI should remain responsive on mid-range devices.
+
+Rules:
+
+```txt
+Avoid unnecessary client components.
+Avoid heavy visual effects.
+Avoid layout shifts from unknown card heights.
+Reserve space for loading content where practical.
+Use Skeleton dimensions close to final content.
+Avoid rendering both heavy desktop and mobile representations when one can be hidden efficiently.
+```
+
+Do not introduce new performance-heavy dependencies to solve responsive layout.
+
+Respect reduced-motion preferences if motion already exists.
+
+## Mobile Testing Workflow
+
+For every responsive UI task:
+
+1. Inventory the affected routes and components.
+2. Check the narrowest required viewport first.
+3. Test normal, long, empty, loading, and error content.
+4. Test with the virtual keyboard open for forms.
+5. Test portrait and landscape.
+6. Test touch-target spacing.
+7. Verify no horizontal page overflow.
+8. Verify navigation and primary actions.
+9. Verify dialogs, drawers, and menus.
+10. Run lint, tests, and build commands available in `package.json`.
+
+If browser automation already exists, add focused responsive coverage.
+
+Do not add Playwright, Cypress, or another browser-testing framework without approval.
+
+## Responsive Audit Report
+
+When auditing mobile behavior, report:
+
+```md
+| Route | 320px | 360px | 390px | 768px | Main issue | Priority |
+| ----- | ----- | ----- | ----- | ----- | ---------- | -------- |
+```
+
+For each issue include:
+
+```txt
+Affected component
+Failure mode
+Viewport where it occurs
+User impact
+Recommended change
+Whether the fix changes behavior or only presentation
+```
+
+Do not report “responsive: good” without listing the viewports and states reviewed.
+
+## Mobile Definition of Done
+
+A responsive route is complete only when:
+
+```txt
+It works from 320px upward.
+It has no horizontal page scrolling.
+Primary actions remain visible and reachable.
+Touch targets are comfortable.
+Text and money values do not overflow.
+Forms work with the virtual keyboard.
+Mobile navigation is clear.
+Tables have a deliberate mobile representation.
+Dialogs and drawers work on small screens.
+Safe-area insets are respected where relevant.
+Status remains understandable without color.
+Empty, loading, error, and long-content states work.
+No required workflow depends on hover.
+No desktop functionality is silently lost on mobile.
+```
+
+## Mobile Anti-Patterns
 
 Do not:
 
 ```txt
-Make the dashboard decorative but not actionable.
-Build desktop-only screens.
-Hide the primary transaction action.
-Confuse category with payment method.
-Treat a credit-card payment as a new expense.
-Use color as the only status signal.
-Put financial calculations directly in JSX.
-Show raw enum values in user-facing UI.
-Add charts before cards and lists work.
-Add AI-first classification before merchant rules.
-Over-customize MUI or create a large design system prematurely.
-```
-
-## Final Standard
-
-A successful screen makes three things obvious:
-
-```txt
-What happened?
-Is it healthy?
-What should I do next?
+Shrink desktop UI until it technically fits.
+Hide essential columns without an alternative.
+Use horizontal page scrolling as the main solution.
+Use fixed viewport heights for forms.
+Place fixed buttons over content.
+Use tiny icon-only controls.
+Depend on hover tooltips.
+Render four or more tiny dashboard cards in one mobile row.
+Use a desktop dialog for a long mobile form.
+Let the virtual keyboard cover required actions.
+Use JavaScript viewport checks when CSS/MUI responsiveness is sufficient.
+Mark a route responsive without testing 320px and long content.
 ```

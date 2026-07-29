@@ -287,6 +287,7 @@ Los resultados se redondean a dos decimales antes de persistirse.
 - Presupuesto para `2026-07-01`.
 - 13 asignaciones de categoría.
 - 7 reglas de comercios.
+- 15 transacciones mock para `2026-07`.
 
 El seed puede repetirse sin duplicar estas entidades. También sincroniza los valores iniciales definidos en el archivo.
 
