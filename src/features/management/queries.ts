@@ -12,76 +12,76 @@ import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostic
 
 export async function getCategoryManagementData(month: string) {
   return withDatabaseDiagnostics("management.categories.load", async () => {
-  const budgetDate = `${month}-01`;
-  const [categoryRows, budgetRows] = await Promise.all([
-    db.select().from(categories).orderBy(categories.sortOrder, categories.name),
-    db
-      .select()
-      .from(monthlyBudgets)
-      .where(eq(monthlyBudgets.month, budgetDate))
-      .limit(1),
-  ]);
-  const budget = budgetRows[0] ?? null;
-  const allocations = budget
-    ? await db
+    const budgetDate = `${month}-01`;
+    const [categoryRows, budgetRows] = await Promise.all([
+      db.select().from(categories).orderBy(categories.sortOrder, categories.name),
+      db
         .select()
-        .from(monthlyBudgetCategories)
-        .where(eq(monthlyBudgetCategories.monthlyBudgetId, budget.id))
-    : [];
-  const allocationByCategory = new Map(
-    allocations.map((allocation) => [
-      allocation.categoryId,
-      allocation.amountUsd,
-    ]),
-  );
+        .from(monthlyBudgets)
+        .where(eq(monthlyBudgets.month, budgetDate))
+        .limit(1),
+    ]);
+    const budget = budgetRows[0] ?? null;
+    const allocations = budget
+      ? await db
+          .select()
+          .from(monthlyBudgetCategories)
+          .where(eq(monthlyBudgetCategories.monthlyBudgetId, budget.id))
+      : [];
+    const allocationByCategory = new Map(
+      allocations.map((allocation) => [
+        allocation.categoryId,
+        allocation.amountUsd,
+      ]),
+    );
 
-  return {
-    budget,
-    categories: categoryRows.map((category) => ({
-      ...category,
-      selectedMonthBudgetUsd:
-        allocationByCategory.get(category.id) ?? category.monthlyBudgetUsd,
-    })),
-  };
+    return {
+      budget,
+      categories: categoryRows.map((category) => ({
+        ...category,
+        selectedMonthBudgetUsd:
+          allocationByCategory.get(category.id) ?? category.monthlyBudgetUsd,
+      })),
+    };
   });
 }
 
 export async function getRulesManagementData() {
   return withDatabaseDiagnostics("management.rules.load", async () => {
-  const [rules, categoryRows] = await Promise.all([
-    db
-      .select({
-        id: merchantRules.id,
-        pattern: merchantRules.pattern,
-        priority: merchantRules.priority,
-        isActive: merchantRules.isActive,
-        categoryId: merchantRules.categoryId,
-        categoryName: categories.name,
-      })
-      .from(merchantRules)
-      .innerJoin(categories, eq(merchantRules.categoryId, categories.id))
-      .orderBy(asc(merchantRules.priority), asc(merchantRules.pattern)),
-    db
-      .select({ id: categories.id, name: categories.name })
-      .from(categories)
-      .where(eq(categories.isActive, true))
-      .orderBy(categories.sortOrder, categories.name),
-  ]);
+    const [rules, categoryRows] = await Promise.all([
+      db
+        .select({
+          id: merchantRules.id,
+          pattern: merchantRules.pattern,
+          priority: merchantRules.priority,
+          isActive: merchantRules.isActive,
+          categoryId: merchantRules.categoryId,
+          categoryName: categories.name,
+        })
+        .from(merchantRules)
+        .innerJoin(categories, eq(merchantRules.categoryId, categories.id))
+        .orderBy(asc(merchantRules.priority), asc(merchantRules.pattern)),
+      db
+        .select({ id: categories.id, name: categories.name })
+        .from(categories)
+        .where(eq(categories.isActive, true))
+        .orderBy(categories.sortOrder, categories.name),
+    ]);
 
-  return { rules, categories: categoryRows };
+    return { rules, categories: categoryRows };
   });
 }
 
 export async function getSettingsData() {
   return withDatabaseDiagnostics("management.settings.load", async () => {
-  const [settingsRows, methodRows] = await Promise.all([
-    db.select().from(appSettings).limit(1),
-    db.select().from(paymentMethods).orderBy(paymentMethods.name),
-  ]);
+    const [settingsRows, methodRows] = await Promise.all([
+      db.select().from(appSettings).limit(1),
+      db.select().from(paymentMethods).orderBy(paymentMethods.name),
+    ]);
 
-  return {
-    settings: settingsRows[0] ?? null,
-    paymentMethods: methodRows,
-  };
+    return {
+      settings: settingsRows[0] ?? null,
+      paymentMethods: methodRows,
+    };
   });
 }

@@ -14,7 +14,9 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx --env-file=.env.local src/lib/db/seed.ts"
+    "db:seed": "tsx --env-file=.env.local src/lib/db/seed.ts",
+    "format": "prettier --write .",
+  "format:check": "prettier --check ."
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",

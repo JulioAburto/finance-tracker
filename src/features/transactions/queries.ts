@@ -19,92 +19,92 @@ export type TransactionFilters = {
 // coordinen datos y presentación. Drizzle genera SQL parametrizado.
 export async function getTransactionFormOptions() {
   return withDatabaseDiagnostics("transactions.options.load", async () => {
-  const [categoryRows, paymentMethodRows, settingsRows] = await Promise.all([
-    db
-      .select({ id: categories.id, name: categories.name })
-      .from(categories)
-      .where(eq(categories.isActive, true))
-      .orderBy(categories.sortOrder, categories.name),
-    db
-      .select({
-        id: paymentMethods.id,
-        name: paymentMethods.name,
-        type: paymentMethods.type,
-      })
-      .from(paymentMethods)
-      .where(eq(paymentMethods.isActive, true))
-      .orderBy(paymentMethods.name),
-    db
-      .select({
-        defaultCurrency: appSettings.defaultCurrency,
-        defaultExchangeRate: appSettings.defaultExchangeRate,
-      })
-      .from(appSettings)
-      .limit(1),
-  ]);
+    const [categoryRows, paymentMethodRows, settingsRows] = await Promise.all([
+      db
+        .select({ id: categories.id, name: categories.name })
+        .from(categories)
+        .where(eq(categories.isActive, true))
+        .orderBy(categories.sortOrder, categories.name),
+      db
+        .select({
+          id: paymentMethods.id,
+          name: paymentMethods.name,
+          type: paymentMethods.type,
+        })
+        .from(paymentMethods)
+        .where(eq(paymentMethods.isActive, true))
+        .orderBy(paymentMethods.name),
+      db
+        .select({
+          defaultCurrency: appSettings.defaultCurrency,
+          defaultExchangeRate: appSettings.defaultExchangeRate,
+        })
+        .from(appSettings)
+        .limit(1),
+    ]);
 
-  return {
-    categories: categoryRows,
-    paymentMethods: paymentMethodRows,
-    settings: settingsRows[0] ?? {
-      defaultCurrency: "USD" as const,
-      defaultExchangeRate: "36.6243",
-    },
-  };
+    return {
+      categories: categoryRows,
+      paymentMethods: paymentMethodRows,
+      settings: settingsRows[0] ?? {
+        defaultCurrency: "USD" as const,
+        defaultExchangeRate: "36.6243",
+      },
+    };
   });
 }
 
 export async function getTransactions(filters: TransactionFilters) {
   return withDatabaseDiagnostics("transactions.list", async () => {
-  const { startDate, endDate } = getMonthRange(filters.month);
-  const conditions: SQL[] = [
-    gte(transactions.date, startDate),
-    lt(transactions.date, endDate),
-  ];
+    const { startDate, endDate } = getMonthRange(filters.month);
+    const conditions: SQL[] = [
+      gte(transactions.date, startDate),
+      lt(transactions.date, endDate),
+    ];
 
-  if (filters.categoryId) {
-    conditions.push(eq(transactions.categoryId, filters.categoryId));
-  }
+    if (filters.categoryId) {
+      conditions.push(eq(transactions.categoryId, filters.categoryId));
+    }
 
-  if (filters.paymentMethodId) {
-    conditions.push(
-      eq(transactions.paymentMethodId, filters.paymentMethodId),
-    );
-  }
+    if (filters.paymentMethodId) {
+      conditions.push(
+        eq(transactions.paymentMethodId, filters.paymentMethodId),
+      );
+    }
 
-  return db
-    .select({
-      id: transactions.id,
-      name: transactions.name,
-      amount: transactions.amount,
-      currency: transactions.currency,
-      amountUsd: transactions.amountUsd,
-      amountNio: transactions.amountNio,
-      date: transactions.date,
-      type: transactions.type,
-      categoryName: categories.name,
-      paymentMethodName: paymentMethods.name,
-      note: transactions.note,
-    })
-    .from(transactions)
-    .leftJoin(categories, eq(transactions.categoryId, categories.id))
-    .leftJoin(
-      paymentMethods,
-      eq(transactions.paymentMethodId, paymentMethods.id),
-    )
-    .where(and(...conditions))
-    .orderBy(desc(transactions.date), desc(transactions.createdAt));
+    return db
+      .select({
+        id: transactions.id,
+        name: transactions.name,
+        amount: transactions.amount,
+        currency: transactions.currency,
+        amountUsd: transactions.amountUsd,
+        amountNio: transactions.amountNio,
+        date: transactions.date,
+        type: transactions.type,
+        categoryName: categories.name,
+        paymentMethodName: paymentMethods.name,
+        note: transactions.note,
+      })
+      .from(transactions)
+      .leftJoin(categories, eq(transactions.categoryId, categories.id))
+      .leftJoin(
+        paymentMethods,
+        eq(transactions.paymentMethodId, paymentMethods.id),
+      )
+      .where(and(...conditions))
+      .orderBy(desc(transactions.date), desc(transactions.createdAt));
   });
 }
 
 export async function getTransactionById(id: string) {
   return withDatabaseDiagnostics("transactions.detail", async () => {
-  const rows = await db
-    .select()
-    .from(transactions)
-    .where(eq(transactions.id, id))
-    .limit(1);
+    const rows = await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.id, id))
+      .limit(1);
 
-  return rows[0] ?? null;
+    return rows[0] ?? null;
   });
 }
