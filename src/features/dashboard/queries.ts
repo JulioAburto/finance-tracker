@@ -7,9 +7,11 @@ import {
   transactions,
 } from "@/lib/db/schema";
 import { getMonthRange } from "@/lib/date/month";
+import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostics";
 import { calculateDashboardSummary } from "./calculations";
 
 export async function getDashboardData(month: string) {
+  return withDatabaseDiagnostics("dashboard.load", async () => {
   const { startDate, endDate, budgetDate } = getMonthRange(month);
 
   // Primero buscamos la cabecera porque sus categorías dependen de ese UUID.
@@ -92,4 +94,5 @@ export async function getDashboardData(month: string) {
     ),
     hasBudget: budget !== null,
   };
+  });
 }

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { categories, paymentMethods, transactions } from "@/lib/db/schema";
 import { convertMoney } from "@/lib/money/convert";
+import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostics";
 import {
   isSavingsCategoryName,
   readTransactionFormData,
@@ -18,32 +19,36 @@ async function validateReferences(
 ): Promise<TransactionFormState | null> {
   // La validación de IDs no termina en el navegador: comprobamos que las
   // referencias existan y estén activas antes de escribir la transacción.
-  const [categoryRows, paymentRows] = await Promise.all([
-    input.categoryId
-      ? db
-          .select({ id: categories.id, name: categories.name })
-          .from(categories)
-          .where(
-            and(
-              eq(categories.id, input.categoryId),
-              eq(categories.isActive, true),
-            ),
-          )
-          .limit(1)
-      : Promise.resolve([]),
-    input.paymentMethodId
-      ? db
-          .select({ id: paymentMethods.id })
-          .from(paymentMethods)
-          .where(
-            and(
-              eq(paymentMethods.id, input.paymentMethodId),
-              eq(paymentMethods.isActive, true),
-            ),
-          )
-          .limit(1)
-      : Promise.resolve([]),
-  ]);
+  const [categoryRows, paymentRows] = await withDatabaseDiagnostics(
+    "transactions.references.validate",
+    () =>
+      Promise.all([
+        input.categoryId
+          ? db
+              .select({ id: categories.id, name: categories.name })
+              .from(categories)
+              .where(
+                and(
+                  eq(categories.id, input.categoryId),
+                  eq(categories.isActive, true),
+                ),
+              )
+              .limit(1)
+          : Promise.resolve([]),
+        input.paymentMethodId
+          ? db
+              .select({ id: paymentMethods.id })
+              .from(paymentMethods)
+              .where(
+                and(
+                  eq(paymentMethods.id, input.paymentMethodId),
+                  eq(paymentMethods.isActive, true),
+                ),
+              )
+              .limit(1)
+          : Promise.resolve([]),
+      ]),
+  );
 
   const categoryExists = !input.categoryId || categoryRows.length === 1;
   const paymentMethodExists =
@@ -136,7 +141,9 @@ export async function createTransactionAction(
   if (!result.success) return result.state;
 
   try {
-    await db.insert(transactions).values(toDatabaseValues(result.data));
+    await withDatabaseDiagnostics("transactions.create", () =>
+      db.insert(transactions).values(toDatabaseValues(result.data)),
+    );
   } catch {
     return {
       status: "error",
@@ -158,11 +165,15 @@ export async function updateTransactionAction(
   if (!result.success) return result.state;
 
   try {
-    const updated = await db
-      .update(transactions)
-      .set(toDatabaseValues(result.data))
-      .where(eq(transactions.id, id))
-      .returning({ id: transactions.id });
+    const updated = await withDatabaseDiagnostics(
+      "transactions.update",
+      () =>
+        db
+          .update(transactions)
+          .set(toDatabaseValues(result.data))
+          .where(eq(transactions.id, id))
+          .returning({ id: transactions.id }),
+    );
 
     if (updated.length === 0) {
       return { status: "error", message: "La transacción ya no existe." };
@@ -180,7 +191,9 @@ export async function updateTransactionAction(
 }
 
 export async function deleteTransactionAction(id: string): Promise<void> {
-  await db.delete(transactions).where(eq(transactions.id, id));
+  await withDatabaseDiagnostics("transactions.delete", () =>
+    db.delete(transactions).where(eq(transactions.id, id)),
+  );
   revalidatePath("/transactions");
   revalidatePath("/dashboard");
 }

@@ -8,8 +8,10 @@ import {
   monthlyBudgets,
   paymentMethods,
 } from "@/lib/db/schema";
+import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostics";
 
 export async function getCategoryManagementData(month: string) {
+  return withDatabaseDiagnostics("management.categories.load", async () => {
   const budgetDate = `${month}-01`;
   const [categoryRows, budgetRows] = await Promise.all([
     db.select().from(categories).orderBy(categories.sortOrder, categories.name),
@@ -41,9 +43,11 @@ export async function getCategoryManagementData(month: string) {
         allocationByCategory.get(category.id) ?? category.monthlyBudgetUsd,
     })),
   };
+  });
 }
 
 export async function getRulesManagementData() {
+  return withDatabaseDiagnostics("management.rules.load", async () => {
   const [rules, categoryRows] = await Promise.all([
     db
       .select({
@@ -65,9 +69,11 @@ export async function getRulesManagementData() {
   ]);
 
   return { rules, categories: categoryRows };
+  });
 }
 
 export async function getSettingsData() {
+  return withDatabaseDiagnostics("management.settings.load", async () => {
   const [settingsRows, methodRows] = await Promise.all([
     db.select().from(appSettings).limit(1),
     db.select().from(paymentMethods).orderBy(paymentMethods.name),
@@ -77,4 +83,5 @@ export async function getSettingsData() {
     settings: settingsRows[0] ?? null,
     paymentMethods: methodRows,
   };
+  });
 }

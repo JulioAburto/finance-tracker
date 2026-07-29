@@ -7,6 +7,7 @@ import {
   transactions,
 } from "@/lib/db/schema";
 import { getMonthRange } from "@/lib/date/month";
+import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostics";
 
 export type TransactionFilters = {
   month: string;
@@ -17,6 +18,7 @@ export type TransactionFilters = {
 // Las consultas viven fuera de los componentes para que las páginas solo
 // coordinen datos y presentación. Drizzle genera SQL parametrizado.
 export async function getTransactionFormOptions() {
+  return withDatabaseDiagnostics("transactions.options.load", async () => {
   const [categoryRows, paymentMethodRows, settingsRows] = await Promise.all([
     db
       .select({ id: categories.id, name: categories.name })
@@ -49,9 +51,11 @@ export async function getTransactionFormOptions() {
       defaultExchangeRate: "36.6243",
     },
   };
+  });
 }
 
 export async function getTransactions(filters: TransactionFilters) {
+  return withDatabaseDiagnostics("transactions.list", async () => {
   const { startDate, endDate } = getMonthRange(filters.month);
   const conditions: SQL[] = [
     gte(transactions.date, startDate),
@@ -90,9 +94,11 @@ export async function getTransactions(filters: TransactionFilters) {
     )
     .where(and(...conditions))
     .orderBy(desc(transactions.date), desc(transactions.createdAt));
+  });
 }
 
 export async function getTransactionById(id: string) {
+  return withDatabaseDiagnostics("transactions.detail", async () => {
   const rows = await db
     .select()
     .from(transactions)
@@ -100,4 +106,5 @@ export async function getTransactionById(id: string) {
     .limit(1);
 
   return rows[0] ?? null;
+  });
 }
