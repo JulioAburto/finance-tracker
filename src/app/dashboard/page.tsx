@@ -77,9 +77,13 @@ export default async function DashboardPage({
           defaultValue={month}
           size="small"
           slotProps={{ inputLabel: { shrink: true } }}
-          sx={{ minWidth: { sm: 190 } }}
+          sx={{ width: { xs: "100%", sm: "auto" }, minWidth: { sm: 190 } }}
         />
-        <Button type="submit" variant="outlined">
+        <Button
+          type="submit"
+          variant="outlined"
+          sx={{ width: { xs: "100%", sm: "auto" } }}
+        >
           Ver mes
         </Button>
       </Card>
@@ -113,6 +117,7 @@ export default async function DashboardPage({
                   fontWeight: 800,
                   letterSpacing: "-0.04em",
                   lineHeight: 1.1,
+                  overflowWrap: "anywhere",
                 }}
               >
                 {formatUsd(summary.totalSpentUsd)}
@@ -170,6 +175,39 @@ export default async function DashboardPage({
         </CardContent>
       </Card>
 
+      {summary.alerts.length > 0 ? (
+        <Stack spacing={1.5}>
+          <Typography variant="h6">Atención este mes</Typography>
+          {summary.alerts.map((alert) => (
+            <Alert
+              key={alert.categoryId}
+              severity={alert.status === "warning" ? "warning" : "error"}
+            >
+              {alert.categoryName}: {alert.usagePercent.toFixed(1)}%.{" "}
+              {alert.recommendation}
+            </Alert>
+          ))}
+        </Stack>
+      ) : (
+        <Alert severity="success">
+          No hay alertas de presupuesto. Tus categorías están dentro de sus
+          límites.
+        </Alert>
+      )}
+
+      {summary.uncategorizedCount > 0 ? (
+        <Alert
+          severity="warning"
+          action={
+            <Button color="inherit" href="/transactions" size="small">
+              Revisar
+            </Button>
+          }
+        >
+          Gastos sin categoría: {summary.uncategorizedCount}.
+        </Alert>
+      ) : null}
+
       <Box
         sx={{
           display: "grid",
@@ -198,39 +236,6 @@ export default async function DashboardPage({
           context="Gastos pendientes de categoría"
         />
       </Box>
-
-      {summary.uncategorizedCount > 0 ? (
-        <Alert
-          severity="warning"
-          action={
-            <Button color="inherit" href="/transactions" size="small">
-              Revisar
-            </Button>
-          }
-        >
-          Gastos sin categoría: {summary.uncategorizedCount}.
-        </Alert>
-      ) : null}
-
-      {summary.alerts.length > 0 ? (
-        <Stack spacing={1.5}>
-          <Typography variant="h6">Atención este mes</Typography>
-          {summary.alerts.map((alert) => (
-            <Alert
-              key={alert.categoryId}
-              severity={alert.status === "warning" ? "warning" : "error"}
-            >
-              {alert.categoryName}: {alert.usagePercent.toFixed(1)}%.{" "}
-              {alert.recommendation}
-            </Alert>
-          ))}
-        </Stack>
-      ) : (
-        <Alert severity="success">
-          No hay alertas de presupuesto. Tus categorías están dentro de sus
-          límites.
-        </Alert>
-      )}
 
       <Stack spacing={1.5}>
         <Typography variant="h6">

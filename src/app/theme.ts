@@ -82,6 +82,22 @@ export const theme = createTheme({
         root: {
           borderRadius: 10,
           minHeight: 44,
+          "&.Mui-focusVisible": {
+            outline: "3px solid rgba(20, 125, 111, 0.35)",
+            outlineOffset: 2,
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          minWidth: 44,
+          minHeight: 44,
+          "&.Mui-focusVisible": {
+            outline: "3px solid rgba(20, 125, 111, 0.35)",
+            outlineOffset: 2,
+          },
         },
       },
     },
@@ -112,6 +128,24 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 10,
+          minWidth: 0,
+        },
+        input: {
+          "@media (max-width: 600px)": {
+            fontSize: "1rem",
+          },
+        },
+      },
+    },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          minHeight: 44,
+          marginLeft: 0,
+          marginRight: 0,
+        },
+        label: {
+          overflowWrap: "anywhere",
         },
       },
     },

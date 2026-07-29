@@ -24,7 +24,7 @@ export default async function NewTransactionPage() {
         title="Agregar transacción"
         description="Registra un gasto, ingreso o transferencia con su tasa histórica."
       />
-      <Card sx={{ maxWidth: 760 }}>
+      <Card sx={{ width: "100%", maxWidth: 760 }}>
         <CardContent sx={{ p: { xs: 2, md: 3.5 } }}>
           <TransactionForm
             action={createTransactionAction}

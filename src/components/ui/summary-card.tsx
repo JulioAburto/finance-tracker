@@ -15,10 +15,13 @@ export function SummaryCard({
   indicator,
 }: SummaryCardProps) {
   return (
-    <Card>
-      <CardContent>
+    <Card sx={{ height: "100%" }}>
+      <CardContent sx={{ p: { xs: 2, md: 2.5 }, "&:last-child": { pb: { xs: 2, md: 2.5 } } }}>
         <Stack spacing={1} sx={{ minWidth: 0 }}>
-          <Stack direction="row" sx={{ justifyContent: "space-between", gap: 1, minWidth: 0 }}>
+          <Stack
+            direction="row"
+            sx={{ justifyContent: "space-between", gap: 1, minWidth: 0 }}
+          >
             <Typography
               color="text.secondary"
               variant="body2"
@@ -28,7 +31,10 @@ export function SummaryCard({
             </Typography>
             {indicator}
           </Stack>
-          <Typography variant="h5" sx={{ overflowWrap: "anywhere" }}>
+          <Typography
+            variant="h5"
+            sx={{ lineHeight: 1.25, overflowWrap: "anywhere" }}
+          >
             {value}
           </Typography>
           {context ? (

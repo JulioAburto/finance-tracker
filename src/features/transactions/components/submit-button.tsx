@@ -3,7 +3,13 @@
 import { Button } from "@mui/material";
 import { useFormStatus } from "react-dom";
 
-export function SubmitButton({ label }: { label: string }) {
+export function SubmitButton({
+  label,
+  fullWidth = false,
+}: {
+  label: string;
+  fullWidth?: boolean;
+}) {
   const { pending } = useFormStatus();
 
   return (
@@ -11,7 +17,8 @@ export function SubmitButton({ label }: { label: string }) {
       type="submit"
       variant="contained"
       disabled={pending}
-      sx={{ width: { xs: "100%", sm: "auto" } }}
+      fullWidth={fullWidth}
+      sx={{ width: fullWidth ? "100%" : { xs: "100%", sm: "auto" } }}
     >
       {pending ? "Guardando..." : label}
     </Button>

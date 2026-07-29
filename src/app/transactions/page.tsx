@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   Chip,
-  MenuItem,
   Stack,
   Table,
   TableBody,
@@ -12,12 +11,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { DeleteTransactionButton } from "@/features/transactions/components/delete-transaction-button";
+import { TransactionFilters } from "@/features/transactions/components/transaction-filters";
 import {
   getTransactionFormOptions,
   getTransactions,
@@ -76,54 +75,13 @@ export default async function TransactionsPage({
         }
       />
 
-      <Card component="form" method="get" sx={{ p: 2 }}>
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-          <TextField
-            name="month"
-            label="Mes"
-            type="month"
-            defaultValue={month}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
-          <TextField
-            select
-            name="categoryId"
-            label="Categoría"
-            defaultValue={categoryId ?? ""}
-            fullWidth
-            sx={{ minWidth: { md: 220 } }}
-          >
-            <MenuItem value="">Todas</MenuItem>
-            {options.categories.map((category) => (
-              <MenuItem key={category.id} value={category.id}>
-                {category.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            name="paymentMethodId"
-            label="Método de pago"
-            defaultValue={paymentMethodId ?? ""}
-            fullWidth
-            sx={{ minWidth: { md: 220 } }}
-          >
-            <MenuItem value="">Todos</MenuItem>
-            {options.paymentMethods.map((method) => (
-              <MenuItem key={method.id} value={method.id}>
-                {method.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Button
-            type="submit"
-            variant="outlined"
-            sx={{ width: { xs: "100%", md: "auto" } }}
-          >
-            Filtrar
-          </Button>
-        </Stack>
-      </Card>
+      <TransactionFilters
+        month={month}
+        categoryId={categoryId}
+        paymentMethodId={paymentMethodId}
+        categories={options.categories}
+        paymentMethods={options.paymentMethods}
+      />
 
       {rows.length === 0 ? (
         <Card>
@@ -136,63 +94,84 @@ export default async function TransactionsPage({
         </Card>
       ) : (
         <>
+          <Typography color="text.secondary" variant="body2">
+            {rows.length} {rows.length === 1 ? "movimiento" : "movimientos"}
+          </Typography>
+
           <Stack spacing={1.5} sx={{ display: { xs: "flex", md: "none" } }}>
             {rows.map((transaction) => (
               <Card key={transaction.id}>
-                <CardContent>
+                <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
                   <Stack spacing={1.5}>
                     <Stack
-                      direction={{ xs: "column", sm: "row" }}
+                      direction="row"
                       spacing={1}
-                      sx={{ justifyContent: "space-between", alignItems: { sm: "center" } }}
+                      sx={{
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        minWidth: 0,
+                      }}
                     >
-                      <Typography color="text.secondary" variant="body2">
-                        {formatDisplayDate(transaction.date)}
-                      </Typography>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography
+                          variant="h6"
+                          sx={{ lineHeight: 1.25, overflowWrap: "anywhere" }}
+                        >
+                          {transaction.name}
+                        </Typography>
+                        <Typography color="text.secondary" variant="body2">
+                          {formatDisplayDate(transaction.date)}
+                        </Typography>
+                      </Box>
                       <Chip
                         size="small"
                         label={transactionTypeLabels[transaction.type]}
                         color={transactionTypeColors[transaction.type]}
+                        sx={{ flexShrink: 0 }}
                       />
                     </Stack>
 
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography variant="h6">{transaction.name}</Typography>
-                      <Typography
-                        color="text.secondary"
-                        variant="body2"
-                        sx={{ overflowWrap: "anywhere" }}
-                      >
-                        {transaction.categoryName ?? "Sin categoría"} ·{" "}
-                        {transaction.paymentMethodName ?? "Sin método"}
-                      </Typography>
-                    </Box>
-
                     <Stack
-                      direction={{ xs: "column", sm: "row" }}
-                      spacing={0.75}
-                      sx={{ justifyContent: "space-between", alignItems: { sm: "end" } }}
+                      direction="row"
+                      spacing={1}
+                      sx={{
+                        justifyContent: "space-between",
+                        alignItems: "flex-end",
+                        minWidth: 0,
+                      }}
                     >
-                      <Box>
-                        <Typography color="text.secondary" variant="caption">
-                          Monto original
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography
+                          color="text.secondary"
+                          variant="body2"
+                          sx={{ overflowWrap: "anywhere" }}
+                        >
+                          {transaction.categoryName ?? "Sin categoría"}
                         </Typography>
-                        <Typography sx={{ fontWeight: 800 }}>
+                        <Typography
+                          color="text.secondary"
+                          variant="caption"
+                          sx={{ display: "block", overflowWrap: "anywhere" }}
+                        >
+                          {transaction.paymentMethodName ?? "Sin método"}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ flexShrink: 0, textAlign: "right" }}>
+                        <Typography sx={{ fontWeight: 800, whiteSpace: "nowrap" }}>
                           {transaction.currency === "USD"
                             ? formatUsd(Number(transaction.amount))
                             : formatNio(Number(transaction.amount))}
                         </Typography>
+                        <Typography color="text.secondary" variant="caption">
+                          {formatUsd(Number(transaction.amountUsd))} en USD
+                        </Typography>
                       </Box>
-                      <Typography color="text.secondary" variant="body2">
-                        {formatUsd(Number(transaction.amountUsd))}
-                      </Typography>
                     </Stack>
 
-                    <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                    <Stack direction="row" spacing={1}>
                       <Button
                         href={`/transactions/${transaction.id}/edit`}
                         variant="outlined"
-                        size="small"
                         fullWidth
                       >
                         Editar

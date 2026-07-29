@@ -59,6 +59,24 @@ describe("transaction validation", () => {
     expect(result.success).toBe(true);
   });
 
+  it("acepta un movimiento válido en USD", () => {
+    const result = validateTransactionInput({
+      ...validExpense,
+      amount: "24.99",
+      currency: "USD",
+      type: "transfer",
+      categoryId: "",
+      paymentMethodId: "",
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.currency).toBe("USD");
+      expect(result.data.amount).toBe(24.99);
+      expect(result.data.type).toBe("transfer");
+    }
+  });
+
   it("rechaza montos, tasas y fechas inválidas", () => {
     const result = validateTransactionInput({
       ...validExpense,
@@ -72,6 +90,18 @@ describe("transaction validation", () => {
       expect(result.fieldErrors.amount).toBeDefined();
       expect(result.fieldErrors.exchangeRate).toBeDefined();
       expect(result.fieldErrors.date).toBeDefined();
+    }
+  });
+
+  it("rechaza nombres demasiado largos", () => {
+    const result = validateTransactionInput({
+      ...validExpense,
+      name: "a".repeat(181),
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.fieldErrors.name).toBeDefined();
     }
   });
 

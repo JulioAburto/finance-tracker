@@ -38,7 +38,7 @@ export default async function EditTransactionPage({
         La tasa guardada pertenece a esta transacción. Modifícala solo si el
         valor original fue registrado incorrectamente.
       </Alert>
-      <Card sx={{ maxWidth: 760 }}>
+      <Card sx={{ width: "100%", maxWidth: 760 }}>
         <CardContent sx={{ p: { xs: 2, md: 3.5 } }}>
           <TransactionForm
             action={action}
