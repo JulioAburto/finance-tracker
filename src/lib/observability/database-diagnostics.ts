@@ -1,14 +1,11 @@
-import "server-only";
+import 'server-only';
 
-import {
-  classifyDatabaseError,
-  SLOW_DATABASE_OPERATION_MS,
-} from "./log-entry";
+import {classifyDatabaseError, SLOW_DATABASE_OPERATION_MS} from './log-entry';
 import {
   createIncidentId,
   getOrCreateIncidentId,
   logStructuredEvent,
-} from "./logger";
+} from './logger';
 
 type DatabaseDiagnosticsOptions = {
   incidentId?: string;
@@ -21,8 +18,7 @@ export async function withDatabaseDiagnostics<T>(
   options: DatabaseDiagnosticsOptions = {},
 ): Promise<T> {
   const startedAt = performance.now();
-  const slowThresholdMs =
-    options.slowThresholdMs ?? SLOW_DATABASE_OPERATION_MS;
+  const slowThresholdMs = options.slowThresholdMs ?? SLOW_DATABASE_OPERATION_MS;
 
   try {
     const result = await execute();
@@ -30,13 +26,13 @@ export async function withDatabaseDiagnostics<T>(
 
     if (durationMs >= slowThresholdMs) {
       logStructuredEvent({
-        level: "warn",
-        event: "database.operation.slow",
+        level: 'warn',
+        event: 'database.operation.slow',
         operation,
         durationMs,
         error: {
-          code: "SLOW_QUERY",
-          name: "DatabaseSlowOperation",
+          code: 'SLOW_QUERY',
+          name: 'DatabaseSlowOperation',
         },
         incidentId: options.incidentId ?? createIncidentId(),
       });
@@ -45,8 +41,8 @@ export async function withDatabaseDiagnostics<T>(
     return result;
   } catch (error) {
     logStructuredEvent({
-      level: "error",
-      event: "database.operation.failed",
+      level: 'error',
+      event: 'database.operation.failed',
       operation,
       durationMs: performance.now() - startedAt,
       error: classifyDatabaseError(error),

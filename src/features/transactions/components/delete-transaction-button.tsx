@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Button } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
-import { deleteTransactionAction } from "../actions";
+import {Button} from '@mui/material';
+import {useRouter} from 'next/navigation';
+import {useTransition} from 'react';
+import {deleteTransactionAction} from '../actions';
 
 export function DeleteTransactionButton({
   transactionId,
@@ -16,7 +16,7 @@ export function DeleteTransactionButton({
   const [pending, startTransition] = useTransition();
 
   function handleDelete() {
-    if (!window.confirm("¿Eliminar esta transacción permanentemente?")) return;
+    if (!window.confirm('¿Eliminar esta transacción permanentemente?')) return;
 
     startTransition(async () => {
       await deleteTransactionAction(transactionId);
@@ -32,7 +32,7 @@ export function DeleteTransactionButton({
       disabled={pending}
       fullWidth={fullWidth}
     >
-      {pending ? "Eliminando..." : "Eliminar"}
+      {pending ? 'Eliminando...' : 'Eliminar'}
     </Button>
   );
 }

@@ -126,11 +126,11 @@ No recalcular transacciones históricas con una tasa nueva.
 
 ## Estados de presupuesto
 
-| Uso | Estado |
-| --- | --- |
-| 0%–69% | `safe` |
-| 70%–79% | `warning` |
-| 80%–99% | `danger` |
+| Uso        | Estado     |
+| ---------- | ---------- |
+| 0%–69%     | `safe`     |
+| 70%–79%    | `warning`  |
+| 80%–99%    | `danger`   |
 | 100% o más | `exceeded` |
 
 Si una categoría alcanza al menos 80% antes del día 20, recomendar congelar gastos extra.
@@ -225,15 +225,15 @@ Los importes y columnas exactos están en [`DATABASE_SCHEMA.md`](./DATABASE_SCHE
 
 ## Fases
 
-| Fase | Estado | Contenido |
-| --- | --- | --- |
-| Fundación | ✅ | MUI, Drizzle, esquema, migración y seed |
-| Utilidades | ✅ | Dinero y presupuesto |
-| Transacciones | ✅ | Crear, listar, editar y eliminar |
-| Dashboard | ✅ | Cálculos y alertas |
-| Categorías | ⏳ | CRUD y presupuestos |
-| Reglas | ⏳ | CRUD y clasificación |
-| IA opcional | ⏳ | Solo después de reglas |
+| Fase          | Estado | Contenido                               |
+| ------------- | ------ | --------------------------------------- |
+| Fundación     | ✅     | MUI, Drizzle, esquema, migración y seed |
+| Utilidades    | ✅     | Dinero y presupuesto                    |
+| Transacciones | ✅     | Crear, listar, editar y eliminar        |
+| Dashboard     | ✅     | Cálculos y alertas                      |
+| Categorías    | ⏳     | CRUD y presupuestos                     |
+| Reglas        | ⏳     | CRUD y clasificación                    |
+| IA opcional   | ⏳     | Solo después de reglas                  |
 
 ## Criterios de éxito
 

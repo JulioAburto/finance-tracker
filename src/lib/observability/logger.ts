@@ -1,10 +1,10 @@
-import "server-only";
+import 'server-only';
 
 import {
   createStructuredLogEntry,
   type LogLevel,
   type SafeErrorDetails,
-} from "./log-entry";
+} from './log-entry';
 
 const incidentByError = new WeakMap<object, string>();
 
@@ -13,7 +13,7 @@ export function createIncidentId(): string {
 }
 
 export function getOrCreateIncidentId(error: unknown): string {
-  if (typeof error !== "object" || error === null) {
+  if (typeof error !== 'object' || error === null) {
     return createIncidentId();
   }
 
@@ -39,12 +39,12 @@ export function logStructuredEvent(input: {
   });
   const serializedEntry = JSON.stringify(entry);
 
-  if (entry.level === "error") {
+  if (entry.level === 'error') {
     console.error(serializedEntry);
     return;
   }
 
-  if (entry.level === "warn") {
+  if (entry.level === 'warn') {
     console.warn(serializedEntry);
     return;
   }

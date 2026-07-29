@@ -1,5 +1,5 @@
-import { asc, eq } from "drizzle-orm";
-import { db } from "@/lib/db";
+import {asc, eq} from 'drizzle-orm';
+import {db} from '@/lib/db';
 import {
   appSettings,
   categories,
@@ -7,14 +7,17 @@ import {
   monthlyBudgetCategories,
   monthlyBudgets,
   paymentMethods,
-} from "@/lib/db/schema";
-import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostics";
+} from '@/lib/db/schema';
+import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
 
 export async function getCategoryManagementData(month: string) {
-  return withDatabaseDiagnostics("management.categories.load", async () => {
+  return withDatabaseDiagnostics('management.categories.load', async () => {
     const budgetDate = `${month}-01`;
     const [categoryRows, budgetRows] = await Promise.all([
-      db.select().from(categories).orderBy(categories.sortOrder, categories.name),
+      db
+        .select()
+        .from(categories)
+        .orderBy(categories.sortOrder, categories.name),
       db
         .select()
         .from(monthlyBudgets)
@@ -29,7 +32,7 @@ export async function getCategoryManagementData(month: string) {
           .where(eq(monthlyBudgetCategories.monthlyBudgetId, budget.id))
       : [];
     const allocationByCategory = new Map(
-      allocations.map((allocation) => [
+      allocations.map(allocation => [
         allocation.categoryId,
         allocation.amountUsd,
       ]),
@@ -37,7 +40,7 @@ export async function getCategoryManagementData(month: string) {
 
     return {
       budget,
-      categories: categoryRows.map((category) => ({
+      categories: categoryRows.map(category => ({
         ...category,
         selectedMonthBudgetUsd:
           allocationByCategory.get(category.id) ?? category.monthlyBudgetUsd,
@@ -47,7 +50,7 @@ export async function getCategoryManagementData(month: string) {
 }
 
 export async function getRulesManagementData() {
-  return withDatabaseDiagnostics("management.rules.load", async () => {
+  return withDatabaseDiagnostics('management.rules.load', async () => {
     const [rules, categoryRows] = await Promise.all([
       db
         .select({
@@ -62,18 +65,18 @@ export async function getRulesManagementData() {
         .innerJoin(categories, eq(merchantRules.categoryId, categories.id))
         .orderBy(asc(merchantRules.priority), asc(merchantRules.pattern)),
       db
-        .select({ id: categories.id, name: categories.name })
+        .select({id: categories.id, name: categories.name})
         .from(categories)
         .where(eq(categories.isActive, true))
         .orderBy(categories.sortOrder, categories.name),
     ]);
 
-    return { rules, categories: categoryRows };
+    return {rules, categories: categoryRows};
   });
 }
 
 export async function getSettingsData() {
-  return withDatabaseDiagnostics("management.settings.load", async () => {
+  return withDatabaseDiagnostics('management.settings.load', async () => {
     const [settingsRows, methodRows] = await Promise.all([
       db.select().from(appSettings).limit(1),
       db.select().from(paymentMethods).orderBy(paymentMethods.name),

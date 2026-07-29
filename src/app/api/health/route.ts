@@ -1,14 +1,14 @@
-import { sql } from "drizzle-orm";
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostics";
-import { createIncidentId } from "@/lib/observability/logger";
+import {sql} from 'drizzle-orm';
+import {NextResponse} from 'next/server';
+import {db} from '@/lib/db';
+import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
+import {createIncidentId} from '@/lib/observability/logger';
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 const noStoreHeaders = {
-  "Cache-Control": "no-store",
+  'Cache-Control': 'no-store',
 };
 
 export async function GET() {
@@ -16,19 +16,19 @@ export async function GET() {
 
   try {
     await withDatabaseDiagnostics(
-      "health.database.check",
+      'health.database.check',
       () => db.execute(sql`select 1`),
-      { incidentId },
+      {incidentId},
     );
 
     return NextResponse.json(
-      { status: "ok", incidentId: null },
-      { status: 200, headers: noStoreHeaders },
+      {status: 'ok', incidentId: null},
+      {status: 200, headers: noStoreHeaders},
     );
   } catch {
     return NextResponse.json(
-      { status: "degraded", incidentId },
-      { status: 503, headers: noStoreHeaders },
+      {status: 'degraded', incidentId},
+      {status: 503, headers: noStoreHeaders},
     );
   }
 }

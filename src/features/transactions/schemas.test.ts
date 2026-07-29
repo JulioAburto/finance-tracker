@@ -1,33 +1,30 @@
-import {
-  isSavingsCategoryName,
-  validateTransactionInput,
-} from "./schemas";
+import {isSavingsCategoryName, validateTransactionInput} from './schemas';
 
 const validExpense = {
-  name: "La Colonia",
-  amount: "850",
-  currency: "NIO",
-  exchangeRate: "36.6243",
-  date: "2026-07-05",
-  type: "expense",
-  categoryId: "00000000-0000-4000-8000-000000000002",
-  paymentMethodId: "00000000-0000-4000-8000-000000000003",
-  note: "",
+  name: 'La Colonia',
+  amount: '850',
+  currency: 'NIO',
+  exchangeRate: '36.6243',
+  date: '2026-07-05',
+  type: 'expense',
+  categoryId: '00000000-0000-4000-8000-000000000002',
+  paymentMethodId: '00000000-0000-4000-8000-000000000003',
+  note: '',
 };
 
-describe("transaction validation", () => {
-  it("acepta un gasto válido y convierte campos numéricos", () => {
+describe('transaction validation', () => {
+  it('acepta un gasto válido y convierte campos numéricos', () => {
     const result = validateTransactionInput(validExpense);
 
     expect(result).toEqual({
       success: true,
       data: {
-        name: "La Colonia",
+        name: 'La Colonia',
         amount: 850,
-        currency: "NIO",
+        currency: 'NIO',
         exchangeRate: 36.6243,
-        date: "2026-07-05",
-        type: "expense",
+        date: '2026-07-05',
+        type: 'expense',
         categoryId: validExpense.categoryId,
         paymentMethodId: validExpense.paymentMethodId,
         note: null,
@@ -35,11 +32,11 @@ describe("transaction validation", () => {
     });
   });
 
-  it("exige categoría y método de pago para gastos", () => {
+  it('exige categoría y método de pago para gastos', () => {
     const result = validateTransactionInput({
       ...validExpense,
-      categoryId: "",
-      paymentMethodId: "",
+      categoryId: '',
+      paymentMethodId: '',
     });
 
     expect(result.success).toBe(false);
@@ -49,40 +46,40 @@ describe("transaction validation", () => {
     }
   });
 
-  it("permite una transferencia sin categoría", () => {
+  it('permite una transferencia sin categoría', () => {
     const result = validateTransactionInput({
       ...validExpense,
-      type: "transfer",
-      categoryId: "",
+      type: 'transfer',
+      categoryId: '',
     });
 
     expect(result.success).toBe(true);
   });
 
-  it("acepta un movimiento válido en USD", () => {
+  it('acepta un movimiento válido en USD', () => {
     const result = validateTransactionInput({
       ...validExpense,
-      amount: "24.99",
-      currency: "USD",
-      type: "transfer",
-      categoryId: "",
-      paymentMethodId: "",
+      amount: '24.99',
+      currency: 'USD',
+      type: 'transfer',
+      categoryId: '',
+      paymentMethodId: '',
     });
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.currency).toBe("USD");
+      expect(result.data.currency).toBe('USD');
       expect(result.data.amount).toBe(24.99);
-      expect(result.data.type).toBe("transfer");
+      expect(result.data.type).toBe('transfer');
     }
   });
 
-  it("rechaza montos, tasas y fechas inválidas", () => {
+  it('rechaza montos, tasas y fechas inválidas', () => {
     const result = validateTransactionInput({
       ...validExpense,
-      amount: "0",
-      exchangeRate: "-1",
-      date: "2026-02-30",
+      amount: '0',
+      exchangeRate: '-1',
+      date: '2026-02-30',
     });
 
     expect(result.success).toBe(false);
@@ -93,10 +90,10 @@ describe("transaction validation", () => {
     }
   });
 
-  it("rechaza nombres demasiado largos", () => {
+  it('rechaza nombres demasiado largos', () => {
     const result = validateTransactionInput({
       ...validExpense,
-      name: "a".repeat(181),
+      name: 'a'.repeat(181),
     });
 
     expect(result.success).toBe(false);
@@ -105,9 +102,9 @@ describe("transaction validation", () => {
     }
   });
 
-  it("identifica la categoría de ahorro sin depender de mayúsculas", () => {
-    expect(isSavingsCategoryName(" Ahorro ")).toBe(true);
-    expect(isSavingsCategoryName("AHORRO")).toBe(true);
-    expect(isSavingsCategoryName("Supermercado")).toBe(false);
+  it('identifica la categoría de ahorro sin depender de mayúsculas', () => {
+    expect(isSavingsCategoryName(' Ahorro ')).toBe(true);
+    expect(isSavingsCategoryName('AHORRO')).toBe(true);
+    expect(isSavingsCategoryName('Supermercado')).toBe(false);
   });
 });

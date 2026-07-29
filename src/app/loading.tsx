@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Skeleton, Stack } from "@mui/material";
+import {Box, Card, CardContent, Skeleton, Stack} from '@mui/material';
 
 export default function Loading() {
   return (
@@ -10,12 +10,12 @@ export default function Loading() {
 
       <Box
         sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: 2,
         }}
       >
-        {[0, 1, 2, 3].map((item) => (
+        {[0, 1, 2, 3].map(item => (
           <Card key={item}>
             <CardContent>
               <Skeleton variant="text" width="55%" />
@@ -28,7 +28,7 @@ export default function Loading() {
       <Card>
         <CardContent>
           <Stack spacing={1}>
-            {[0, 1, 2, 3].map((item) => (
+            {[0, 1, 2, 3].map(item => (
               <Skeleton key={item} variant="rounded" height={44} />
             ))}
           </Stack>

@@ -129,20 +129,20 @@ pnpm build
 
 ## Scripts disponibles
 
-| Script | Función |
-| --- | --- |
-| `pnpm dev` | Servidor HTTP de desarrollo |
-| `pnpm run dev:https` | Servidor HTTPS de desarrollo |
-| `pnpm test` | Jest |
-| `pnpm test:watch` | Jest en modo watch |
-| `pnpm lint` | ESLint |
-| `pnpm build` | Build de producción |
-| `pnpm start` | Ejecutar el build |
-| `pnpm db:generate` | Generar migraciones |
-| `pnpm db:migrate` | Aplicar migraciones |
-| `pnpm db:push` | Sincronización directa; usar con cautela |
-| `pnpm db:studio` | Drizzle Studio |
-| `pnpm db:seed` | Cargar catálogos iniciales y transacciones mock |
+| Script               | Función                                         |
+| -------------------- | ----------------------------------------------- |
+| `pnpm dev`           | Servidor HTTP de desarrollo                     |
+| `pnpm run dev:https` | Servidor HTTPS de desarrollo                    |
+| `pnpm test`          | Jest                                            |
+| `pnpm test:watch`    | Jest en modo watch                              |
+| `pnpm lint`          | ESLint                                          |
+| `pnpm build`         | Build de producción                             |
+| `pnpm start`         | Ejecutar el build                               |
+| `pnpm db:generate`   | Generar migraciones                             |
+| `pnpm db:migrate`    | Aplicar migraciones                             |
+| `pnpm db:push`       | Sincronización directa; usar con cautela        |
+| `pnpm db:studio`     | Drizzle Studio                                  |
+| `pnpm db:seed`       | Cargar catálogos iniciales y transacciones mock |
 
 ## Archivos principales
 

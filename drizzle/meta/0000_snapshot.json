@@ -128,12 +128,8 @@
           "name": "alerts_category_id_categories_id_fk",
           "tableFrom": "alerts",
           "tableTo": "categories",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -141,12 +137,8 @@
           "name": "alerts_transaction_id_transactions_id_fk",
           "tableFrom": "alerts",
           "tableTo": "transactions",
-          "columnsFrom": [
-            "transaction_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["transaction_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -321,9 +313,7 @@
         "categories_name_unique": {
           "name": "categories_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -451,12 +441,8 @@
           "name": "merchant_rules_category_id_categories_id_fk",
           "tableFrom": "merchant_rules",
           "tableTo": "categories",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -466,9 +452,7 @@
         "merchant_rules_pattern_unique": {
           "name": "merchant_rules_pattern_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "pattern"
-          ]
+          "columns": ["pattern"]
         }
       },
       "policies": {},
@@ -556,12 +540,8 @@
           "name": "monthly_budget_categories_monthly_budget_id_monthly_budgets_id_fk",
           "tableFrom": "monthly_budget_categories",
           "tableTo": "monthly_budgets",
-          "columnsFrom": [
-            "monthly_budget_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["monthly_budget_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -569,12 +549,8 @@
           "name": "monthly_budget_categories_category_id_categories_id_fk",
           "tableFrom": "monthly_budget_categories",
           "tableTo": "categories",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -584,10 +560,7 @@
         "monthly_budget_categories_budget_category_unique": {
           "name": "monthly_budget_categories_budget_category_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "monthly_budget_id",
-            "category_id"
-          ]
+          "columns": ["monthly_budget_id", "category_id"]
         }
       },
       "policies": {},
@@ -651,9 +624,7 @@
         "monthly_budgets_month_unique": {
           "name": "monthly_budgets_month_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "month"
-          ]
+          "columns": ["month"]
         }
       },
       "policies": {},
@@ -771,9 +742,7 @@
         "payment_methods_name_unique": {
           "name": "payment_methods_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -988,12 +957,8 @@
           "name": "transactions_category_id_categories_id_fk",
           "tableFrom": "transactions",
           "tableTo": "categories",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1001,12 +966,8 @@
           "name": "transactions_payment_method_id_payment_methods_id_fk",
           "tableFrom": "transactions",
           "tableTo": "payment_methods",
-          "columnsFrom": [
-            "payment_method_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_method_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1043,20 +1004,12 @@
     "public.alert_level": {
       "name": "alert_level",
       "schema": "public",
-      "values": [
-        "info",
-        "warning",
-        "danger",
-        "exceeded"
-      ]
+      "values": ["info", "warning", "danger", "exceeded"]
     },
     "public.currency": {
       "name": "currency",
       "schema": "public",
-      "values": [
-        "USD",
-        "NIO"
-      ]
+      "values": ["USD", "NIO"]
     },
     "public.payment_method_type": {
       "name": "payment_method_type",
@@ -1074,11 +1027,7 @@
     "public.transaction_type": {
       "name": "transaction_type",
       "schema": "public",
-      "values": [
-        "income",
-        "expense",
-        "transfer"
-      ]
+      "values": ["income", "expense", "transfer"]
     }
   },
   "schemas": {},

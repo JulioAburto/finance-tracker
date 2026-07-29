@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Alert,
@@ -9,10 +9,10 @@ import {
   Stack,
   TextField,
   Typography,
-} from "@mui/material";
-import Link from "next/link";
-import { useActionState, useEffect, useId, useState } from "react";
-import { isSavingsCategoryName } from "../schemas";
+} from '@mui/material';
+import Link from 'next/link';
+import {useActionState, useEffect, useId, useState} from 'react';
+import {isSavingsCategoryName} from '../schemas';
 import type {
   TransactionField,
   PaymentMethodFormOption,
@@ -20,32 +20,32 @@ import type {
   TransactionFormState,
   TransactionFormValues,
   TransactionType,
-} from "../types";
-import { SubmitButton } from "./submit-button";
+} from '../types';
+import {SubmitButton} from './submit-button';
 
-const initialState: TransactionFormState = { status: "idle" };
+const initialState: TransactionFormState = {status: 'idle'};
 const MOBILE_FIELD_SX = {
-  "& .MuiInputBase-input": {
+  '& .MuiInputBase-input': {
     fontSize: 16,
   },
-  "& .MuiInputBase-inputMultiline": {
+  '& .MuiInputBase-inputMultiline': {
     fontSize: 16,
   },
-  "& .MuiSelect-select": {
+  '& .MuiSelect-select': {
     fontSize: 16,
   },
 } as const;
 
 const FIELD_ID_SUFFIX: Record<TransactionField, string> = {
-  amount: "amount",
-  currency: "currency",
-  name: "name",
-  categoryId: "category",
-  paymentMethodId: "payment-method",
-  date: "date",
-  type: "type",
-  exchangeRate: "exchange-rate",
-  note: "note",
+  amount: 'amount',
+  currency: 'currency',
+  name: 'name',
+  categoryId: 'category',
+  paymentMethodId: 'payment-method',
+  date: 'date',
+  type: 'type',
+  exchangeRate: 'exchange-rate',
+  note: 'note',
 };
 
 type TransactionFormProps = {
@@ -77,13 +77,15 @@ export function TransactionForm({
   const fieldIdPrefix = useId();
   const error = (field: keyof NonNullable<typeof state.fieldErrors>) =>
     state.fieldErrors?.[field];
-  const isExpense = transactionType === "expense";
+  const isExpense = transactionType === 'expense';
   const selectedPaymentMethod = paymentMethods.find(
-    (method) => method.id === paymentMethodId,
+    method => method.id === paymentMethodId,
   );
-  const isCreditCard = selectedPaymentMethod?.type === "credit_card";
+  const isCreditCard = selectedPaymentMethod?.type === 'credit_card';
   const hasFieldErrors = Boolean(
-    state.status === "error" && state.fieldErrors && Object.keys(state.fieldErrors).length > 0,
+    state.status === 'error' &&
+    state.fieldErrors &&
+    Object.keys(state.fieldErrors).length > 0,
   );
 
   function getFieldId(field: TransactionField): string {
@@ -94,36 +96,38 @@ export function TransactionForm({
     if (!state.fieldErrors) return;
 
     const fieldOrder: TransactionField[] = [
-      "amount",
-      "currency",
-      "name",
-      "categoryId",
-      "paymentMethodId",
-      "date",
-      "type",
-      "exchangeRate",
-      "note",
+      'amount',
+      'currency',
+      'name',
+      'categoryId',
+      'paymentMethodId',
+      'date',
+      'type',
+      'exchangeRate',
+      'note',
     ];
-    const firstInvalidField = fieldOrder.find((field) => state.fieldErrors?.[field]);
+    const firstInvalidField = fieldOrder.find(
+      field => state.fieldErrors?.[field],
+    );
     if (!firstInvalidField) return;
 
     const target = document.getElementById(getFieldId(firstInvalidField));
     if (target instanceof HTMLElement) {
       target.focus();
-      target.scrollIntoView({ block: "center", behavior: "smooth" });
+      target.scrollIntoView({block: 'center', behavior: 'smooth'});
     }
   }, [state.fieldErrors]);
 
   return (
     <Box component="form" action={formAction} noValidate>
-      <Stack spacing={3} sx={{ minWidth: 0 }}>
-        {state.status === "error" && state.message ? (
+      <Stack spacing={3} sx={{minWidth: 0}}>
+        {state.status === 'error' && state.message ? (
           <Alert severity="error">{state.message}</Alert>
         ) : null}
 
         <Stack spacing={2}>
           <div>
-            <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+            <Typography variant="subtitle1" sx={{fontWeight: 800}}>
               Datos principales
             </Typography>
             <Typography color="text.secondary" variant="body2">
@@ -131,33 +135,37 @@ export function TransactionForm({
             </Typography>
           </div>
 
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+          <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
             <TextField
-              id={getFieldId("amount")}
+              id={getFieldId('amount')}
               name="amount"
               label="Monto"
               type="number"
               defaultValue={initialValues.amount}
               slotProps={{
-                htmlInput: { min: 0.01, step: 0.01, inputMode: "decimal" },
+                htmlInput: {min: 0.01, step: 0.01, inputMode: 'decimal'},
               }}
               required
               fullWidth
-              error={Boolean(error("amount"))}
-              helperText={error("amount") ?? "Ingresa el monto exacto del movimiento."}
+              error={Boolean(error('amount'))}
+              helperText={
+                error('amount') ?? 'Ingresa el monto exacto del movimiento.'
+              }
               sx={MOBILE_FIELD_SX}
             />
             <TextField
-              id={getFieldId("currency")}
+              id={getFieldId('currency')}
               select
               name="currency"
               label="Moneda"
               value={currency}
-              onChange={(event) => setCurrency(event.target.value as "USD" | "NIO")}
+              onChange={event =>
+                setCurrency(event.target.value as 'USD' | 'NIO')
+              }
               required
               fullWidth
-              error={Boolean(error("currency"))}
-              helperText={error("currency")}
+              error={Boolean(error('currency'))}
+              helperText={error('currency')}
               sx={MOBILE_FIELD_SX}
             >
               <MenuItem value="USD">USD</MenuItem>
@@ -166,14 +174,14 @@ export function TransactionForm({
           </Stack>
 
           <TextField
-            id={getFieldId("name")}
+            id={getFieldId('name')}
             name="name"
             label="Nombre o comercio"
             defaultValue={initialValues.name}
             required
             fullWidth
-            error={Boolean(error("name"))}
-            helperText={error("name") ?? "Ejemplo: La Colonia"}
+            error={Boolean(error('name'))}
+            helperText={error('name') ?? 'Ejemplo: La Colonia'}
             sx={MOBILE_FIELD_SX}
           />
         </Stack>
@@ -182,37 +190,37 @@ export function TransactionForm({
 
         <Stack spacing={2}>
           <div>
-            <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+            <Typography variant="subtitle1" sx={{fontWeight: 800}}>
               Clasificación y pago
             </Typography>
             <Typography color="text.secondary" variant="body2">
-              La categoría indica en qué se usó el dinero; el método indica
-              cómo se pagó.
+              La categoría indica en qué se usó el dinero; el método indica cómo
+              se pagó.
             </Typography>
           </div>
 
-          <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+          <Stack direction={{xs: 'column', md: 'row'}} spacing={2}>
             <TextField
-              id={getFieldId("categoryId")}
+              id={getFieldId('categoryId')}
               select
               name="categoryId"
               label="Categoría"
               defaultValue={initialValues.categoryId}
               required={isExpense}
               fullWidth
-              error={Boolean(error("categoryId"))}
+              error={Boolean(error('categoryId'))}
               helperText={
-                error("categoryId") ??
+                error('categoryId') ??
                 (isExpense
-                  ? "Indica en qué se utilizó el dinero."
-                  : "Opcional para ingresos y transferencias.")
+                  ? 'Indica en qué se utilizó el dinero.'
+                  : 'Opcional para ingresos y transferencias.')
               }
               sx={MOBILE_FIELD_SX}
             >
               <MenuItem value="">
-                {isExpense ? "Selecciona una categoría" : "Sin categoría"}
+                {isExpense ? 'Selecciona una categoría' : 'Sin categoría'}
               </MenuItem>
-              {categories.map((category) => (
+              {categories.map(category => (
                 <MenuItem
                   key={category.id}
                   value={category.id}
@@ -224,29 +232,29 @@ export function TransactionForm({
             </TextField>
 
             <TextField
-              id={getFieldId("paymentMethodId")}
+              id={getFieldId('paymentMethodId')}
               select
               name="paymentMethodId"
               label="Método de pago"
               value={paymentMethodId}
-              onChange={(event) => setPaymentMethodId(event.target.value)}
+              onChange={event => setPaymentMethodId(event.target.value)}
               required={isExpense}
               fullWidth
-              error={Boolean(error("paymentMethodId"))}
+              error={Boolean(error('paymentMethodId'))}
               helperText={
-                error("paymentMethodId") ??
+                error('paymentMethodId') ??
                 (isExpense
-                  ? "Indica cómo se pagó."
-                  : "Opcional para ingresos y transferencias.")
+                  ? 'Indica cómo se pagó.'
+                  : 'Opcional para ingresos y transferencias.')
               }
               sx={MOBILE_FIELD_SX}
             >
               <MenuItem value="">
                 {isExpense
-                  ? "Selecciona un método de pago"
-                  : "Sin método de pago"}
+                  ? 'Selecciona un método de pago'
+                  : 'Sin método de pago'}
               </MenuItem>
-              {paymentMethods.map((method) => (
+              {paymentMethods.map(method => (
                 <MenuItem key={method.id} value={method.id}>
                   {method.name}
                 </MenuItem>
@@ -254,33 +262,35 @@ export function TransactionForm({
             </TextField>
           </Stack>
 
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+          <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
             <TextField
-              id={getFieldId("date")}
+              id={getFieldId('date')}
               name="date"
               label="Fecha"
               type="date"
               defaultValue={initialValues.date}
-              slotProps={{ inputLabel: { shrink: true } }}
+              slotProps={{inputLabel: {shrink: true}}}
               required
               fullWidth
-              error={Boolean(error("date"))}
-              helperText={error("date")}
+              error={Boolean(error('date'))}
+              helperText={error('date')}
               sx={MOBILE_FIELD_SX}
             />
             <TextField
-              id={getFieldId("type")}
+              id={getFieldId('type')}
               select
               name="type"
               label="Tipo de transacción"
               value={transactionType}
-              onChange={(event) =>
+              onChange={event =>
                 setTransactionType(event.target.value as TransactionType)
               }
               required
               fullWidth
-              error={Boolean(error("type"))}
-              helperText={error("type") ?? "Elige si es gasto, ingreso o transferencia."}
+              error={Boolean(error('type'))}
+              helperText={
+                error('type') ?? 'Elige si es gasto, ingreso o transferencia.'
+              }
               sx={MOBILE_FIELD_SX}
             >
               <MenuItem value="expense">Gasto</MenuItem>
@@ -297,8 +307,8 @@ export function TransactionForm({
           {isCreditCard ? (
             <Alert severity="info">
               {isExpense
-                ? "Esta compra contará como gasto. Cuando pagues la tarjeta, registra el pago como transferencia."
-                : "El pago de la tarjeta no contará como un gasto nuevo."}
+                ? 'Esta compra contará como gasto. Cuando pagues la tarjeta, registra el pago como transferencia.'
+                : 'El pago de la tarjeta no contará como un gasto nuevo.'}
             </Alert>
           ) : null}
         </Stack>
@@ -307,7 +317,7 @@ export function TransactionForm({
 
         <Stack spacing={2}>
           <div>
-            <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+            <Typography variant="subtitle1" sx={{fontWeight: 800}}>
               Conversión y nota
             </Typography>
             <Typography color="text.secondary" variant="body2">
@@ -316,56 +326,59 @@ export function TransactionForm({
           </div>
 
           <TextField
-            id={getFieldId("exchangeRate")}
+            id={getFieldId('exchangeRate')}
             name="exchangeRate"
             label="Tipo de cambio (1 USD a NIO)"
             type="number"
             defaultValue={initialValues.exchangeRate}
             slotProps={{
-              htmlInput: { min: 0.0001, step: 0.0001, inputMode: "decimal" },
+              htmlInput: {min: 0.0001, step: 0.0001, inputMode: 'decimal'},
             }}
             required
             fullWidth
-            error={Boolean(error("exchangeRate"))}
+            error={Boolean(error('exchangeRate'))}
             helperText={
-              error("exchangeRate") ??
-              (currency === "USD"
-                ? "Aunque registres USD, la tasa se guarda para conservar el valor histórico en NIO."
-                : "Se usa para guardar los valores históricos en USD y NIO.")
+              error('exchangeRate') ??
+              (currency === 'USD'
+                ? 'Aunque registres USD, la tasa se guarda para conservar el valor histórico en NIO.'
+                : 'Se usa para guardar los valores históricos en USD y NIO.')
             }
             sx={MOBILE_FIELD_SX}
           />
 
           <TextField
-            id={getFieldId("note")}
+            id={getFieldId('note')}
             name="note"
             label="Nota opcional"
             defaultValue={initialValues.note}
             multiline
             minRows={3}
             fullWidth
-            error={Boolean(error("note"))}
-            helperText={error("note") ?? "Opcional. Úsala para un detalle que quieras recordar."}
+            error={Boolean(error('note'))}
+            helperText={
+              error('note') ??
+              'Opcional. Úsala para un detalle que quieras recordar.'
+            }
             sx={MOBILE_FIELD_SX}
           />
         </Stack>
 
         <Box
           sx={{
-            position: { xs: "sticky", sm: "static" },
+            position: {xs: 'sticky', sm: 'static'},
             bottom: 0,
             zIndex: 1,
             mt: 1,
-            mx: { xs: -2, md: 0 },
-            px: { xs: 2, md: 0 },
+            mx: {xs: -2, md: 0},
+            px: {xs: 2, md: 0},
             pt: 2,
             pb: {
-              xs: "max(16px, env(safe-area-inset-bottom))",
+              xs: 'max(16px, env(safe-area-inset-bottom))',
               sm: 0,
             },
-            borderTop: "1px solid",
-            borderColor: { xs: "divider", sm: "transparent" },
-            bgcolor: "background.paper",
+            borderTop: '1px solid',
+            borderColor: {xs: 'divider', sm: 'transparent'},
+            bgcolor: 'background.paper',
           }}
         >
           <Stack spacing={1.25}>
@@ -375,13 +388,13 @@ export function TransactionForm({
               </Typography>
             ) : null}
 
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+            <Stack direction={{xs: 'column', sm: 'row'}} spacing={1}>
               <SubmitButton label={submitLabel} fullWidth />
               <Button
                 component={Link}
                 href="/transactions"
                 variant="text"
-                sx={{ width: { xs: "100%", sm: "auto" }, minHeight: 44 }}
+                sx={{width: {xs: '100%', sm: 'auto'}, minHeight: 44}}
               >
                 Cancelar
               </Button>

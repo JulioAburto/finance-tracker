@@ -1,44 +1,44 @@
-import { createTheme } from "@mui/material/styles";
+import {createTheme} from '@mui/material/styles';
 
 export const theme = createTheme({
   palette: {
-    mode: "light",
+    mode: 'light',
     primary: {
-      main: "#173A52",
-      light: "#E8F0F5",
-      dark: "#0F2A3D",
-      contrastText: "#FFFFFF",
+      main: '#173A52',
+      light: '#E8F0F5',
+      dark: '#0F2A3D',
+      contrastText: '#FFFFFF',
     },
     secondary: {
-      main: "#147D6F",
-      light: "#E5F4F0",
-      dark: "#0D5E54",
-      contrastText: "#FFFFFF",
+      main: '#147D6F',
+      light: '#E5F4F0',
+      dark: '#0D5E54',
+      contrastText: '#FFFFFF',
     },
     background: {
-      default: "#F5F7F8",
-      paper: "#FFFFFF",
+      default: '#F5F7F8',
+      paper: '#FFFFFF',
     },
     text: {
-      primary: "#17232D",
-      secondary: "#62717D",
+      primary: '#17232D',
+      secondary: '#62717D',
     },
-    divider: "#DDE4E8",
+    divider: '#DDE4E8',
     success: {
-      main: "#24845D",
-      light: "#E8F5EE",
+      main: '#24845D',
+      light: '#E8F5EE',
     },
     warning: {
-      main: "#B86E18",
-      light: "#FFF3DF",
+      main: '#B86E18',
+      light: '#FFF3DF',
     },
     error: {
-      main: "#C44747",
-      light: "#FCEBEB",
+      main: '#C44747',
+      light: '#FCEBEB',
     },
     info: {
-      main: "#3977A8",
-      light: "#EAF2F8",
+      main: '#3977A8',
+      light: '#EAF2F8',
     },
   },
   shape: {
@@ -48,29 +48,29 @@ export const theme = createTheme({
     fontFamily:
       '"Google Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     h4: {
-      fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
+      fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
       fontWeight: 700,
-      letterSpacing: "-0.025em",
+      letterSpacing: '-0.025em',
       lineHeight: 1.2,
     },
     h5: {
       fontWeight: 700,
-      letterSpacing: "-0.015em",
+      letterSpacing: '-0.015em',
     },
     h6: {
       fontWeight: 700,
-      letterSpacing: "-0.01em",
+      letterSpacing: '-0.01em',
     },
     button: {
       fontWeight: 700,
-      textTransform: "none",
+      textTransform: 'none',
     },
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: "#F5F7F8",
+          backgroundColor: '#F5F7F8',
         },
       },
     },
@@ -82,8 +82,8 @@ export const theme = createTheme({
         root: {
           borderRadius: 10,
           minHeight: 44,
-          "&.Mui-focusVisible": {
-            outline: "3px solid rgba(20, 125, 111, 0.35)",
+          '&.Mui-focusVisible': {
+            outline: '3px solid rgba(20, 125, 111, 0.35)',
             outlineOffset: 2,
           },
         },
@@ -94,8 +94,8 @@ export const theme = createTheme({
         root: {
           minWidth: 44,
           minHeight: 44,
-          "&.Mui-focusVisible": {
-            outline: "3px solid rgba(20, 125, 111, 0.35)",
+          '&.Mui-focusVisible': {
+            outline: '3px solid rgba(20, 125, 111, 0.35)',
             outlineOffset: 2,
           },
         },
@@ -104,24 +104,24 @@ export const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundImage: "none",
+          backgroundImage: 'none',
         },
       },
     },
     MuiCard: {
       defaultProps: {
-        variant: "outlined",
+        variant: 'outlined',
       },
       styleOverrides: {
         root: {
-          borderColor: "#DDE4E8",
-          boxShadow: "0 8px 24px rgba(23, 58, 82, 0.05)",
+          borderColor: '#DDE4E8',
+          boxShadow: '0 8px 24px rgba(23, 58, 82, 0.05)',
         },
       },
     },
     MuiTextField: {
       defaultProps: {
-        variant: "outlined",
+        variant: 'outlined',
       },
     },
     MuiOutlinedInput: {
@@ -131,8 +131,8 @@ export const theme = createTheme({
           minWidth: 0,
         },
         input: {
-          "@media (max-width: 600px)": {
-            fontSize: "1rem",
+          '@media (max-width: 600px)': {
+            fontSize: '1rem',
           },
         },
       },
@@ -145,19 +145,19 @@ export const theme = createTheme({
           marginRight: 0,
         },
         label: {
-          overflowWrap: "anywhere",
+          overflowWrap: 'anywhere',
         },
       },
     },
     MuiTableCell: {
       styleOverrides: {
         head: {
-          color: "#62717D",
-          backgroundColor: "#F8FAFB",
-          fontSize: "0.75rem",
+          color: '#62717D',
+          backgroundColor: '#F8FAFB',
+          fontSize: '0.75rem',
           fontWeight: 800,
-          letterSpacing: "0.04em",
-          textTransform: "uppercase",
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase',
         },
       },
     },

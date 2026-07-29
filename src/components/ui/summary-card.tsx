@@ -1,5 +1,5 @@
-import { Card, CardContent, Stack, Typography } from "@mui/material";
-import type { ReactNode } from "react";
+import {Card, CardContent, Stack, Typography} from '@mui/material';
+import type {ReactNode} from 'react';
 
 type SummaryCardProps = {
   label: string;
@@ -15,17 +15,19 @@ export function SummaryCard({
   indicator,
 }: SummaryCardProps) {
   return (
-    <Card sx={{ height: "100%" }}>
-      <CardContent sx={{ p: { xs: 2, md: 2.5 }, "&:last-child": { pb: { xs: 2, md: 2.5 } } }}>
-        <Stack spacing={1} sx={{ minWidth: 0 }}>
+    <Card sx={{height: '100%'}}>
+      <CardContent
+        sx={{p: {xs: 2, md: 2.5}, '&:last-child': {pb: {xs: 2, md: 2.5}}}}
+      >
+        <Stack spacing={1} sx={{minWidth: 0}}>
           <Stack
             direction="row"
-            sx={{ justifyContent: "space-between", gap: 1, minWidth: 0 }}
+            sx={{justifyContent: 'space-between', gap: 1, minWidth: 0}}
           >
             <Typography
               color="text.secondary"
               variant="body2"
-              sx={{ minWidth: 0, overflowWrap: "anywhere" }}
+              sx={{minWidth: 0, overflowWrap: 'anywhere'}}
             >
               {label}
             </Typography>
@@ -33,7 +35,7 @@ export function SummaryCard({
           </Stack>
           <Typography
             variant="h5"
-            sx={{ lineHeight: 1.25, overflowWrap: "anywhere" }}
+            sx={{lineHeight: 1.25, overflowWrap: 'anywhere'}}
           >
             {value}
           </Typography>
@@ -41,7 +43,7 @@ export function SummaryCard({
             <Typography
               color="text.secondary"
               variant="body2"
-              sx={{ overflowWrap: "anywhere" }}
+              sx={{overflowWrap: 'anywhere'}}
             >
               {context}
             </Typography>

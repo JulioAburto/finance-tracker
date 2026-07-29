@@ -29,18 +29,18 @@ No es un sistema contable ni bancario completo.
 
 ## Decisiones vigentes
 
-| Tema | Decisión |
-| --- | --- |
-| Framework | Next.js App Router con TypeScript |
-| UI | MUI; no Tailwind |
-| Base de datos | Supabase Postgres |
-| Acceso a datos | Drizzle ORM con `postgres` |
-| Despliegue previsto | Vercel |
-| Usuario | Único usuario durante MVP v1 |
-| Moneda interna | USD |
-| Monedas capturadas | USD y NIO |
-| Clasificación | Selección manual, luego reglas y finalmente IA opcional |
-| Autenticación | No requerida localmente; necesaria alguna protección al publicar |
+| Tema                | Decisión                                                         |
+| ------------------- | ---------------------------------------------------------------- |
+| Framework           | Next.js App Router con TypeScript                                |
+| UI                  | MUI; no Tailwind                                                 |
+| Base de datos       | Supabase Postgres                                                |
+| Acceso a datos      | Drizzle ORM con `postgres`                                       |
+| Despliegue previsto | Vercel                                                           |
+| Usuario             | Único usuario durante MVP v1                                     |
+| Moneda interna      | USD                                                              |
+| Monedas capturadas  | USD y NIO                                                        |
+| Clasificación       | Selección manual, luego reglas y finalmente IA opcional          |
+| Autenticación       | No requerida localmente; necesaria alguna protección al publicar |
 
 ## Estado actual
 

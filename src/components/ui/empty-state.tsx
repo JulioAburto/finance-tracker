@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import {Box, Button, Stack, Typography} from '@mui/material';
 
 type EmptyStateProps = {
   title: string;
@@ -17,10 +17,10 @@ export function EmptyState({
     <Stack
       spacing={1.5}
       sx={{
-        alignItems: "center",
+        alignItems: 'center',
         py: 4,
         px: 2,
-        textAlign: "center",
+        textAlign: 'center',
       }}
     >
       <Box
@@ -28,20 +28,20 @@ export function EmptyState({
         sx={{
           width: 44,
           height: 44,
-          borderRadius: "50%",
-          bgcolor: "primary.light",
-          border: "1px solid",
-          borderColor: "divider",
+          borderRadius: '50%',
+          bgcolor: 'primary.light',
+          border: '1px solid',
+          borderColor: 'divider',
         }}
       />
-      <Box sx={{ minWidth: 0 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+      <Box sx={{minWidth: 0}}>
+        <Typography variant="subtitle1" sx={{fontWeight: 700}}>
           {title}
         </Typography>
         <Typography
           color="text.secondary"
           variant="body2"
-          sx={{ overflowWrap: "anywhere" }}
+          sx={{overflowWrap: 'anywhere'}}
         >
           {description}
         </Typography>
@@ -51,7 +51,7 @@ export function EmptyState({
           href={actionHref}
           variant="contained"
           size="small"
-          sx={{ minHeight: 44, width: { xs: "100%", sm: "auto" } }}
+          sx={{minHeight: 44, width: {xs: '100%', sm: 'auto'}}}
         >
           {actionLabel}
         </Button>

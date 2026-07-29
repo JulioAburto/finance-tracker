@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Button } from "@mui/material";
-import { useFormStatus } from "react-dom";
+import {Button} from '@mui/material';
+import {useFormStatus} from 'react-dom';
 
 export function SubmitButton({
   label,
@@ -10,7 +10,7 @@ export function SubmitButton({
   label: string;
   fullWidth?: boolean;
 }) {
-  const { pending } = useFormStatus();
+  const {pending} = useFormStatus();
 
   return (
     <Button
@@ -18,9 +18,9 @@ export function SubmitButton({
       variant="contained"
       disabled={pending}
       fullWidth={fullWidth}
-      sx={{ width: fullWidth ? "100%" : { xs: "100%", sm: "auto" } }}
+      sx={{width: fullWidth ? '100%' : {xs: '100%', sm: 'auto'}}}
     >
-      {pending ? "Guardando..." : label}
+      {pending ? 'Guardando...' : label}
     </Button>
   );
 }

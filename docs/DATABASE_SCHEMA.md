@@ -88,14 +88,14 @@ exceeded
 
 Configuración global. El seed mantiene una fila conocida.
 
-| Columna | Tipo | Reglas |
-| --- | --- | --- |
-| `id` | uuid | PK |
-| `default_currency` | currency | requerido, `USD` |
-| `default_exchange_rate` | numeric(12,4) | requerido, mayor que 0 |
-| `credit_card_mode_enabled` | boolean | requerido, `false` |
-| `created_at` | timestamptz | requerido |
-| `updated_at` | timestamptz | requerido |
+| Columna                    | Tipo          | Reglas                 |
+| -------------------------- | ------------- | ---------------------- |
+| `id`                       | uuid          | PK                     |
+| `default_currency`         | currency      | requerido, `USD`       |
+| `default_exchange_rate`    | numeric(12,4) | requerido, mayor que 0 |
+| `credit_card_mode_enabled` | boolean       | requerido, `false`     |
+| `created_at`               | timestamptz   | requerido              |
+| `updated_at`               | timestamptz   | requerido              |
 
 La tasa representa cuántos NIO equivalen a 1 USD.
 
@@ -103,19 +103,19 @@ La tasa representa cuántos NIO equivalen a 1 USD.
 
 Describe en qué se utilizó el dinero.
 
-| Columna | Tipo | Reglas |
-| --- | --- | --- |
-| `id` | uuid | PK |
-| `name` | varchar(120) | requerido, único |
-| `monthly_budget_usd` | numeric(12,2) | requerido, no negativo |
-| `is_essential` | boolean | requerido |
-| `is_active` | boolean | requerido |
-| `warning_threshold` | integer | mayor que 0 |
-| `danger_threshold` | integer | mayor que warning |
-| `exceeded_threshold` | integer | mayor o igual que danger |
-| `sort_order` | integer | requerido |
-| `created_at` | timestamptz | requerido |
-| `updated_at` | timestamptz | requerido |
+| Columna              | Tipo          | Reglas                   |
+| -------------------- | ------------- | ------------------------ |
+| `id`                 | uuid          | PK                       |
+| `name`               | varchar(120)  | requerido, único         |
+| `monthly_budget_usd` | numeric(12,2) | requerido, no negativo   |
+| `is_essential`       | boolean       | requerido                |
+| `is_active`          | boolean       | requerido                |
+| `warning_threshold`  | integer       | mayor que 0              |
+| `danger_threshold`   | integer       | mayor que warning        |
+| `exceeded_threshold` | integer       | mayor o igual que danger |
+| `sort_order`         | integer       | requerido                |
+| `created_at`         | timestamptz   | requerido                |
+| `updated_at`         | timestamptz   | requerido                |
 
 Índice adicional sobre `is_active`.
 
@@ -125,17 +125,17 @@ Describe en qué se utilizó el dinero.
 
 Describe cómo se pagó.
 
-| Columna | Tipo | Reglas |
-| --- | --- | --- |
-| `id` | uuid | PK |
-| `name` | varchar(120) | requerido, único |
-| `type` | payment_method_type | requerido |
-| `is_active` | boolean | requerido |
-| `credit_limit_usd` | numeric(12,2) | opcional, no negativo |
-| `statement_cut_day` | integer | opcional, 1–31 |
-| `payment_due_day` | integer | opcional, 1–31 |
-| `created_at` | timestamptz | requerido |
-| `updated_at` | timestamptz | requerido |
+| Columna             | Tipo                | Reglas                |
+| ------------------- | ------------------- | --------------------- |
+| `id`                | uuid                | PK                    |
+| `name`              | varchar(120)        | requerido, único      |
+| `type`              | payment_method_type | requerido             |
+| `is_active`         | boolean             | requerido             |
+| `credit_limit_usd`  | numeric(12,2)       | opcional, no negativo |
+| `statement_cut_day` | integer             | opcional, 1–31        |
+| `payment_due_day`   | integer             | opcional, 1–31        |
+| `created_at`        | timestamptz         | requerido             |
+| `updated_at`        | timestamptz         | requerido             |
 
 Índices sobre `type` e `is_active`.
 
@@ -143,14 +143,14 @@ Describe cómo se pagó.
 
 Cabecera de un presupuesto mensual.
 
-| Columna | Tipo | Reglas |
-| --- | --- | --- |
-| `id` | uuid | PK |
-| `month` | date | requerido, único |
-| `salary_usd` | numeric(12,2) | mayor que 0 |
-| `expected_savings_usd` | numeric(12,2) | no negativo |
-| `created_at` | timestamptz | requerido |
-| `updated_at` | timestamptz | requerido |
+| Columna                | Tipo          | Reglas           |
+| ---------------------- | ------------- | ---------------- |
+| `id`                   | uuid          | PK               |
+| `month`                | date          | requerido, único |
+| `salary_usd`           | numeric(12,2) | mayor que 0      |
+| `expected_savings_usd` | numeric(12,2) | no negativo      |
+| `created_at`           | timestamptz   | requerido        |
+| `updated_at`           | timestamptz   | requerido        |
 
 `month` debe ser el primer día del mes.
 
@@ -158,14 +158,14 @@ Cabecera de un presupuesto mensual.
 
 Distribución del presupuesto entre categorías.
 
-| Columna | Tipo | Reglas |
-| --- | --- | --- |
-| `id` | uuid | PK |
-| `monthly_budget_id` | uuid | FK, cascade al eliminar presupuesto |
-| `category_id` | uuid | FK, restrict al eliminar categoría |
-| `amount_usd` | numeric(12,2) | requerido, no negativo |
-| `created_at` | timestamptz | requerido |
-| `updated_at` | timestamptz | requerido |
+| Columna             | Tipo          | Reglas                              |
+| ------------------- | ------------- | ----------------------------------- |
+| `id`                | uuid          | PK                                  |
+| `monthly_budget_id` | uuid          | FK, cascade al eliminar presupuesto |
+| `category_id`       | uuid          | FK, restrict al eliminar categoría  |
+| `amount_usd`        | numeric(12,2) | requerido, no negativo              |
+| `created_at`        | timestamptz   | requerido                           |
+| `updated_at`        | timestamptz   | requerido                           |
 
 La combinación `(monthly_budget_id, category_id)` es única.
 
@@ -175,25 +175,25 @@ La combinación `(monthly_budget_id, category_id)` es única.
 
 Ingresos, gastos y transferencias.
 
-| Columna | Tipo | Reglas |
-| --- | --- | --- |
-| `id` | uuid | PK |
-| `name` | varchar(180) | requerido |
-| `amount` | numeric(12,2) | mayor que 0 |
-| `currency` | currency | requerido |
-| `exchange_rate` | numeric(12,4) | mayor que 0 |
-| `amount_usd` | numeric(12,2) | no negativo |
-| `amount_nio` | numeric(12,2) | no negativo |
-| `date` | date | requerido |
-| `type` | transaction_type | requerido |
-| `category_id` | uuid | opcional, FK con `set null` |
-| `payment_method_id` | uuid | opcional, FK con `set null` |
-| `note` | text | opcional |
-| `raw_input` | text | reservado |
-| `classification_confidence` | numeric(5,4) | opcional, 0–1 |
-| `classification_reason` | text | opcional |
-| `created_at` | timestamptz | requerido |
-| `updated_at` | timestamptz | requerido |
+| Columna                     | Tipo             | Reglas                      |
+| --------------------------- | ---------------- | --------------------------- |
+| `id`                        | uuid             | PK                          |
+| `name`                      | varchar(180)     | requerido                   |
+| `amount`                    | numeric(12,2)    | mayor que 0                 |
+| `currency`                  | currency         | requerido                   |
+| `exchange_rate`             | numeric(12,4)    | mayor que 0                 |
+| `amount_usd`                | numeric(12,2)    | no negativo                 |
+| `amount_nio`                | numeric(12,2)    | no negativo                 |
+| `date`                      | date             | requerido                   |
+| `type`                      | transaction_type | requerido                   |
+| `category_id`               | uuid             | opcional, FK con `set null` |
+| `payment_method_id`         | uuid             | opcional, FK con `set null` |
+| `note`                      | text             | opcional                    |
+| `raw_input`                 | text             | reservado                   |
+| `classification_confidence` | numeric(5,4)     | opcional, 0–1               |
+| `classification_reason`     | text             | opcional                    |
+| `created_at`                | timestamptz      | requerido                   |
+| `updated_at`                | timestamptz      | requerido                   |
 
 Índices:
 
@@ -216,15 +216,15 @@ Reglas de aplicación:
 
 Reglas determinísticas de clasificación.
 
-| Columna | Tipo | Reglas |
-| --- | --- | --- |
-| `id` | uuid | PK |
-| `pattern` | varchar(240) | requerido, único |
-| `category_id` | uuid | FK, cascade |
-| `priority` | integer | requerido |
-| `is_active` | boolean | requerido |
-| `created_at` | timestamptz | requerido |
-| `updated_at` | timestamptz | requerido |
+| Columna       | Tipo         | Reglas           |
+| ------------- | ------------ | ---------------- |
+| `id`          | uuid         | PK               |
+| `pattern`     | varchar(240) | requerido, único |
+| `category_id` | uuid         | FK, cascade      |
+| `priority`    | integer      | requerido        |
+| `is_active`   | boolean      | requerido        |
+| `created_at`  | timestamptz  | requerido        |
+| `updated_at`  | timestamptz  | requerido        |
 
 Menor prioridad numérica se evalúa primero.
 
@@ -236,16 +236,16 @@ No ejecutar código arbitrario almacenado en `pattern`. Si se admiten expresione
 
 Alertas persistentes opcionales.
 
-| Columna | Tipo | Reglas |
-| --- | --- | --- |
-| `id` | uuid | PK |
-| `level` | alert_level | requerido |
-| `title` | varchar(180) | requerido |
-| `message` | text | requerido |
-| `category_id` | uuid | opcional, `set null` |
-| `transaction_id` | uuid | opcional, cascade |
-| `is_read` | boolean | requerido |
-| `created_at` | timestamptz | requerido |
+| Columna          | Tipo         | Reglas               |
+| ---------------- | ------------ | -------------------- |
+| `id`             | uuid         | PK                   |
+| `level`          | alert_level  | requerido            |
+| `title`          | varchar(180) | requerido            |
+| `message`        | text         | requerido            |
+| `category_id`    | uuid         | opcional, `set null` |
+| `transaction_id` | uuid         | opcional, cascade    |
+| `is_read`        | boolean      | requerido            |
+| `created_at`     | timestamptz  | requerido            |
 
 Índices sobre nivel, categoría, transacción y lectura.
 

@@ -3,7 +3,7 @@ const MONTH_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/;
 export function getCurrentMonth(): string {
   const now = new Date();
   const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, '0');
 
   return `${year}-${month}`;
 }
@@ -17,7 +17,7 @@ export function getMonthRange(month: string): {
   endDate: string;
   budgetDate: string;
 } {
-  const [year, monthNumber] = month.split("-").map(Number);
+  const [year, monthNumber] = month.split('-').map(Number);
   const nextMonth = new Date(Date.UTC(year, monthNumber, 1));
 
   return {
@@ -31,10 +31,10 @@ export function formatDisplayDate(value: string): string {
   const date = new Date(`${value}T00:00:00.000Z`);
   if (Number.isNaN(date.getTime())) return value;
 
-  return new Intl.DateTimeFormat("es-NI", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
+  return new Intl.DateTimeFormat('es-NI', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
   }).format(date);
 }

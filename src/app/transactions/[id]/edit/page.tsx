@@ -1,22 +1,22 @@
-import { Alert, Card, CardContent, Stack } from "@mui/material";
-import { notFound } from "next/navigation";
-import { PageHeader } from "@/components/layout/page-header";
-import { updateTransactionAction } from "@/features/transactions/actions";
-import { TransactionForm } from "@/features/transactions/components/transaction-form";
+import {Alert, Card, CardContent, Stack} from '@mui/material';
+import {notFound} from 'next/navigation';
+import {PageHeader} from '@/components/layout/page-header';
+import {updateTransactionAction} from '@/features/transactions/actions';
+import {TransactionForm} from '@/features/transactions/components/transaction-form';
 import {
   getTransactionById,
   getTransactionFormOptions,
-} from "@/features/transactions/queries";
-import { isUuid } from "@/features/transactions/schemas";
+} from '@/features/transactions/queries';
+import {isUuid} from '@/features/transactions/schemas';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default async function EditTransactionPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{id: string}>;
 }) {
-  const { id } = await params;
+  const {id} = await params;
   if (!isUuid(id)) notFound();
 
   const [transaction, options] = await Promise.all([
@@ -38,8 +38,8 @@ export default async function EditTransactionPage({
         La tasa guardada pertenece a esta transacción. Modifícala solo si el
         valor original fue registrado incorrectamente.
       </Alert>
-      <Card sx={{ width: "100%", maxWidth: 760 }}>
-        <CardContent sx={{ p: { xs: 2, md: 3.5 } }}>
+      <Card sx={{width: '100%', maxWidth: 760}}>
+        <CardContent sx={{p: {xs: 2, md: 3.5}}}>
           <TransactionForm
             action={action}
             categories={options.categories}
@@ -51,9 +51,9 @@ export default async function EditTransactionPage({
               exchangeRate: transaction.exchangeRate,
               date: transaction.date,
               type: transaction.type,
-              categoryId: transaction.categoryId ?? "",
-              paymentMethodId: transaction.paymentMethodId ?? "",
-              note: transaction.note ?? "",
+              categoryId: transaction.categoryId ?? '',
+              paymentMethodId: transaction.paymentMethodId ?? '',
+              note: transaction.note ?? '',
             }}
             submitLabel="Actualizar transacción"
           />

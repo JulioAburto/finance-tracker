@@ -3,8 +3,8 @@ import {
   getBudgetUsagePercent,
   shouldFreezeCategory,
   type BudgetStatus,
-} from "@/lib/budget/status";
-import { roundMoney } from "@/lib/money/convert";
+} from '@/lib/budget/status';
+import {roundMoney} from '@/lib/money/convert';
 
 export type DashboardBudget = {
   salaryUsd: number;
@@ -24,7 +24,7 @@ export type DashboardTransaction = {
   id: string;
   name: string;
   date: string;
-  type: "income" | "expense" | "transfer";
+  type: 'income' | 'expense' | 'transfer';
   amountUsd: number;
   categoryId: string | null;
   categoryName: string | null;
@@ -54,18 +54,18 @@ export type DashboardSummary = {
 };
 
 function isSavingsCategory(name: string): boolean {
-  return name.trim().toLocaleLowerCase("es") === "ahorro";
+  return name.trim().toLocaleLowerCase('es') === 'ahorro';
 }
 
 function getRecommendation(
   status: BudgetStatus,
   shouldFreeze: boolean,
 ): string {
-  if (shouldFreeze) return "Congela gastos extra en esta categoría.";
-  if (status === "exceeded") return "Detén gastos y revisa el excedente.";
-  if (status === "danger") return "Reduce gastos durante el resto del mes.";
-  if (status === "warning") return "Monitorea los próximos gastos.";
-  return "Dentro del presupuesto.";
+  if (shouldFreeze) return 'Congela gastos extra en esta categoría.';
+  if (status === 'exceeded') return 'Detén gastos y revisa el excedente.';
+  if (status === 'danger') return 'Reduce gastos durante el resto del mes.';
+  if (status === 'warning') return 'Monitorea los próximos gastos.';
+  return 'Dentro del presupuesto.';
 }
 
 // Esta función recibe datos simples, no objetos de Drizzle. Por eso puede
@@ -82,10 +82,10 @@ export function calculateDashboardSummary({
   dayOfMonth: number;
 }): DashboardSummary {
   const expenses = transactions.filter(
-    (transaction) => transaction.type === "expense",
+    transaction => transaction.type === 'expense',
   );
   const spendingCategories = budgetCategories.filter(
-    (category) => !isSavingsCategory(category.categoryName),
+    category => !isSavingsCategory(category.categoryName),
   );
 
   const spentByCategory = new Map<string, number>();
@@ -99,10 +99,8 @@ export function calculateDashboardSummary({
     );
   }
 
-  const categoryUsage = spendingCategories.map((category) => {
-    const spentUsd = roundMoney(
-      spentByCategory.get(category.categoryId) ?? 0,
-    );
+  const categoryUsage = spendingCategories.map(category => {
+    const spentUsd = roundMoney(spentByCategory.get(category.categoryId) ?? 0);
     const usagePercent = getBudgetUsagePercent({
       usedAmountUsd: spentUsd,
       budgetAmountUsd: category.amountUsd,
@@ -139,10 +137,7 @@ export function calculateDashboardSummary({
     ),
   );
   const totalSpentUsd = roundMoney(
-    expenses.reduce(
-      (total, transaction) => total + transaction.amountUsd,
-      0,
-    ),
+    expenses.reduce((total, transaction) => total + transaction.amountUsd, 0),
   );
 
   return {
@@ -156,9 +151,9 @@ export function calculateDashboardSummary({
       budgetAmountUsd: totalBudgetUsd,
     }),
     categoryUsage,
-    alerts: categoryUsage.filter((category) => category.status !== "safe"),
+    alerts: categoryUsage.filter(category => category.status !== 'safe'),
     uncategorizedCount: expenses.filter(
-      (transaction) => transaction.categoryId === null,
+      transaction => transaction.categoryId === null,
     ).length,
   };
 }

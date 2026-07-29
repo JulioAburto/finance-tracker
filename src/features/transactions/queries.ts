@@ -1,13 +1,13 @@
-import { and, desc, eq, gte, lt, type SQL } from "drizzle-orm";
-import { db } from "@/lib/db";
+import {and, desc, eq, gte, lt, type SQL} from 'drizzle-orm';
+import {db} from '@/lib/db';
 import {
   appSettings,
   categories,
   paymentMethods,
   transactions,
-} from "@/lib/db/schema";
-import { getMonthRange } from "@/lib/date/month";
-import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostics";
+} from '@/lib/db/schema';
+import {getMonthRange} from '@/lib/date/month';
+import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
 
 export type TransactionFilters = {
   month: string;
@@ -18,10 +18,10 @@ export type TransactionFilters = {
 // Las consultas viven fuera de los componentes para que las páginas solo
 // coordinen datos y presentación. Drizzle genera SQL parametrizado.
 export async function getTransactionFormOptions() {
-  return withDatabaseDiagnostics("transactions.options.load", async () => {
+  return withDatabaseDiagnostics('transactions.options.load', async () => {
     const [categoryRows, paymentMethodRows, settingsRows] = await Promise.all([
       db
-        .select({ id: categories.id, name: categories.name })
+        .select({id: categories.id, name: categories.name})
         .from(categories)
         .where(eq(categories.isActive, true))
         .orderBy(categories.sortOrder, categories.name),
@@ -47,16 +47,16 @@ export async function getTransactionFormOptions() {
       categories: categoryRows,
       paymentMethods: paymentMethodRows,
       settings: settingsRows[0] ?? {
-        defaultCurrency: "USD" as const,
-        defaultExchangeRate: "36.6243",
+        defaultCurrency: 'USD' as const,
+        defaultExchangeRate: '36.6243',
       },
     };
   });
 }
 
 export async function getTransactions(filters: TransactionFilters) {
-  return withDatabaseDiagnostics("transactions.list", async () => {
-    const { startDate, endDate } = getMonthRange(filters.month);
+  return withDatabaseDiagnostics('transactions.list', async () => {
+    const {startDate, endDate} = getMonthRange(filters.month);
     const conditions: SQL[] = [
       gte(transactions.date, startDate),
       lt(transactions.date, endDate),
@@ -98,7 +98,7 @@ export async function getTransactions(filters: TransactionFilters) {
 }
 
 export async function getTransactionById(id: string) {
-  return withDatabaseDiagnostics("transactions.detail", async () => {
+  return withDatabaseDiagnostics('transactions.detail', async () => {
     const rows = await db
       .select()
       .from(transactions)

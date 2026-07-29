@@ -2,7 +2,7 @@ const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i;
 
 export function readText(formData: FormData, name: string): string {
-  return String(formData.get(name) ?? "").trim();
+  return String(formData.get(name) ?? '').trim();
 }
 
 export function readPositiveNumber(
@@ -27,7 +27,7 @@ export function readInteger(formData: FormData, name: string): number | null {
 }
 
 export function readBoolean(formData: FormData, name: string): boolean {
-  return formData.get(name) === "on";
+  return formData.get(name) === 'on';
 }
 
 export function isUuid(value: string): boolean {
@@ -38,7 +38,7 @@ export function isValidRulePattern(value: string): boolean {
   if (!value || value.length > 240) return false;
 
   try {
-    new RegExp(value, "i");
+    new RegExp(value, 'i');
     return true;
   } catch {
     return false;

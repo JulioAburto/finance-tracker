@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
-import type { ReactNode } from "react";
-import { theme } from "./theme";
+import {CssBaseline, ThemeProvider} from '@mui/material';
+import {AppRouterCacheProvider} from '@mui/material-nextjs/v16-appRouter';
+import type {ReactNode} from 'react';
+import {theme} from './theme';
 
 type ProvidersProps = {
   children: ReactNode;
 };
 
-export function Providers({ children }: ProvidersProps) {
+export function Providers({children}: ProvidersProps) {
   return (
     <AppRouterCacheProvider>
       <ThemeProvider theme={theme}>

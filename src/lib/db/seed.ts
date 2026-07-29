@@ -1,5 +1,5 @@
-import { db, databaseClient } from "./index";
-import { convertMoney } from "../money/convert";
+import {db, databaseClient} from './index';
+import {convertMoney} from '../money/convert';
 import {
   appSettings,
   categories,
@@ -8,80 +8,80 @@ import {
   monthlyBudgets,
   paymentMethods,
   transactions,
-} from "./schema";
+} from './schema';
 
 const categorySeed = [
-  { name: "Ahorro", monthlyBudgetUsd: "450.00", isEssential: true },
-  { name: "Servicios", monthlyBudgetUsd: "60.00", isEssential: true },
+  {name: 'Ahorro', monthlyBudgetUsd: '450.00', isEssential: true},
+  {name: 'Servicios', monthlyBudgetUsd: '60.00', isEssential: true},
   {
-    name: "Productividad",
-    monthlyBudgetUsd: "25.00",
+    name: 'Productividad',
+    monthlyBudgetUsd: '25.00',
     isEssential: true,
   },
-  { name: "Entretenimiento", monthlyBudgetUsd: "45.00", isEssential: false },
+  {name: 'Entretenimiento', monthlyBudgetUsd: '45.00', isEssential: false},
   {
-    name: "Supermercado",
-    monthlyBudgetUsd: "165.00",
+    name: 'Supermercado',
+    monthlyBudgetUsd: '165.00',
     isEssential: true,
   },
-  { name: "Delivery", monthlyBudgetUsd: "70.00", isEssential: false },
+  {name: 'Delivery', monthlyBudgetUsd: '70.00', isEssential: false},
   {
-    name: "Novia / salidas / regalos",
-    monthlyBudgetUsd: "110.00",
+    name: 'Novia / salidas / regalos',
+    monthlyBudgetUsd: '110.00',
     isEssential: false,
   },
   {
-    name: "Amazon / agencias",
-    monthlyBudgetUsd: "70.00",
+    name: 'Amazon / agencias',
+    monthlyBudgetUsd: '70.00',
     isEssential: false,
   },
-  { name: "Ropa", monthlyBudgetUsd: "45.00", isEssential: false },
-  { name: "Salud", monthlyBudgetUsd: "55.00", isEssential: true },
-  { name: "Transporte", monthlyBudgetUsd: "35.00", isEssential: false },
+  {name: 'Ropa', monthlyBudgetUsd: '45.00', isEssential: false},
+  {name: 'Salud', monthlyBudgetUsd: '55.00', isEssential: true},
+  {name: 'Transporte', monthlyBudgetUsd: '35.00', isEssential: false},
   {
-    name: "Efectivo operativo",
-    monthlyBudgetUsd: "100.00",
+    name: 'Efectivo operativo',
+    monthlyBudgetUsd: '100.00',
     isEssential: false,
   },
-  { name: "Varios", monthlyBudgetUsd: "70.00", isEssential: false },
+  {name: 'Varios', monthlyBudgetUsd: '70.00', isEssential: false},
 ] as const;
 
 const paymentMethodSeed = [
-  { name: "Efectivo", type: "cash" },
-  { name: "Débito", type: "debit" },
-  { name: "Tarjeta de crédito", type: "credit_card" },
-  { name: "Transferencia", type: "bank_transfer" },
-  { name: "Prepago", type: "prepaid" },
-  { name: "Agencia", type: "agency" },
-  { name: "Otro", type: "other" },
+  {name: 'Efectivo', type: 'cash'},
+  {name: 'Débito', type: 'debit'},
+  {name: 'Tarjeta de crédito', type: 'credit_card'},
+  {name: 'Transferencia', type: 'bank_transfer'},
+  {name: 'Prepago', type: 'prepaid'},
+  {name: 'Agencia', type: 'agency'},
+  {name: 'Otro', type: 'other'},
 ] as const;
 
 const merchantRuleSeed = [
-  { pattern: "la colonia", categoryName: "Supermercado", priority: 10 },
+  {pattern: 'la colonia', categoryName: 'Supermercado', priority: 10},
   {
-    pattern: "mandaditos|sisu|sorbetes|la placita|glorieta|ambros",
-    categoryName: "Delivery",
+    pattern: 'mandaditos|sisu|sorbetes|la placita|glorieta|ambros',
+    categoryName: 'Delivery',
     priority: 20,
   },
   {
-    pattern: "openai|chatgpt",
-    categoryName: "Productividad",
+    pattern: 'openai|chatgpt',
+    categoryName: 'Productividad',
     priority: 30,
   },
   {
-    pattern: "netflix|max|hbo|spotify|youtube|disney",
-    categoryName: "Entretenimiento",
+    pattern: 'netflix|max|hbo|spotify|youtube|disney',
+    categoryName: 'Entretenimiento',
     priority: 40,
   },
   {
-    pattern: "amazon|amzn|agencia",
-    categoryName: "Amazon / agencias",
+    pattern: 'amazon|amzn|agencia',
+    categoryName: 'Amazon / agencias',
     priority: 50,
   },
-  { pattern: "farmacia", categoryName: "Salud", priority: 60 },
+  {pattern: 'farmacia', categoryName: 'Salud', priority: 60},
   {
-    pattern: "claro|tigo|internet|gas|cable",
-    categoryName: "Servicios",
+    pattern: 'claro|tigo|internet|gas|cable',
+    categoryName: 'Servicios',
     priority: 70,
   },
 ] as const;
@@ -90,10 +90,10 @@ type MockTransactionSeed = {
   id: string;
   name: string;
   amount: number;
-  currency: "USD" | "NIO";
+  currency: 'USD' | 'NIO';
   exchangeRate: number;
   date: string;
-  type: "income" | "expense" | "transfer";
+  type: 'income' | 'expense' | 'transfer';
   categoryName?: string;
   paymentMethodName?: string;
   note?: string;
@@ -101,175 +101,175 @@ type MockTransactionSeed = {
 
 const mockTransactionSeed: MockTransactionSeed[] = [
   {
-    id: "00000000-0000-4000-8000-000000000101",
-    name: "Salario julio",
+    id: '00000000-0000-4000-8000-000000000101',
+    name: 'Salario julio',
     amount: 1300,
-    currency: "USD",
+    currency: 'USD',
     exchangeRate: 36.6243,
-    date: "2026-07-01",
-    type: "income",
-    paymentMethodName: "Transferencia",
-    note: "Ingreso base del mes para el dashboard.",
+    date: '2026-07-01',
+    type: 'income',
+    paymentMethodName: 'Transferencia',
+    note: 'Ingreso base del mes para el dashboard.',
   },
   {
-    id: "00000000-0000-4000-8000-000000000102",
-    name: "Internet hogar Tigo",
+    id: '00000000-0000-4000-8000-000000000102',
+    name: 'Internet hogar Tigo',
     amount: 1950,
-    currency: "NIO",
+    currency: 'NIO',
     exchangeRate: 36.6243,
-    date: "2026-07-02",
-    type: "expense",
-    categoryName: "Servicios",
-    paymentMethodName: "Débito",
+    date: '2026-07-02',
+    type: 'expense',
+    categoryName: 'Servicios',
+    paymentMethodName: 'Débito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000103",
-    name: "Supermercado La Colonia",
+    id: '00000000-0000-4000-8000-000000000103',
+    name: 'Supermercado La Colonia',
     amount: 2550,
-    currency: "NIO",
+    currency: 'NIO',
     exchangeRate: 36.6243,
-    date: "2026-07-04",
-    type: "expense",
-    categoryName: "Supermercado",
-    paymentMethodName: "Tarjeta de crédito",
+    date: '2026-07-04',
+    type: 'expense',
+    categoryName: 'Supermercado',
+    paymentMethodName: 'Tarjeta de crédito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000104",
-    name: "Netflix julio",
+    id: '00000000-0000-4000-8000-000000000104',
+    name: 'Netflix julio',
     amount: 15,
-    currency: "USD",
+    currency: 'USD',
     exchangeRate: 36.6243,
-    date: "2026-07-05",
-    type: "expense",
-    categoryName: "Entretenimiento",
-    paymentMethodName: "Tarjeta de crédito",
+    date: '2026-07-05',
+    type: 'expense',
+    categoryName: 'Entretenimiento',
+    paymentMethodName: 'Tarjeta de crédito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000105",
-    name: "ChatGPT Plus",
+    id: '00000000-0000-4000-8000-000000000105',
+    name: 'ChatGPT Plus',
     amount: 28,
-    currency: "USD",
+    currency: 'USD',
     exchangeRate: 36.6243,
-    date: "2026-07-06",
-    type: "expense",
-    categoryName: "Productividad",
-    paymentMethodName: "Tarjeta de crédito",
+    date: '2026-07-06',
+    type: 'expense',
+    categoryName: 'Productividad',
+    paymentMethodName: 'Tarjeta de crédito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000106",
-    name: "Mandaditos almuerzo",
+    id: '00000000-0000-4000-8000-000000000106',
+    name: 'Mandaditos almuerzo',
     amount: 340,
-    currency: "NIO",
+    currency: 'NIO',
     exchangeRate: 36.6243,
-    date: "2026-07-08",
-    type: "expense",
-    categoryName: "Delivery",
-    paymentMethodName: "Débito",
+    date: '2026-07-08',
+    type: 'expense',
+    categoryName: 'Delivery',
+    paymentMethodName: 'Débito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000107",
-    name: "Farmacia familiar",
+    id: '00000000-0000-4000-8000-000000000107',
+    name: 'Farmacia familiar',
     amount: 620,
-    currency: "NIO",
+    currency: 'NIO',
     exchangeRate: 36.6243,
-    date: "2026-07-10",
-    type: "expense",
-    categoryName: "Salud",
-    paymentMethodName: "Tarjeta de crédito",
+    date: '2026-07-10',
+    type: 'expense',
+    categoryName: 'Salud',
+    paymentMethodName: 'Tarjeta de crédito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000108",
-    name: "Caja chica semanal",
+    id: '00000000-0000-4000-8000-000000000108',
+    name: 'Caja chica semanal',
     amount: 90,
-    currency: "USD",
+    currency: 'USD',
     exchangeRate: 36.6243,
-    date: "2026-07-12",
-    type: "expense",
-    categoryName: "Efectivo operativo",
-    paymentMethodName: "Efectivo",
+    date: '2026-07-12',
+    type: 'expense',
+    categoryName: 'Efectivo operativo',
+    paymentMethodName: 'Efectivo',
   },
   {
-    id: "00000000-0000-4000-8000-000000000109",
-    name: "Cena y regalo aniversario",
+    id: '00000000-0000-4000-8000-000000000109',
+    name: 'Cena y regalo aniversario',
     amount: 98,
-    currency: "USD",
+    currency: 'USD',
     exchangeRate: 36.6243,
-    date: "2026-07-15",
-    type: "expense",
-    categoryName: "Novia / salidas / regalos",
-    paymentMethodName: "Tarjeta de crédito",
+    date: '2026-07-15',
+    type: 'expense',
+    categoryName: 'Novia / salidas / regalos',
+    paymentMethodName: 'Tarjeta de crédito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000110",
-    name: "Gasolina quincena",
+    id: '00000000-0000-4000-8000-000000000110',
+    name: 'Gasolina quincena',
     amount: 1200,
-    currency: "NIO",
+    currency: 'NIO',
     exchangeRate: 36.6243,
-    date: "2026-07-18",
-    type: "expense",
-    categoryName: "Transporte",
-    paymentMethodName: "Débito",
+    date: '2026-07-18',
+    type: 'expense',
+    categoryName: 'Transporte',
+    paymentMethodName: 'Débito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000111",
-    name: "Amazon accesorios home office",
+    id: '00000000-0000-4000-8000-000000000111',
+    name: 'Amazon accesorios home office',
     amount: 52,
-    currency: "USD",
+    currency: 'USD',
     exchangeRate: 36.6243,
-    date: "2026-07-20",
-    type: "expense",
-    categoryName: "Amazon / agencias",
-    paymentMethodName: "Tarjeta de crédito",
+    date: '2026-07-20',
+    type: 'expense',
+    categoryName: 'Amazon / agencias',
+    paymentMethodName: 'Tarjeta de crédito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000112",
-    name: "Camisa oficina",
+    id: '00000000-0000-4000-8000-000000000112',
+    name: 'Camisa oficina',
     amount: 42,
-    currency: "USD",
+    currency: 'USD',
     exchangeRate: 36.6243,
-    date: "2026-07-21",
-    type: "expense",
-    categoryName: "Ropa",
-    paymentMethodName: "Débito",
+    date: '2026-07-21',
+    type: 'expense',
+    categoryName: 'Ropa',
+    paymentMethodName: 'Débito',
   },
   {
-    id: "00000000-0000-4000-8000-000000000113",
-    name: "Aporte ahorro julio",
+    id: '00000000-0000-4000-8000-000000000113',
+    name: 'Aporte ahorro julio',
     amount: 200,
-    currency: "USD",
+    currency: 'USD',
     exchangeRate: 36.6243,
-    date: "2026-07-23",
-    type: "transfer",
-    categoryName: "Ahorro",
-    paymentMethodName: "Transferencia",
-    note: "Transferencia hacia ahorro planificado.",
+    date: '2026-07-23',
+    type: 'transfer',
+    categoryName: 'Ahorro',
+    paymentMethodName: 'Transferencia',
+    note: 'Transferencia hacia ahorro planificado.',
   },
   {
-    id: "00000000-0000-4000-8000-000000000114",
-    name: "Pago tarjeta principal",
+    id: '00000000-0000-4000-8000-000000000114',
+    name: 'Pago tarjeta principal',
     amount: 350,
-    currency: "USD",
+    currency: 'USD',
     exchangeRate: 36.6243,
-    date: "2026-07-25",
-    type: "transfer",
-    paymentMethodName: "Transferencia",
-    note: "Pago de tarjeta registrado como transferencia.",
+    date: '2026-07-25',
+    type: 'transfer',
+    paymentMethodName: 'Transferencia',
+    note: 'Pago de tarjeta registrado como transferencia.',
   },
   {
-    id: "00000000-0000-4000-8000-000000000115",
-    name: "Ferreteria y varios hogar",
+    id: '00000000-0000-4000-8000-000000000115',
+    name: 'Ferreteria y varios hogar',
     amount: 650,
-    currency: "NIO",
+    currency: 'NIO',
     exchangeRate: 36.6243,
-    date: "2026-07-27",
-    type: "expense",
-    categoryName: "Varios",
-    paymentMethodName: "Efectivo",
+    date: '2026-07-27',
+    type: 'expense',
+    categoryName: 'Varios',
+    paymentMethodName: 'Efectivo',
   },
 ];
 
 function toStoredMoneyValues(transaction: MockTransactionSeed) {
-  const { amountUsd, amountNio } = convertMoney({
+  const {amountUsd, amountNio} = convertMoney({
     amount: transaction.amount,
     currency: transaction.currency,
     exchangeRate: transaction.exchangeRate,
@@ -289,16 +289,16 @@ async function seed() {
   await db
     .insert(appSettings)
     .values({
-      id: "00000000-0000-4000-8000-000000000001",
-      defaultCurrency: "USD",
-      defaultExchangeRate: "36.6243",
+      id: '00000000-0000-4000-8000-000000000001',
+      defaultCurrency: 'USD',
+      defaultExchangeRate: '36.6243',
       creditCardModeEnabled: false,
     })
     .onConflictDoUpdate({
       target: appSettings.id,
       set: {
-        defaultCurrency: "USD",
-        defaultExchangeRate: "36.6243",
+        defaultCurrency: 'USD',
+        defaultExchangeRate: '36.6243',
         updatedAt: new Date(),
       },
     });
@@ -311,7 +311,7 @@ async function seed() {
   for (const [sortOrder, category] of categorySeed.entries()) {
     const [savedCategory] = await db
       .insert(categories)
-      .values({ ...category, sortOrder })
+      .values({...category, sortOrder})
       .onConflictDoUpdate({
         target: categories.name,
         set: {
@@ -321,7 +321,7 @@ async function seed() {
           updatedAt: new Date(),
         },
       })
-      .returning({ id: categories.id, name: categories.name });
+      .returning({id: categories.id, name: categories.name});
 
     categoryIds.set(savedCategory.name, savedCategory.id);
   }
@@ -337,7 +337,7 @@ async function seed() {
           updatedAt: new Date(),
         },
       })
-      .returning({ id: paymentMethods.id, name: paymentMethods.name });
+      .returning({id: paymentMethods.id, name: paymentMethods.name});
 
     paymentMethodIds.set(savedPaymentMethod.name, savedPaymentMethod.id);
   }
@@ -345,19 +345,19 @@ async function seed() {
   const [monthlyBudget] = await db
     .insert(monthlyBudgets)
     .values({
-      month: "2026-07-01",
-      salaryUsd: "1300.00",
-      expectedSavingsUsd: "450.00",
+      month: '2026-07-01',
+      salaryUsd: '1300.00',
+      expectedSavingsUsd: '450.00',
     })
     .onConflictDoUpdate({
       target: monthlyBudgets.month,
       set: {
-        salaryUsd: "1300.00",
-        expectedSavingsUsd: "450.00",
+        salaryUsd: '1300.00',
+        expectedSavingsUsd: '450.00',
         updatedAt: new Date(),
       },
     })
-    .returning({ id: monthlyBudgets.id });
+    .returning({id: monthlyBudgets.id});
 
   // Cada combinación presupuesto-categoría es única en la base de datos.
   for (const category of categorySeed) {
@@ -390,7 +390,9 @@ async function seed() {
     const categoryId = categoryIds.get(rule.categoryName);
 
     if (!categoryId) {
-      throw new Error(`Merchant rule category was not found: ${rule.categoryName}`);
+      throw new Error(
+        `Merchant rule category was not found: ${rule.categoryName}`,
+      );
     }
 
     await db
@@ -442,7 +444,7 @@ async function seed() {
         categoryId,
         paymentMethodId,
         note: transaction.note,
-        rawInput: "seed:mock-july-2026",
+        rawInput: 'seed:mock-july-2026',
         ...toStoredMoneyValues(transaction),
       })
       .onConflictDoUpdate({
@@ -455,7 +457,7 @@ async function seed() {
           categoryId,
           paymentMethodId,
           note: transaction.note,
-          rawInput: "seed:mock-july-2026",
+          rawInput: 'seed:mock-july-2026',
           ...toStoredMoneyValues(transaction),
           updatedAt: new Date(),
         },
@@ -465,10 +467,10 @@ async function seed() {
 
 seed()
   .then(() => {
-    console.log("Database seed completed.");
+    console.log('Database seed completed.');
   })
   .catch((error: unknown) => {
-    console.error("Database seed failed.", error);
+    console.error('Database seed failed.', error);
     process.exitCode = 1;
   })
   .finally(async () => {

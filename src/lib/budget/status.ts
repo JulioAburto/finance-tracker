@@ -1,4 +1,4 @@
-export type BudgetStatus = "safe" | "warning" | "danger" | "exceeded";
+export type BudgetStatus = 'safe' | 'warning' | 'danger' | 'exceeded';
 
 type BudgetUsageInput = {
   usedAmountUsd: number;
@@ -38,11 +38,11 @@ export function getBudgetStatus({
     budgetAmountUsd,
   });
 
-  if (usagePercent >= exceededThreshold) return "exceeded";
-  if (usagePercent >= dangerThreshold) return "danger";
-  if (usagePercent >= warningThreshold) return "warning";
+  if (usagePercent >= exceededThreshold) return 'exceeded';
+  if (usagePercent >= dangerThreshold) return 'danger';
+  if (usagePercent >= warningThreshold) return 'warning';
 
-  return "safe";
+  return 'safe';
 }
 
 export function shouldFreezeCategory({

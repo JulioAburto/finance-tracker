@@ -1,9 +1,9 @@
-"use server";
+'use server';
 
-import { and, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
+import {and, eq} from 'drizzle-orm';
+import {revalidatePath} from 'next/cache';
+import {redirect} from 'next/navigation';
+import {db} from '@/lib/db';
 import {
   appSettings,
   categories,
@@ -11,8 +11,8 @@ import {
   monthlyBudgetCategories,
   monthlyBudgets,
   paymentMethods,
-} from "@/lib/db/schema";
-import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostics";
+} from '@/lib/db/schema';
+import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
 import {
   areValidThresholds,
   isUuid,
@@ -22,26 +22,30 @@ import {
   readNonNegativeNumber,
   readPositiveNumber,
   readText,
-} from "./schemas";
+} from './schemas';
 
-function finish(path: string, status: "saved" | "invalid"): never {
-  const pathname = path.split("?")[0];
-  const separator = path.includes("?") ? "&" : "?";
+function finish(path: string, status: 'saved' | 'invalid'): never {
+  const pathname = path.split('?')[0];
+  const separator = path.includes('?') ? '&' : '?';
   revalidatePath(pathname);
-  revalidatePath("/dashboard");
-  revalidatePath("/transactions/new");
+  revalidatePath('/dashboard');
+  revalidatePath('/transactions/new');
   redirect(`${path}${separator}status=${status}`);
 }
 
 export async function saveMonthlyBudgetAction(formData: FormData) {
-  const month = readText(formData, "month");
-  const salary = readPositiveNumber(formData, "salaryUsd");
-  const savings = readNonNegativeNumber(formData, "expectedSavingsUsd");
-  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month) || salary === null || savings === null) {
-    finish("/categories", "invalid");
+  const month = readText(formData, 'month');
+  const salary = readPositiveNumber(formData, 'salaryUsd');
+  const savings = readNonNegativeNumber(formData, 'expectedSavingsUsd');
+  if (
+    !/^\d{4}-(0[1-9]|1[0-2])$/.test(month) ||
+    salary === null ||
+    savings === null
+  ) {
+    finish('/categories', 'invalid');
   }
 
-  await withDatabaseDiagnostics("management.budget.save", () =>
+  await withDatabaseDiagnostics('management.budget.save', () =>
     db
       .insert(monthlyBudgets)
       .values({
@@ -58,35 +62,39 @@ export async function saveMonthlyBudgetAction(formData: FormData) {
         },
       }),
   );
-  finish(`/categories?month=${month}`, "saved");
+  finish(`/categories?month=${month}`, 'saved');
 }
 
 export async function createCategoryAction(formData: FormData) {
-  const name = readText(formData, "name");
-  const budget = readNonNegativeNumber(formData, "monthlyBudgetUsd");
-  if (!name || name.length > 120 || budget === null) finish("/categories", "invalid");
+  const name = readText(formData, 'name');
+  const budget = readNonNegativeNumber(formData, 'monthlyBudgetUsd');
+  if (!name || name.length > 120 || budget === null)
+    finish('/categories', 'invalid');
 
-  await withDatabaseDiagnostics("management.category.create", () =>
+  await withDatabaseDiagnostics('management.category.create', () =>
     db.insert(categories).values({
       name,
       monthlyBudgetUsd: budget.toFixed(2),
-      isEssential: readBoolean(formData, "isEssential"),
-      sortOrder: readInteger(formData, "sortOrder") ?? 0,
+      isEssential: readBoolean(formData, 'isEssential'),
+      sortOrder: readInteger(formData, 'sortOrder') ?? 0,
     }),
   );
-  finish("/categories", "saved");
+  finish('/categories', 'saved');
 }
 
 export async function updateCategoryAction(id: string, formData: FormData) {
-  const name = readText(formData, "name");
-  const defaultBudget = readNonNegativeNumber(formData, "monthlyBudgetUsd");
-  const selectedBudget = readNonNegativeNumber(formData, "selectedMonthBudgetUsd");
-  const warning = readInteger(formData, "warningThreshold");
-  const danger = readInteger(formData, "dangerThreshold");
-  const exceeded = readInteger(formData, "exceededThreshold");
-  const month = readText(formData, "month");
+  const name = readText(formData, 'name');
+  const defaultBudget = readNonNegativeNumber(formData, 'monthlyBudgetUsd');
+  const selectedBudget = readNonNegativeNumber(
+    formData,
+    'selectedMonthBudgetUsd',
+  );
+  const warning = readInteger(formData, 'warningThreshold');
+  const danger = readInteger(formData, 'dangerThreshold');
+  const exceeded = readInteger(formData, 'exceededThreshold');
+  const month = readText(formData, 'month');
   if (warning === null || danger === null || exceeded === null) {
-    finish(`/categories?month=${month}`, "invalid");
+    finish(`/categories?month=${month}`, 'invalid');
   }
 
   if (
@@ -97,27 +105,27 @@ export async function updateCategoryAction(id: string, formData: FormData) {
     selectedBudget === null ||
     !areValidThresholds(warning, danger, exceeded)
   ) {
-    finish(`/categories?month=${month}`, "invalid");
+    finish(`/categories?month=${month}`, 'invalid');
   }
 
-  await withDatabaseDiagnostics("management.category.update", async () => {
+  await withDatabaseDiagnostics('management.category.update', async () => {
     await db
       .update(categories)
       .set({
         name,
         monthlyBudgetUsd: defaultBudget.toFixed(2),
-        isEssential: readBoolean(formData, "isEssential"),
-        isActive: readBoolean(formData, "isActive"),
+        isEssential: readBoolean(formData, 'isEssential'),
+        isActive: readBoolean(formData, 'isActive'),
         warningThreshold: warning,
         dangerThreshold: danger,
         exceededThreshold: exceeded,
-        sortOrder: readInteger(formData, "sortOrder") ?? 0,
+        sortOrder: readInteger(formData, 'sortOrder') ?? 0,
         updatedAt: new Date(),
       })
       .where(eq(categories.id, id));
 
     const budgetRows = await db
-      .select({ id: monthlyBudgets.id })
+      .select({id: monthlyBudgets.id})
       .from(monthlyBudgets)
       .where(eq(monthlyBudgets.month, `${month}-01`))
       .limit(1);
@@ -141,53 +149,62 @@ export async function updateCategoryAction(id: string, formData: FormData) {
         });
     }
   });
-  finish(`/categories?month=${month}`, "saved");
+  finish(`/categories?month=${month}`, 'saved');
 }
 
 export async function createRuleAction(formData: FormData) {
-  const pattern = readText(formData, "pattern");
-  const categoryId = readText(formData, "categoryId");
-  const priority = readInteger(formData, "priority");
-  if (!isValidRulePattern(pattern) || !isUuid(categoryId) || priority === null) {
-    finish("/rules", "invalid");
+  const pattern = readText(formData, 'pattern');
+  const categoryId = readText(formData, 'categoryId');
+  const priority = readInteger(formData, 'priority');
+  if (
+    !isValidRulePattern(pattern) ||
+    !isUuid(categoryId) ||
+    priority === null
+  ) {
+    finish('/rules', 'invalid');
   }
-  await withDatabaseDiagnostics("management.rule.create", () =>
-    db.insert(merchantRules).values({ pattern, categoryId, priority }),
+  await withDatabaseDiagnostics('management.rule.create', () =>
+    db.insert(merchantRules).values({pattern, categoryId, priority}),
   );
-  finish("/rules", "saved");
+  finish('/rules', 'saved');
 }
 
 export async function updateRuleAction(id: string, formData: FormData) {
-  const pattern = readText(formData, "pattern");
-  const categoryId = readText(formData, "categoryId");
-  const priority = readInteger(formData, "priority");
-  if (!isUuid(id) || !isValidRulePattern(pattern) || !isUuid(categoryId) || priority === null) {
-    finish("/rules", "invalid");
+  const pattern = readText(formData, 'pattern');
+  const categoryId = readText(formData, 'categoryId');
+  const priority = readInteger(formData, 'priority');
+  if (
+    !isUuid(id) ||
+    !isValidRulePattern(pattern) ||
+    !isUuid(categoryId) ||
+    priority === null
+  ) {
+    finish('/rules', 'invalid');
   }
-  await withDatabaseDiagnostics("management.rule.update", () =>
+  await withDatabaseDiagnostics('management.rule.update', () =>
     db
       .update(merchantRules)
       .set({
         pattern,
         categoryId,
         priority,
-        isActive: readBoolean(formData, "isActive"),
+        isActive: readBoolean(formData, 'isActive'),
         updatedAt: new Date(),
       })
       .where(eq(merchantRules.id, id)),
   );
-  finish("/rules", "saved");
+  finish('/rules', 'saved');
 }
 
 export async function updateSettingsAction(formData: FormData) {
-  const currency = readText(formData, "defaultCurrency");
-  const rate = readPositiveNumber(formData, "defaultExchangeRate");
-  if ((currency !== "USD" && currency !== "NIO") || rate === null) {
-    finish("/settings", "invalid");
+  const currency = readText(formData, 'defaultCurrency');
+  const rate = readPositiveNumber(formData, 'defaultExchangeRate');
+  if ((currency !== 'USD' && currency !== 'NIO') || rate === null) {
+    finish('/settings', 'invalid');
   }
-  await withDatabaseDiagnostics("management.settings.update", async () => {
+  await withDatabaseDiagnostics('management.settings.update', async () => {
     const rows = await db
-      .select({ id: appSettings.id })
+      .select({id: appSettings.id})
       .from(appSettings)
       .limit(1);
     if (rows[0]) {
@@ -196,45 +213,50 @@ export async function updateSettingsAction(formData: FormData) {
         .set({
           defaultCurrency: currency,
           defaultExchangeRate: rate.toFixed(4),
-          creditCardModeEnabled: readBoolean(
-            formData,
-            "creditCardModeEnabled",
-          ),
+          creditCardModeEnabled: readBoolean(formData, 'creditCardModeEnabled'),
           updatedAt: new Date(),
         })
         .where(eq(appSettings.id, rows[0].id));
     }
   });
-  finish("/settings", "saved");
+  finish('/settings', 'saved');
 }
 
-export async function updatePaymentMethodAction(id: string, formData: FormData) {
-  const creditLimit = readText(formData, "creditLimitUsd");
-  const cutDay = readText(formData, "statementCutDay");
-  const dueDay = readText(formData, "paymentDueDay");
-  const parsedLimit = creditLimit ? readNonNegativeNumber(formData, "creditLimitUsd") : null;
-  const parsedCut = cutDay ? readInteger(formData, "statementCutDay") : null;
-  const parsedDue = dueDay ? readInteger(formData, "paymentDueDay") : null;
-  const validDay = (value: number | null) => value === null || (value >= 1 && value <= 31);
-  if (!isUuid(id) || (creditLimit && parsedLimit === null) || !validDay(parsedCut) || !validDay(parsedDue)) {
-    finish("/settings", "invalid");
+export async function updatePaymentMethodAction(
+  id: string,
+  formData: FormData,
+) {
+  const creditLimit = readText(formData, 'creditLimitUsd');
+  const cutDay = readText(formData, 'statementCutDay');
+  const dueDay = readText(formData, 'paymentDueDay');
+  const parsedLimit = creditLimit
+    ? readNonNegativeNumber(formData, 'creditLimitUsd')
+    : null;
+  const parsedCut = cutDay ? readInteger(formData, 'statementCutDay') : null;
+  const parsedDue = dueDay ? readInteger(formData, 'paymentDueDay') : null;
+  const validDay = (value: number | null) =>
+    value === null || (value >= 1 && value <= 31);
+  if (
+    !isUuid(id) ||
+    (creditLimit && parsedLimit === null) ||
+    !validDay(parsedCut) ||
+    !validDay(parsedDue)
+  ) {
+    finish('/settings', 'invalid');
   }
-  await withDatabaseDiagnostics("management.payment-method.update", () =>
+  await withDatabaseDiagnostics('management.payment-method.update', () =>
     db
       .update(paymentMethods)
       .set({
-        isActive: readBoolean(formData, "isActive"),
+        isActive: readBoolean(formData, 'isActive'),
         creditLimitUsd: parsedLimit?.toFixed(2) ?? null,
         statementCutDay: parsedCut,
         paymentDueDay: parsedDue,
         updatedAt: new Date(),
       })
       .where(
-        and(
-          eq(paymentMethods.id, id),
-          eq(paymentMethods.type, "credit_card"),
-        ),
+        and(eq(paymentMethods.id, id), eq(paymentMethods.type, 'credit_card')),
       ),
   );
-  finish("/settings", "saved");
+  finish('/settings', 'saved');
 }

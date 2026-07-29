@@ -1,4 +1,4 @@
-export type Currency = "USD" | "NIO";
+export type Currency = 'USD' | 'NIO';
 
 export type MoneyConversionInput = {
   amount: number;
@@ -17,14 +17,14 @@ export function convertMoney({
   exchangeRate,
 }: MoneyConversionInput): MoneyConversionResult {
   if (amount <= 0) {
-    throw new Error("Amount must be greater than zero");
+    throw new Error('Amount must be greater than zero');
   }
 
   if (exchangeRate <= 0) {
-    throw new Error("Exchange rate must be greater than zero");
+    throw new Error('Exchange rate must be greater than zero');
   }
 
-  if (currency === "USD") {
+  if (currency === 'USD') {
     return {
       amountUsd: roundMoney(amount),
       amountNio: roundMoney(amount * exchangeRate),

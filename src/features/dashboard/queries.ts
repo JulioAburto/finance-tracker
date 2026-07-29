@@ -1,18 +1,18 @@
-import { and, desc, eq, gte, lt } from "drizzle-orm";
-import { db } from "@/lib/db";
+import {and, desc, eq, gte, lt} from 'drizzle-orm';
+import {db} from '@/lib/db';
 import {
   categories,
   monthlyBudgetCategories,
   monthlyBudgets,
   transactions,
-} from "@/lib/db/schema";
-import { getMonthRange } from "@/lib/date/month";
-import { withDatabaseDiagnostics } from "@/lib/observability/database-diagnostics";
-import { calculateDashboardSummary } from "./calculations";
+} from '@/lib/db/schema';
+import {getMonthRange} from '@/lib/date/month';
+import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
+import {calculateDashboardSummary} from './calculations';
 
 export async function getDashboardData(month: string) {
-  return withDatabaseDiagnostics("dashboard.load", async () => {
-    const { startDate, endDate, budgetDate } = getMonthRange(month);
+  return withDatabaseDiagnostics('dashboard.load', async () => {
+    const {startDate, endDate, budgetDate} = getMonthRange(month);
 
     // Primero buscamos la cabecera porque sus categorías dependen de ese UUID.
     const budgetRows = await db
@@ -66,7 +66,7 @@ export async function getDashboardData(month: string) {
         .orderBy(desc(transactions.date), desc(transactions.createdAt)),
     ]);
 
-    const transactionData = transactionRows.map((transaction) => ({
+    const transactionData = transactionRows.map(transaction => ({
       ...transaction,
       amountUsd: Number(transaction.amountUsd),
     }));
@@ -77,7 +77,7 @@ export async function getDashboardData(month: string) {
             expectedSavingsUsd: Number(budget.expectedSavingsUsd),
           }
         : null,
-      budgetCategories: categoryBudgetRows.map((category) => ({
+      budgetCategories: categoryBudgetRows.map(category => ({
         ...category,
         amountUsd: Number(category.amountUsd),
       })),
@@ -89,8 +89,8 @@ export async function getDashboardData(month: string) {
       summary,
       latestTransactions: transactionData.slice(0, 5),
       uncategorizedTransactions: transactionData.filter(
-        (transaction) =>
-          transaction.type === "expense" && transaction.categoryId === null,
+        transaction =>
+          transaction.type === 'expense' && transaction.categoryId === null,
       ),
       hasBudget: budget !== null,
     };

@@ -82,7 +82,8 @@ export function AppShell({children}: {children: ReactNode}) {
         display: 'flex',
         flexDirection: 'column',
         minWidth: 0,
-      }}>
+      }}
+    >
       <AppBar
         position="sticky"
         color="inherit"
@@ -92,7 +93,8 @@ export function AppShell({children}: {children: ReactNode}) {
           borderColor: 'divider',
           bgcolor: 'background.paper',
           pt: 'env(safe-area-inset-top)',
-        }}>
+        }}
+      >
         <Box sx={shellWidthSx}>
           <Toolbar
             disableGutters
@@ -100,7 +102,8 @@ export function AppShell({children}: {children: ReactNode}) {
               minHeight: {xs: 64, md: 72},
               gap: 1.5,
               minWidth: 0,
-            }}>
+            }}
+          >
             <Box
               component={Link}
               href="/dashboard"
@@ -110,7 +113,8 @@ export function AppShell({children}: {children: ReactNode}) {
                 gap: 1.25,
                 flexGrow: 1,
                 minWidth: 0,
-              }}>
+              }}
+            >
               <Box
                 aria-hidden="true"
                 sx={{
@@ -123,7 +127,8 @@ export function AppShell({children}: {children: ReactNode}) {
                   color: 'primary.contrastText',
                   fontWeight: 800,
                   fontSize: 14,
-                }}>
+                }}
+              >
                 FT
               </Box>
               <Box sx={{minWidth: 0}}>
@@ -135,7 +140,8 @@ export function AppShell({children}: {children: ReactNode}) {
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                  }}>
+                  }}
+                >
                   Finance Tracker
                 </Typography>
                 <Typography
@@ -146,7 +152,8 @@ export function AppShell({children}: {children: ReactNode}) {
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                  }}>
+                  }}
+                >
                   Control financiero personal
                 </Typography>
               </Box>
@@ -159,7 +166,8 @@ export function AppShell({children}: {children: ReactNode}) {
                 display: {xs: 'none', lg: 'flex'},
                 gap: 0.5,
                 minWidth: 0,
-              }}>
+              }}
+            >
               {navigation.map(item => {
                 const active = isActive(item.href);
 
@@ -173,7 +181,8 @@ export function AppShell({children}: {children: ReactNode}) {
                     sx={{
                       color: active ? 'primary.dark' : 'text.secondary',
                       bgcolor: active ? 'primary.light' : 'transparent',
-                    }}>
+                    }}
+                  >
                     {item.label}
                   </Button>
                 );
@@ -184,7 +193,8 @@ export function AppShell({children}: {children: ReactNode}) {
               component={Link}
               href="/transactions/new"
               variant="contained"
-              sx={{display: {xs: 'none', sm: 'inline-flex'}}}>
+              sx={{display: {xs: 'none', sm: 'inline-flex'}}}
+            >
               Agregar gasto
             </Button>
 
@@ -195,7 +205,8 @@ export function AppShell({children}: {children: ReactNode}) {
                 display: {xs: 'inline-flex', lg: 'none'},
                 minHeight: 44,
                 flexShrink: 0,
-              }}>
+              }}
+            >
               Menú
             </Button>
           </Toolbar>
@@ -209,7 +220,8 @@ export function AppShell({children}: {children: ReactNode}) {
               gap: 1,
               pb: 1.5,
               minWidth: 0,
-            }}>
+            }}
+          >
             <Typography
               variant="body2"
               color="text.secondary"
@@ -217,7 +229,8 @@ export function AppShell({children}: {children: ReactNode}) {
                 fontWeight: 700,
                 minWidth: 0,
                 overflowWrap: 'anywhere',
-              }}>
+              }}
+            >
               {currentSectionLabel}
             </Typography>
 
@@ -226,7 +239,8 @@ export function AppShell({children}: {children: ReactNode}) {
                 component={Link}
                 href="/transactions/new"
                 variant="contained"
-                sx={{width: {xs: '100%', sm: 'auto'}}}>
+                sx={{width: {xs: '100%', sm: 'auto'}}}
+              >
                 Agregar gasto
               </Button>
             ) : null}
@@ -247,14 +261,16 @@ export function AppShell({children}: {children: ReactNode}) {
               pb: 'calc(env(safe-area-inset-bottom) + 16px)',
             },
           },
-        }}>
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
             height: '100%',
-          }}>
+          }}
+        >
           <Box>
             <Typography variant="h6" sx={{fontWeight: 800}}>
               Navegación
@@ -269,7 +285,8 @@ export function AppShell({children}: {children: ReactNode}) {
             href="/transactions/new"
             variant="contained"
             fullWidth
-            onClick={closeMobileNav}>
+            onClick={closeMobileNav}
+          >
             Agregar gasto
           </Button>
 
@@ -291,12 +308,14 @@ export function AppShell({children}: {children: ReactNode}) {
                     borderRadius: 2,
                     minHeight: 48,
                     alignItems: 'flex-start',
-                  }}>
+                  }}
+                >
                   <Typography
                     sx={{
                       fontWeight: active ? 800 : 600,
                       overflowWrap: 'anywhere',
-                    }}>
+                    }}
+                  >
                     {item.label}
                   </Typography>
                 </ListItemButton>
@@ -316,7 +335,8 @@ export function AppShell({children}: {children: ReactNode}) {
           },
           flexGrow: 1,
           minWidth: 0,
-        }}>
+        }}
+      >
         <Box sx={{...shellWidthSx, minWidth: 0}}>{children}</Box>
       </Box>
     </Box>

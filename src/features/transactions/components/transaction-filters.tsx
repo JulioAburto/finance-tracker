@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Box,
@@ -10,9 +10,9 @@ import {
   Stack,
   TextField,
   Typography,
-} from "@mui/material";
-import Link from "next/link";
-import { useState } from "react";
+} from '@mui/material';
+import Link from 'next/link';
+import {useState} from 'react';
 
 type FilterOption = {
   id: string;
@@ -48,19 +48,19 @@ function FilterFields({
         defaultValue={month}
         fullWidth={mobile}
         size="small"
-        slotProps={{ inputLabel: { shrink: true } }}
+        slotProps={{inputLabel: {shrink: true}}}
       />
       <TextField
         select
         name="categoryId"
         label="Categoría"
-        defaultValue={categoryId ?? ""}
+        defaultValue={categoryId ?? ''}
         fullWidth
         size="small"
-        sx={{ minWidth: { md: 220 } }}
+        sx={{minWidth: {md: 220}}}
       >
         <MenuItem value="">Todas</MenuItem>
-        {categories.map((category) => (
+        {categories.map(category => (
           <MenuItem key={category.id} value={category.id}>
             {category.name}
           </MenuItem>
@@ -70,13 +70,13 @@ function FilterFields({
         select
         name="paymentMethodId"
         label="Método de pago"
-        defaultValue={paymentMethodId ?? ""}
+        defaultValue={paymentMethodId ?? ''}
         fullWidth
         size="small"
-        sx={{ minWidth: { md: 220 } }}
+        sx={{minWidth: {md: 220}}}
       >
         <MenuItem value="">Todos</MenuItem>
-        {paymentMethods.map((method) => (
+        {paymentMethods.map(method => (
           <MenuItem key={method.id} value={method.id}>
             {method.name}
           </MenuItem>
@@ -103,9 +103,9 @@ export function TransactionFilters({
       <Card
         component="form"
         method="get"
-        sx={{ display: { xs: "none", md: "block" }, p: 2 }}
+        sx={{display: {xs: 'none', md: 'block'}, p: 2}}
       >
-        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+        <Stack direction="row" spacing={2} sx={{alignItems: 'center'}}>
           <FilterFields
             month={month}
             categoryId={categoryId}
@@ -113,7 +113,7 @@ export function TransactionFilters({
             categories={categories}
             paymentMethods={paymentMethods}
           />
-          <Button type="submit" variant="outlined" sx={{ flexShrink: 0 }}>
+          <Button type="submit" variant="outlined" sx={{flexShrink: 0}}>
             Filtrar
           </Button>
           {activeFilterCount > 0 ? (
@@ -124,25 +124,27 @@ export function TransactionFilters({
         </Stack>
       </Card>
 
-      <Card sx={{ display: { xs: "block", md: "none" }, p: 1.5 }}>
+      <Card sx={{display: {xs: 'block', md: 'none'}, p: 1.5}}>
         <Stack
           direction="row"
           spacing={1.5}
-          sx={{ alignItems: "center", justifyContent: "space-between" }}
+          sx={{alignItems: 'center', justifyContent: 'space-between'}}
         >
-          <Box sx={{ minWidth: 0 }}>
-            <Typography variant="body2" sx={{ fontWeight: 800 }}>
+          <Box sx={{minWidth: 0}}>
+            <Typography variant="body2" sx={{fontWeight: 800}}>
               Mes {month}
             </Typography>
             <Typography
               color="text.secondary"
               variant="caption"
-              sx={{ display: "block", overflowWrap: "anywhere" }}
+              sx={{display: 'block', overflowWrap: 'anywhere'}}
             >
               {activeFilterCount === 0
-                ? "Sin filtros adicionales"
+                ? 'Sin filtros adicionales'
                 : `${activeFilterCount} ${
-                    activeFilterCount === 1 ? "filtro activo" : "filtros activos"
+                    activeFilterCount === 1
+                      ? 'filtro activo'
+                      : 'filtros activos'
                   }`}
             </Typography>
           </Box>
@@ -150,11 +152,11 @@ export function TransactionFilters({
             variant="outlined"
             onClick={() => setMobileFiltersOpen(true)}
             aria-haspopup="dialog"
-            sx={{ flexShrink: 0 }}
+            sx={{flexShrink: 0}}
           >
             {activeFilterCount > 0
               ? `Filtros (${activeFilterCount})`
-              : "Filtros"}
+              : 'Filtros'}
           </Button>
         </Stack>
       </Card>
@@ -166,10 +168,10 @@ export function TransactionFilters({
         slotProps={{
           paper: {
             sx: {
-              maxHeight: "calc(100dvh - env(safe-area-inset-top) - 16px)",
+              maxHeight: 'calc(100dvh - env(safe-area-inset-top) - 16px)',
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
-              overflow: "hidden",
+              overflow: 'hidden',
             },
           },
         }}
@@ -179,12 +181,12 @@ export function TransactionFilters({
           method="get"
           aria-labelledby="transaction-filters-title"
           sx={{
-            display: "flex",
-            flexDirection: "column",
+            display: 'flex',
+            flexDirection: 'column',
             minHeight: 0,
           }}
         >
-          <Box sx={{ px: 2, pt: 2, pb: 1.5 }}>
+          <Box sx={{px: 2, pt: 2, pb: 1.5}}>
             <Typography id="transaction-filters-title" variant="h6">
               Filtrar transacciones
             </Typography>
@@ -197,8 +199,8 @@ export function TransactionFilters({
             spacing={2}
             sx={{
               p: 2,
-              overflowY: "auto",
-              overscrollBehavior: "contain",
+              overflowY: 'auto',
+              overscrollBehavior: 'contain',
             }}
           >
             <FilterFields
@@ -216,12 +218,17 @@ export function TransactionFilters({
             spacing={1}
             sx={{
               p: 2,
-              pb: "max(16px, env(safe-area-inset-bottom))",
-              bgcolor: "background.paper",
+              pb: 'max(16px, env(safe-area-inset-bottom))',
+              bgcolor: 'background.paper',
             }}
           >
             {activeFilterCount > 0 ? (
-              <Button component={Link} href={clearHref} color="inherit" fullWidth>
+              <Button
+                component={Link}
+                href={clearHref}
+                color="inherit"
+                fullWidth
+              >
                 Limpiar
               </Button>
             ) : (

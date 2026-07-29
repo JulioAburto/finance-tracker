@@ -1,16 +1,23 @@
-"use client";
+'use client';
 
-import { Alert, Button, Card, CardContent, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Card,
+  CardContent,
+  Stack,
+  Typography,
+} from '@mui/material';
 
 export default function GlobalError({
   reset,
 }: {
-  error: Error & { digest?: string };
+  error: Error & {digest?: string};
   reset: () => void;
 }) {
   return (
-    <Card sx={{ maxWidth: 640 }}>
-      <CardContent sx={{ p: { xs: 2.5, md: 4 } }}>
+    <Card sx={{maxWidth: 640}}>
+      <CardContent sx={{p: {xs: 2.5, md: 4}}}>
         <Stack spacing={2}>
           <Typography variant="h4" component="h1">
             No se pudo cargar esta pantalla
@@ -21,7 +28,7 @@ export default function GlobalError({
           <Button
             variant="contained"
             onClick={reset}
-            sx={{ alignSelf: "flex-start" }}
+            sx={{alignSelf: 'flex-start'}}
           >
             Reintentar
           </Button>

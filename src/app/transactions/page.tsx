@@ -12,31 +12,31 @@ import {
   TableHead,
   TableRow,
   Typography,
-} from "@mui/material";
-import { PageHeader } from "@/components/layout/page-header";
-import { EmptyState } from "@/components/ui/empty-state";
-import { DeleteTransactionButton } from "@/features/transactions/components/delete-transaction-button";
-import { TransactionFilters } from "@/features/transactions/components/transaction-filters";
+} from '@mui/material';
+import {PageHeader} from '@/components/layout/page-header';
+import {EmptyState} from '@/components/ui/empty-state';
+import {DeleteTransactionButton} from '@/features/transactions/components/delete-transaction-button';
+import {TransactionFilters} from '@/features/transactions/components/transaction-filters';
 import {
   getTransactionFormOptions,
   getTransactions,
-} from "@/features/transactions/queries";
-import { normalizeMonth } from "@/lib/date/month";
-import { formatDisplayDate } from "@/lib/date/month";
-import { formatNio, formatUsd } from "@/lib/money/format";
+} from '@/features/transactions/queries';
+import {normalizeMonth} from '@/lib/date/month';
+import {formatDisplayDate} from '@/lib/date/month';
+import {formatNio, formatUsd} from '@/lib/money/format';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 const transactionTypeLabels = {
-  expense: "Gasto",
-  income: "Ingreso",
-  transfer: "Transferencia",
+  expense: 'Gasto',
+  income: 'Ingreso',
+  transfer: 'Transferencia',
 } as const;
 
 const transactionTypeColors = {
-  expense: "error",
-  income: "success",
-  transfer: "info",
+  expense: 'error',
+  income: 'success',
+  transfer: 'info',
 } as const;
 
 type SearchParams = Promise<{
@@ -55,7 +55,7 @@ export default async function TransactionsPage({
   const categoryId = params.categoryId || undefined;
   const paymentMethodId = params.paymentMethodId || undefined;
   const [rows, options] = await Promise.all([
-    getTransactions({ month, categoryId, paymentMethodId }),
+    getTransactions({month, categoryId, paymentMethodId}),
     getTransactionFormOptions(),
   ]);
 
@@ -68,7 +68,7 @@ export default async function TransactionsPage({
           <Button
             href="/transactions/new"
             variant="contained"
-            sx={{ width: { xs: "100%", sm: "auto" } }}
+            sx={{width: {xs: '100%', sm: 'auto'}}}
           >
             Agregar gasto
           </Button>
@@ -95,27 +95,27 @@ export default async function TransactionsPage({
       ) : (
         <>
           <Typography color="text.secondary" variant="body2">
-            {rows.length} {rows.length === 1 ? "movimiento" : "movimientos"}
+            {rows.length} {rows.length === 1 ? 'movimiento' : 'movimientos'}
           </Typography>
 
-          <Stack spacing={1.5} sx={{ display: { xs: "flex", md: "none" } }}>
-            {rows.map((transaction) => (
+          <Stack spacing={1.5} sx={{display: {xs: 'flex', md: 'none'}}}>
+            {rows.map(transaction => (
               <Card key={transaction.id}>
-                <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+                <CardContent sx={{p: 2, '&:last-child': {pb: 2}}}>
                   <Stack spacing={1.5}>
                     <Stack
                       direction="row"
                       spacing={1}
                       sx={{
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
                         minWidth: 0,
                       }}
                     >
-                      <Box sx={{ minWidth: 0 }}>
+                      <Box sx={{minWidth: 0}}>
                         <Typography
                           variant="h6"
-                          sx={{ lineHeight: 1.25, overflowWrap: "anywhere" }}
+                          sx={{lineHeight: 1.25, overflowWrap: 'anywhere'}}
                         >
                           {transaction.name}
                         </Typography>
@@ -127,7 +127,7 @@ export default async function TransactionsPage({
                         size="small"
                         label={transactionTypeLabels[transaction.type]}
                         color={transactionTypeColors[transaction.type]}
-                        sx={{ flexShrink: 0 }}
+                        sx={{flexShrink: 0}}
                       />
                     </Stack>
 
@@ -135,30 +135,32 @@ export default async function TransactionsPage({
                       direction="row"
                       spacing={1}
                       sx={{
-                        justifyContent: "space-between",
-                        alignItems: "flex-end",
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-end',
                         minWidth: 0,
                       }}
                     >
-                      <Box sx={{ minWidth: 0 }}>
+                      <Box sx={{minWidth: 0}}>
                         <Typography
                           color="text.secondary"
                           variant="body2"
-                          sx={{ overflowWrap: "anywhere" }}
+                          sx={{overflowWrap: 'anywhere'}}
                         >
-                          {transaction.categoryName ?? "Sin categoría"}
+                          {transaction.categoryName ?? 'Sin categoría'}
                         </Typography>
                         <Typography
                           color="text.secondary"
                           variant="caption"
-                          sx={{ display: "block", overflowWrap: "anywhere" }}
+                          sx={{display: 'block', overflowWrap: 'anywhere'}}
                         >
-                          {transaction.paymentMethodName ?? "Sin método"}
+                          {transaction.paymentMethodName ?? 'Sin método'}
                         </Typography>
                       </Box>
-                      <Box sx={{ flexShrink: 0, textAlign: "right" }}>
-                        <Typography sx={{ fontWeight: 800, whiteSpace: "nowrap" }}>
-                          {transaction.currency === "USD"
+                      <Box sx={{flexShrink: 0, textAlign: 'right'}}>
+                        <Typography
+                          sx={{fontWeight: 800, whiteSpace: 'nowrap'}}
+                        >
+                          {transaction.currency === 'USD'
                             ? formatUsd(Number(transaction.amount))
                             : formatNio(Number(transaction.amount))}
                         </Typography>
@@ -176,7 +178,7 @@ export default async function TransactionsPage({
                       >
                         Editar
                       </Button>
-                      <Box sx={{ flex: 1 }}>
+                      <Box sx={{flex: 1}}>
                         <DeleteTransactionButton
                           transactionId={transaction.id}
                           fullWidth
@@ -191,9 +193,9 @@ export default async function TransactionsPage({
 
           <TableContainer
             component={Card}
-            sx={{ display: { xs: "none", md: "block" } }}
+            sx={{display: {xs: 'none', md: 'block'}}}
           >
-            <Table size="small" sx={{ minWidth: 900 }}>
+            <Table size="small" sx={{minWidth: 900}}>
               <TableHead>
                 <TableRow>
                   <TableCell>Fecha</TableCell>
@@ -207,35 +209,35 @@ export default async function TransactionsPage({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((transaction) => (
-                <TableRow key={transaction.id} hover>
-                  <TableCell>{formatDisplayDate(transaction.date)}</TableCell>
-                  <TableCell>{transaction.name}</TableCell>
-                  <TableCell>{transactionTypeLabels[transaction.type]}</TableCell>
-                  <TableCell>
-                    {transaction.categoryName ?? "Sin categoría"}
-                  </TableCell>
-                  <TableCell>
-                    {transaction.paymentMethodName ?? "Sin método"}
-                  </TableCell>
-                  <TableCell align="right">
-                    {formatUsd(Number(transaction.amountUsd))}
-                  </TableCell>
-                  <TableCell align="right">
-                    {formatNio(Number(transaction.amountNio))}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Button
-                      href={`/transactions/${transaction.id}/edit`}
-                      size="small"
-                    >
-                      Editar
-                    </Button>
-                    <DeleteTransactionButton
-                      transactionId={transaction.id}
-                    />
-                  </TableCell>
-                </TableRow>
+                {rows.map(transaction => (
+                  <TableRow key={transaction.id} hover>
+                    <TableCell>{formatDisplayDate(transaction.date)}</TableCell>
+                    <TableCell>{transaction.name}</TableCell>
+                    <TableCell>
+                      {transactionTypeLabels[transaction.type]}
+                    </TableCell>
+                    <TableCell>
+                      {transaction.categoryName ?? 'Sin categoría'}
+                    </TableCell>
+                    <TableCell>
+                      {transaction.paymentMethodName ?? 'Sin método'}
+                    </TableCell>
+                    <TableCell align="right">
+                      {formatUsd(Number(transaction.amountUsd))}
+                    </TableCell>
+                    <TableCell align="right">
+                      {formatNio(Number(transaction.amountNio))}
+                    </TableCell>
+                    <TableCell align="right">
+                      <Button
+                        href={`/transactions/${transaction.id}/edit`}
+                        size="small"
+                      >
+                        Editar
+                      </Button>
+                      <DeleteTransactionButton transactionId={transaction.id} />
+                    </TableCell>
+                  </TableRow>
                 ))}
               </TableBody>
             </Table>

@@ -12,27 +12,27 @@ import {
   Stack,
   TextField,
   Typography,
-} from "@mui/material";
-import { PageHeader } from "@/components/layout/page-header";
+} from '@mui/material';
+import {PageHeader} from '@/components/layout/page-header';
 import {
   updatePaymentMethodAction,
   updateSettingsAction,
-} from "@/features/management/actions";
-import { ManagementDialog } from "@/features/management/components/management-dialog";
-import { getSettingsData } from "@/features/management/queries";
-import { formatUsd } from "@/lib/money/format";
+} from '@/features/management/actions';
+import {ManagementDialog} from '@/features/management/components/management-dialog';
+import {getSettingsData} from '@/features/management/queries';
+import {formatUsd} from '@/lib/money/format';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default async function SettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{status?: string}>;
 }) {
   const params = await searchParams;
   const data = await getSettingsData();
   const creditCards = data.paymentMethods.filter(
-    (method) => method.type === "credit_card",
+    method => method.type === 'credit_card',
   );
 
   return (
@@ -42,10 +42,10 @@ export default async function SettingsPage({
         description="Valores predeterminados para registrar transacciones."
       />
 
-      {params.status === "saved" ? (
+      {params.status === 'saved' ? (
         <Alert severity="success">Cambios guardados.</Alert>
       ) : null}
-      {params.status === "invalid" ? (
+      {params.status === 'invalid' ? (
         <Alert severity="error">Revisa los valores ingresados.</Alert>
       ) : null}
       <Alert severity="warning">
@@ -56,13 +56,20 @@ export default async function SettingsPage({
         <CardContent>
           <Stack spacing={2}>
             <Stack
-              direction={{ xs: "column", sm: "row" }}
+              direction={{xs: 'column', sm: 'row'}}
               spacing={2}
-              sx={{ justifyContent: "space-between", alignItems: { sm: "flex-start" } }}
+              sx={{
+                justifyContent: 'space-between',
+                alignItems: {sm: 'flex-start'},
+              }}
             >
-              <Box sx={{ minWidth: 0 }}>
+              <Box sx={{minWidth: 0}}>
                 <Typography variant="h6">Valores generales</Typography>
-                <Typography color="text.secondary" variant="body2" sx={{ mt: 0.5 }}>
+                <Typography
+                  color="text.secondary"
+                  variant="body2"
+                  sx={{mt: 0.5}}
+                >
                   Moneda y tasa utilizadas al comenzar una nueva transacción.
                 </Typography>
               </Box>
@@ -77,7 +84,7 @@ export default async function SettingsPage({
                       select
                       name="defaultCurrency"
                       label="Moneda predeterminada"
-                      defaultValue={data.settings?.defaultCurrency ?? "USD"}
+                      defaultValue={data.settings?.defaultCurrency ?? 'USD'}
                       fullWidth
                     >
                       <MenuItem value="USD">USD</MenuItem>
@@ -87,8 +94,10 @@ export default async function SettingsPage({
                       name="defaultExchangeRate"
                       label="Tasa predeterminada (1 USD a NIO)"
                       type="number"
-                      defaultValue={data.settings?.defaultExchangeRate ?? "36.6243"}
-                      slotProps={{ htmlInput: { min: 0.0001, step: 0.0001 } }}
+                      defaultValue={
+                        data.settings?.defaultExchangeRate ?? '36.6243'
+                      }
+                      slotProps={{htmlInput: {min: 0.0001, step: 0.0001}}}
                       required
                       fullWidth
                     />
@@ -115,8 +124,8 @@ export default async function SettingsPage({
 
             <Box
               sx={{
-                display: "grid",
-                gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(3, 1fr)" },
+                display: 'grid',
+                gridTemplateColumns: {xs: '1fr 1fr', md: 'repeat(3, 1fr)'},
                 gap: 2,
               }}
             >
@@ -124,24 +133,24 @@ export default async function SettingsPage({
                 <Typography color="text.secondary" variant="caption">
                   Moneda
                 </Typography>
-                <Typography sx={{ fontWeight: 800 }}>
-                  {data.settings?.defaultCurrency ?? "USD"}
+                <Typography sx={{fontWeight: 800}}>
+                  {data.settings?.defaultCurrency ?? 'USD'}
                 </Typography>
               </Box>
               <Box>
                 <Typography color="text.secondary" variant="caption">
                   Tasa USD/NIO
                 </Typography>
-                <Typography sx={{ fontWeight: 800 }}>
-                  {data.settings?.defaultExchangeRate ?? "36.6243"}
+                <Typography sx={{fontWeight: 800}}>
+                  {data.settings?.defaultExchangeRate ?? '36.6243'}
                 </Typography>
               </Box>
-              <Box sx={{ gridColumn: { xs: "1 / -1", md: "auto" } }}>
+              <Box sx={{gridColumn: {xs: '1 / -1', md: 'auto'}}}>
                 <Typography color="text.secondary" variant="caption">
                   Modo tarjeta
                 </Typography>
-                <Typography sx={{ fontWeight: 800 }}>
-                  {data.settings?.creditCardModeEnabled ? "Activo" : "Inactivo"}
+                <Typography sx={{fontWeight: 800}}>
+                  {data.settings?.creditCardModeEnabled ? 'Activo' : 'Inactivo'}
                 </Typography>
               </Box>
             </Box>
@@ -153,34 +162,42 @@ export default async function SettingsPage({
         <Box>
           <Typography variant="h6">Tarjetas de crédito</Typography>
           <Typography color="text.secondary" variant="body2">
-            Administra límites y fechas sin convertir los pagos en nuevos gastos.
+            Administra límites y fechas sin convertir los pagos en nuevos
+            gastos.
           </Typography>
         </Box>
 
         {creditCards.length === 0 ? (
-          <Alert severity="info">No hay tarjetas de crédito configuradas.</Alert>
+          <Alert severity="info">
+            No hay tarjetas de crédito configuradas.
+          </Alert>
         ) : (
-          creditCards.map((method) => (
+          creditCards.map(method => (
             <Card key={method.id}>
-              <CardContent sx={{ p: { xs: 2, md: 2.5 }, "&:last-child": { pb: { xs: 2, md: 2.5 } } }}>
+              <CardContent
+                sx={{
+                  p: {xs: 2, md: 2.5},
+                  '&:last-child': {pb: {xs: 2, md: 2.5}},
+                }}
+              >
                 <Stack spacing={2}>
                   <Stack
-                    direction={{ xs: "column", sm: "row" }}
+                    direction={{xs: 'column', sm: 'row'}}
                     spacing={1.5}
                     sx={{
-                      justifyContent: "space-between",
-                      alignItems: { sm: "flex-start" },
+                      justifyContent: 'space-between',
+                      alignItems: {sm: 'flex-start'},
                     }}
                   >
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography variant="h6" sx={{ overflowWrap: "anywhere" }}>
+                    <Box sx={{minWidth: 0}}>
+                      <Typography variant="h6" sx={{overflowWrap: 'anywhere'}}>
                         {method.name}
                       </Typography>
                       <Chip
                         size="small"
-                        label={method.isActive ? "Activa" : "Inactiva"}
-                        color={method.isActive ? "success" : "default"}
-                        sx={{ mt: 1 }}
+                        label={method.isActive ? 'Activa' : 'Inactiva'}
+                        color={method.isActive ? 'success' : 'default'}
+                        sx={{mt: 1}}
                       />
                     </Box>
                     <ManagementDialog
@@ -203,14 +220,14 @@ export default async function SettingsPage({
                             name="creditLimitUsd"
                             label="Límite USD"
                             type="number"
-                            defaultValue={method.creditLimitUsd ?? ""}
+                            defaultValue={method.creditLimitUsd ?? ''}
                             fullWidth
-                            slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                            slotProps={{htmlInput: {min: 0, step: 0.01}}}
                           />
                           <Box
                             sx={{
-                              display: "grid",
-                              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                              display: 'grid',
+                              gridTemplateColumns: {xs: '1fr', sm: '1fr 1fr'},
                               gap: 2,
                             }}
                           >
@@ -218,17 +235,17 @@ export default async function SettingsPage({
                               name="statementCutDay"
                               label="Día de corte"
                               type="number"
-                              defaultValue={method.statementCutDay ?? ""}
+                              defaultValue={method.statementCutDay ?? ''}
                               fullWidth
-                              slotProps={{ htmlInput: { min: 1, max: 31 } }}
+                              slotProps={{htmlInput: {min: 1, max: 31}}}
                             />
                             <TextField
                               name="paymentDueDay"
                               label="Día de pago"
                               type="number"
-                              defaultValue={method.paymentDueDay ?? ""}
+                              defaultValue={method.paymentDueDay ?? ''}
                               fullWidth
-                              slotProps={{ htmlInput: { min: 1, max: 31 } }}
+                              slotProps={{htmlInput: {min: 1, max: 31}}}
                             />
                           </Box>
                           <FormControlLabel
@@ -252,8 +269,8 @@ export default async function SettingsPage({
 
                   <Box
                     sx={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
                       gap: 2,
                     }}
                   >
@@ -261,26 +278,28 @@ export default async function SettingsPage({
                       <Typography color="text.secondary" variant="caption">
                         Límite
                       </Typography>
-                      <Typography sx={{ fontWeight: 800, overflowWrap: "anywhere" }}>
+                      <Typography
+                        sx={{fontWeight: 800, overflowWrap: 'anywhere'}}
+                      >
                         {method.creditLimitUsd
                           ? formatUsd(Number(method.creditLimitUsd))
-                          : "Sin definir"}
+                          : 'Sin definir'}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography color="text.secondary" variant="caption">
                         Corte
                       </Typography>
-                      <Typography sx={{ fontWeight: 800 }}>
-                        {method.statementCutDay ?? "—"}
+                      <Typography sx={{fontWeight: 800}}>
+                        {method.statementCutDay ?? '—'}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography color="text.secondary" variant="caption">
                         Pago
                       </Typography>
-                      <Typography sx={{ fontWeight: 800 }}>
-                        {method.paymentDueDay ?? "—"}
+                      <Typography sx={{fontWeight: 800}}>
+                        {method.paymentDueDay ?? '—'}
                       </Typography>
                     </Box>
                   </Box>

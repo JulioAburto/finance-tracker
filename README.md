@@ -16,24 +16,25 @@ El objetivo principal es responder rápido:
 
 ### ✅ Implementado
 
-* Conexión con **Supabase Postgres** mediante **Drizzle ORM**.
-* Migración y seed inicial.
-* Conversión **USD/NIO** con tasa histórica por transacción.
-* Creación, listado, filtrado, edición y eliminación de transacciones.
-* Dashboard mensual con:
+- Conexión con **Supabase Postgres** mediante **Drizzle ORM**.
+- Migración y seed inicial.
+- Conversión **USD/NIO** con tasa histórica por transacción.
+- Creación, listado, filtrado, edición y eliminación de transacciones.
+- Dashboard mensual con:
 
-  * uso por categoría,
-  * alertas de presupuesto,
-  * gastos sin categoría.
-* Pruebas unitarias con **Jest**.
+  - uso por categoría,
+  - alertas de presupuesto,
+  - gastos sin categoría.
+
+- Pruebas unitarias con **Jest**.
 
 ### ⏳ Pendiente dentro del MVP
 
-* Gestión de categorías y presupuestos.
-* Gestión de reglas de comercios.
-* Configuración editable desde la interfaz.
-* Protección del despliegue público.
-* IA opcional como fallback.
+- Gestión de categorías y presupuestos.
+- Gestión de reglas de comercios.
+- Configuración editable desde la interfaz.
+- Protección del despliegue público.
+- IA opcional como fallback.
 
 El alcance y estado detallados están en [docs/MVP.md](./docs/MVP.md).
 
@@ -107,8 +108,8 @@ Para requisitos, HTTPS local, scripts y solución de problemas, consulta [docs/S
 
 ## ⏳ Rutas pendientes dentro del MVP
 
-| Ruta          | Estado   |
-| ------------- | -------- |
+| Ruta          | Estado    |
+| ------------- | --------- |
 | `/categories` | Pendiente |
 | `/rules`      | Pendiente |
 | `/settings`   | Pendiente |
@@ -215,14 +216,14 @@ u otra protección aprobada.
 
 ## 🧠 Notas de arquitectura
 
-* La app usa **Next.js App Router**.
-* Se priorizan **Server Components** por defecto.
-* Las mutaciones deben manejarse desde servidor.
-* La base de datos se consulta mediante **Drizzle ORM**.
-* No se usa Firebase.
-* No se usa Tailwind.
-* No se usa AI-first UX en el MVP.
-* Las reglas financieras tienen prioridad sobre cualquier automatización futura.
+- La app usa **Next.js App Router**.
+- Se priorizan **Server Components** por defecto.
+- Las mutaciones deben manejarse desde servidor.
+- La base de datos se consulta mediante **Drizzle ORM**.
+- No se usa Firebase.
+- No se usa Tailwind.
+- No se usa AI-first UX en el MVP.
+- Las reglas financieras tienen prioridad sobre cualquier automatización futura.
 
 ---
 

@@ -11,24 +11,24 @@ import {
   Stack,
   TextField,
   Typography,
-} from "@mui/material";
-import { PageHeader } from "@/components/layout/page-header";
+} from '@mui/material';
+import {PageHeader} from '@/components/layout/page-header';
 import {
   createCategoryAction,
   saveMonthlyBudgetAction,
   updateCategoryAction,
-} from "@/features/management/actions";
-import { ManagementDialog } from "@/features/management/components/management-dialog";
-import { getCategoryManagementData } from "@/features/management/queries";
-import { normalizeMonth } from "@/lib/date/month";
-import { formatUsd } from "@/lib/money/format";
+} from '@/features/management/actions';
+import {ManagementDialog} from '@/features/management/components/management-dialog';
+import {getCategoryManagementData} from '@/features/management/queries';
+import {normalizeMonth} from '@/lib/date/month';
+import {formatUsd} from '@/lib/money/format';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default async function CategoriesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ month?: string; status?: string }>;
+  searchParams: Promise<{month?: string; status?: string}>;
 }) {
   const params = await searchParams;
   const month = normalizeMonth(params.month);
@@ -55,7 +55,7 @@ export default async function CategoriesPage({
                   type="number"
                   required
                   fullWidth
-                  slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                  slotProps={{htmlInput: {min: 0, step: 0.01}}}
                 />
                 <TextField
                   name="sortOrder"
@@ -77,19 +77,19 @@ export default async function CategoriesPage({
         }
       />
 
-      {params.status === "saved" ? (
+      {params.status === 'saved' ? (
         <Alert severity="success">Cambios guardados.</Alert>
       ) : null}
-      {params.status === "invalid" ? (
+      {params.status === 'invalid' ? (
         <Alert severity="error">Revisa los valores ingresados.</Alert>
       ) : null}
 
       <Card component="form" method="get">
-        <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+        <CardContent sx={{p: 2, '&:last-child': {pb: 2}}}>
           <Stack
-            direction={{ xs: "column", sm: "row" }}
+            direction={{xs: 'column', sm: 'row'}}
             spacing={1.5}
-            sx={{ alignItems: { sm: "center" } }}
+            sx={{alignItems: {sm: 'center'}}}
           >
             <TextField
               name="month"
@@ -98,13 +98,13 @@ export default async function CategoriesPage({
               defaultValue={month}
               size="small"
               fullWidth
-              slotProps={{ inputLabel: { shrink: true } }}
-              sx={{ maxWidth: { sm: 260 } }}
+              slotProps={{inputLabel: {shrink: true}}}
+              sx={{maxWidth: {sm: 260}}}
             />
             <Button
               type="submit"
               variant="outlined"
-              sx={{ width: { xs: "100%", sm: "auto" } }}
+              sx={{width: {xs: '100%', sm: 'auto'}}}
             >
               Ver mes
             </Button>
@@ -122,20 +122,22 @@ export default async function CategoriesPage({
       <Card>
         <CardContent>
           <Stack
-            direction={{ xs: "column", sm: "row" }}
+            direction={{xs: 'column', sm: 'row'}}
             spacing={2}
-            sx={{ justifyContent: "space-between", alignItems: { sm: "center" } }}
+            sx={{justifyContent: 'space-between', alignItems: {sm: 'center'}}}
           >
-            <Box sx={{ minWidth: 0 }}>
+            <Box sx={{minWidth: 0}}>
               <Typography variant="h6">Presupuesto mensual</Typography>
-              <Typography color="text.secondary" variant="body2" sx={{ mt: 0.5 }}>
+              <Typography color="text.secondary" variant="body2" sx={{mt: 0.5}}>
                 {data.budget
                   ? `${formatUsd(Number(data.budget.salaryUsd))} disponibles · ${formatUsd(Number(data.budget.expectedSavingsUsd))} de ahorro esperado`
                   : `Todavía no hay presupuesto para ${month}.`}
               </Typography>
             </Box>
             <ManagementDialog
-              triggerLabel={data.budget ? "Editar presupuesto" : "Crear presupuesto"}
+              triggerLabel={
+                data.budget ? 'Editar presupuesto' : 'Crear presupuesto'
+              }
               title={`Presupuesto de ${month}`}
               description="Estos valores definen el ingreso disponible y el ahorro esperado del mes."
             >
@@ -148,25 +150,25 @@ export default async function CategoriesPage({
                     defaultValue={month}
                     required
                     fullWidth
-                    slotProps={{ inputLabel: { shrink: true } }}
+                    slotProps={{inputLabel: {shrink: true}}}
                   />
                   <TextField
                     name="salaryUsd"
                     label="Ingreso disponible (USD)"
                     type="number"
-                    defaultValue={data.budget?.salaryUsd ?? ""}
+                    defaultValue={data.budget?.salaryUsd ?? ''}
                     required
                     fullWidth
-                    slotProps={{ htmlInput: { min: 0.01, step: 0.01 } }}
+                    slotProps={{htmlInput: {min: 0.01, step: 0.01}}}
                   />
                   <TextField
                     name="expectedSavingsUsd"
                     label="Ahorro esperado (USD)"
                     type="number"
-                    defaultValue={data.budget?.expectedSavingsUsd ?? "0"}
+                    defaultValue={data.budget?.expectedSavingsUsd ?? '0'}
                     required
                     fullWidth
-                    slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                    slotProps={{htmlInput: {min: 0, step: 0.01}}}
                   />
                   <Button type="submit" variant="contained" fullWidth>
                     Guardar presupuesto
@@ -182,32 +184,38 @@ export default async function CategoriesPage({
         <Box>
           <Typography variant="h6">Categorías</Typography>
           <Typography color="text.secondary" variant="body2">
-            {data.categories.length} {data.categories.length === 1 ? "categoría" : "categorías"}
+            {data.categories.length}{' '}
+            {data.categories.length === 1 ? 'categoría' : 'categorías'}
           </Typography>
         </Box>
 
-        {data.categories.map((category) => (
+        {data.categories.map(category => (
           <Card key={category.id}>
-            <CardContent sx={{ p: { xs: 2, md: 2.5 }, "&:last-child": { pb: { xs: 2, md: 2.5 } } }}>
+            <CardContent
+              sx={{p: {xs: 2, md: 2.5}, '&:last-child': {pb: {xs: 2, md: 2.5}}}}
+            >
               <Stack spacing={2}>
                 <Stack
-                  direction={{ xs: "column", sm: "row" }}
+                  direction={{xs: 'column', sm: 'row'}}
                   spacing={1.5}
-                  sx={{ justifyContent: "space-between", alignItems: { sm: "flex-start" } }}
+                  sx={{
+                    justifyContent: 'space-between',
+                    alignItems: {sm: 'flex-start'},
+                  }}
                 >
-                  <Box sx={{ minWidth: 0 }}>
-                    <Typography variant="h6" sx={{ overflowWrap: "anywhere" }}>
+                  <Box sx={{minWidth: 0}}>
+                    <Typography variant="h6" sx={{overflowWrap: 'anywhere'}}>
                       {category.name}
                     </Typography>
                     <Stack
                       direction="row"
                       spacing={1}
-                      sx={{ mt: 1, flexWrap: "wrap", rowGap: 1 }}
+                      sx={{mt: 1, flexWrap: 'wrap', rowGap: 1}}
                     >
                       <Chip
                         size="small"
-                        label={category.isActive ? "Activa" : "Inactiva"}
-                        color={category.isActive ? "success" : "default"}
+                        label={category.isActive ? 'Activa' : 'Inactiva'}
+                        color={category.isActive ? 'success' : 'default'}
                       />
                       {category.isEssential ? (
                         <Chip size="small" label="Esencial" color="info" />
@@ -234,8 +242,8 @@ export default async function CategoriesPage({
                         />
                         <Box
                           sx={{
-                            display: "grid",
-                            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                            display: 'grid',
+                            gridTemplateColumns: {xs: '1fr', sm: '1fr 1fr'},
                             gap: 2,
                           }}
                         >
@@ -245,7 +253,7 @@ export default async function CategoriesPage({
                             type="number"
                             defaultValue={category.monthlyBudgetUsd}
                             fullWidth
-                            slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                            slotProps={{htmlInput: {min: 0, step: 0.01}}}
                           />
                           <TextField
                             name="selectedMonthBudgetUsd"
@@ -253,7 +261,7 @@ export default async function CategoriesPage({
                             type="number"
                             defaultValue={category.selectedMonthBudgetUsd}
                             fullWidth
-                            slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                            slotProps={{htmlInput: {min: 0, step: 0.01}}}
                           />
                           <TextField
                             name="sortOrder"
@@ -264,11 +272,16 @@ export default async function CategoriesPage({
                           />
                         </Box>
                         <Divider />
-                        <Typography variant="subtitle2">Umbrales de alerta</Typography>
+                        <Typography variant="subtitle2">
+                          Umbrales de alerta
+                        </Typography>
                         <Box
                           sx={{
-                            display: "grid",
-                            gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+                            display: 'grid',
+                            gridTemplateColumns: {
+                              xs: '1fr',
+                              sm: 'repeat(3, 1fr)',
+                            },
                             gap: 2,
                           }}
                         >
@@ -294,7 +307,10 @@ export default async function CategoriesPage({
                             fullWidth
                           />
                         </Box>
-                        <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                        <Stack
+                          direction={{xs: 'column', sm: 'row'}}
+                          spacing={1}
+                        >
                           <FormControlLabel
                             control={
                               <Checkbox
@@ -326,8 +342,8 @@ export default async function CategoriesPage({
 
                 <Box
                   sx={{
-                    display: "grid",
-                    gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(3, 1fr)" },
+                    display: 'grid',
+                    gridTemplateColumns: {xs: '1fr 1fr', md: 'repeat(3, 1fr)'},
                     gap: 2,
                   }}
                 >
@@ -335,7 +351,7 @@ export default async function CategoriesPage({
                     <Typography color="text.secondary" variant="caption">
                       Presupuesto {month}
                     </Typography>
-                    <Typography sx={{ fontWeight: 800 }}>
+                    <Typography sx={{fontWeight: 800}}>
                       {formatUsd(Number(category.selectedMonthBudgetUsd))}
                     </Typography>
                   </Box>
@@ -343,17 +359,17 @@ export default async function CategoriesPage({
                     <Typography color="text.secondary" variant="caption">
                       Predeterminado
                     </Typography>
-                    <Typography sx={{ fontWeight: 800 }}>
+                    <Typography sx={{fontWeight: 800}}>
                       {formatUsd(Number(category.monthlyBudgetUsd))}
                     </Typography>
                   </Box>
-                  <Box sx={{ gridColumn: { xs: "1 / -1", md: "auto" } }}>
+                  <Box sx={{gridColumn: {xs: '1 / -1', md: 'auto'}}}>
                     <Typography color="text.secondary" variant="caption">
                       Umbrales
                     </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                      {category.warningThreshold}% · {category.dangerThreshold}% ·{" "}
-                      {category.exceededThreshold}%
+                    <Typography variant="body2" sx={{fontWeight: 700}}>
+                      {category.warningThreshold}% · {category.dangerThreshold}%
+                      · {category.exceededThreshold}%
                     </Typography>
                   </Box>
                 </Box>

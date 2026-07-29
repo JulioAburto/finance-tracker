@@ -1,6 +1,6 @@
-import type { Currency } from "@/lib/money/convert";
+import type {Currency} from '@/lib/money/convert';
 
-export type TransactionType = "income" | "expense" | "transfer";
+export type TransactionType = 'income' | 'expense' | 'transfer';
 
 export type TransactionInput = {
   name: string;
@@ -15,18 +15,18 @@ export type TransactionInput = {
 };
 
 export type TransactionField =
-  | "name"
-  | "amount"
-  | "currency"
-  | "exchangeRate"
-  | "date"
-  | "type"
-  | "categoryId"
-  | "paymentMethodId"
-  | "note";
+  | 'name'
+  | 'amount'
+  | 'currency'
+  | 'exchangeRate'
+  | 'date'
+  | 'type'
+  | 'categoryId'
+  | 'paymentMethodId'
+  | 'note';
 
 export type TransactionFormState = {
-  status: "idle" | "error";
+  status: 'idle' | 'error';
   message?: string;
   fieldErrors?: Partial<Record<TransactionField, string>>;
 };
@@ -37,13 +37,13 @@ export type TransactionFormOption = {
 };
 
 export type PaymentMethodType =
-  | "cash"
-  | "debit"
-  | "credit_card"
-  | "bank_transfer"
-  | "prepaid"
-  | "agency"
-  | "other";
+  | 'cash'
+  | 'debit'
+  | 'credit_card'
+  | 'bank_transfer'
+  | 'prepaid'
+  | 'agency'
+  | 'other';
 
 export type PaymentMethodFormOption = TransactionFormOption & {
   type: PaymentMethodType;
