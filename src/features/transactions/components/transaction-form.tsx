@@ -66,7 +66,7 @@ export function TransactionForm({
 
         <Stack spacing={2}>
           <div>
-            <Typography variant="subtitle1" fontWeight={800}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
               Datos principales
             </Typography>
             <Typography color="text.secondary" variant="body2">
@@ -148,7 +148,7 @@ export function TransactionForm({
 
         <Stack spacing={2}>
           <div>
-            <Typography variant="subtitle1" fontWeight={800}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
               Clasificación y pago
             </Typography>
             <Typography color="text.secondary" variant="body2">
@@ -234,7 +234,7 @@ export function TransactionForm({
 
         <Stack spacing={2}>
           <div>
-            <Typography variant="subtitle1" fontWeight={800}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
               Conversión y nota
             </Typography>
             <Typography color="text.secondary" variant="body2">

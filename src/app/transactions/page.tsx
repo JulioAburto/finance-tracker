@@ -90,7 +90,8 @@ export default async function TransactionsPage({
             name="categoryId"
             label="Categoría"
             defaultValue={categoryId ?? ""}
-            sx={{ minWidth: 220 }}
+            fullWidth
+            sx={{ minWidth: { md: 220 } }}
           >
             <MenuItem value="">Todas</MenuItem>
             {options.categories.map((category) => (
@@ -104,7 +105,8 @@ export default async function TransactionsPage({
             name="paymentMethodId"
             label="Método de pago"
             defaultValue={paymentMethodId ?? ""}
-            sx={{ minWidth: 220 }}
+            fullWidth
+            sx={{ minWidth: { md: 220 } }}
           >
             <MenuItem value="">Todos</MenuItem>
             {options.paymentMethods.map((method) => (
@@ -140,9 +142,9 @@ export default async function TransactionsPage({
                 <CardContent>
                   <Stack spacing={1.5}>
                     <Stack
-                      direction="row"
+                      direction={{ xs: "column", sm: "row" }}
                       spacing={1}
-                      sx={{ justifyContent: "space-between", alignItems: "center" }}
+                      sx={{ justifyContent: "space-between", alignItems: { sm: "center" } }}
                     >
                       <Typography color="text.secondary" variant="body2">
                         {formatDisplayDate(transaction.date)}
@@ -154,34 +156,39 @@ export default async function TransactionsPage({
                       />
                     </Stack>
 
-                    <div>
+                    <Box sx={{ minWidth: 0 }}>
                       <Typography variant="h6">{transaction.name}</Typography>
-                      <Typography color="text.secondary" variant="body2">
+                      <Typography
+                        color="text.secondary"
+                        variant="body2"
+                        sx={{ overflowWrap: "anywhere" }}
+                      >
                         {transaction.categoryName ?? "Sin categoría"} ·{" "}
                         {transaction.paymentMethodName ?? "Sin método"}
                       </Typography>
-                    </div>
+                    </Box>
 
                     <Stack
-                      direction="row"
-                      sx={{ justifyContent: "space-between", alignItems: "end" }}
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={0.75}
+                      sx={{ justifyContent: "space-between", alignItems: { sm: "end" } }}
                     >
-                      <div>
+                      <Box>
                         <Typography color="text.secondary" variant="caption">
                           Monto original
                         </Typography>
-                        <Typography fontWeight={800}>
+                        <Typography sx={{ fontWeight: 800 }}>
                           {transaction.currency === "USD"
                             ? formatUsd(Number(transaction.amount))
                             : formatNio(Number(transaction.amount))}
                         </Typography>
-                      </div>
+                      </Box>
                       <Typography color="text.secondary" variant="body2">
                         {formatUsd(Number(transaction.amountUsd))}
                       </Typography>
                     </Stack>
 
-                    <Stack direction="row" spacing={1}>
+                    <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
                       <Button
                         href={`/transactions/${transaction.id}/edit`}
                         variant="outlined"

@@ -23,7 +23,7 @@ import {
   readText,
 } from "./schemas";
 
-function finish(path: string, status: "saved" | "invalid") {
+function finish(path: string, status: "saved" | "invalid"): never {
   const pathname = path.split("?")[0];
   const separator = path.includes("?") ? "&" : "?";
   revalidatePath(pathname);
@@ -80,6 +80,10 @@ export async function updateCategoryAction(id: string, formData: FormData) {
   const danger = readInteger(formData, "dangerThreshold");
   const exceeded = readInteger(formData, "exceededThreshold");
   const month = readText(formData, "month");
+  if (warning === null || danger === null || exceeded === null) {
+    finish(`/categories?month=${month}`, "invalid");
+  }
+
   if (
     !isUuid(id) ||
     !name ||

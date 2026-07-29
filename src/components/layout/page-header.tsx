@@ -19,20 +19,24 @@ export function PageHeader({
       sx={{
         justifyContent: "space-between",
         alignItems: { sm: "center" },
+        minWidth: 0,
       }}
     >
-      <Box sx={{ maxWidth: 720 }}>
+      <Box sx={{ maxWidth: 720, minWidth: 0 }}>
         <Typography variant="h4" component="h1">
           {title}
         </Typography>
         {description ? (
-          <Typography color="text.secondary" sx={{ mt: 0.75 }}>
+          <Typography
+            color="text.secondary"
+            sx={{ mt: 0.75, overflowWrap: "anywhere" }}
+          >
             {description}
           </Typography>
         ) : null}
       </Box>
       {action ? (
-        <Box sx={{ width: { xs: "100%", sm: "auto" }, flexShrink: 0 }}>
+        <Box sx={{ width: { xs: "100%", sm: "auto" }, flexShrink: 0, minWidth: 0 }}>
           {action}
         </Box>
       ) : null}

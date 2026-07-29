@@ -81,7 +81,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 10,
-          minHeight: 40,
+          minHeight: 44,
         },
       },
     },

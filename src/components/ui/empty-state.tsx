@@ -34,16 +34,25 @@ export function EmptyState({
           borderColor: "divider",
         }}
       />
-      <div>
-        <Typography variant="subtitle1" fontWeight={700}>
+      <Box sx={{ minWidth: 0 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
           {title}
         </Typography>
-        <Typography color="text.secondary" variant="body2">
+        <Typography
+          color="text.secondary"
+          variant="body2"
+          sx={{ overflowWrap: "anywhere" }}
+        >
           {description}
         </Typography>
-      </div>
+      </Box>
       {actionHref && actionLabel ? (
-        <Button href={actionHref} variant="contained" size="small">
+        <Button
+          href={actionHref}
+          variant="contained"
+          size="small"
+          sx={{ minHeight: 44, width: { xs: "100%", sm: "auto" } }}
+        >
           {actionLabel}
         </Button>
       ) : null}

@@ -125,12 +125,12 @@ export default async function DashboardPage({
             <div>
               <Stack
                 direction="row"
-                sx={{ justifyContent: "space-between", mb: 1 }}
+                sx={{ justifyContent: "space-between", mb: 1, gap: 1 }}
               >
                 <Typography variant="body2" sx={{ opacity: 0.8 }}>
                   Presupuesto usado
                 </Typography>
-                <Typography variant="body2" fontWeight={800}>
+                <Typography variant="body2" sx={{ fontWeight: 800 }}>
                   {summary.usagePercent.toFixed(1)}%
                 </Typography>
               </Stack>
@@ -253,9 +253,13 @@ export default async function DashboardPage({
                     <Stack
                       direction="row"
                       spacing={1}
-                      sx={{ justifyContent: "space-between", alignItems: "center" }}
+                      sx={{
+                        justifyContent: "space-between",
+                        alignItems: { xs: "flex-start", sm: "center" },
+                        flexWrap: "wrap",
+                      }}
                     >
-                      <Typography fontWeight={700}>
+                      <Typography sx={{ fontWeight: 700, overflowWrap: "anywhere" }}>
                         {category.categoryName}
                       </Typography>
                       <BudgetStatusChip status={category.status} />
@@ -276,16 +280,16 @@ export default async function DashboardPage({
                     />
                     <Stack
                       direction="row"
-                      sx={{ justifyContent: "space-between" }}
+                      sx={{ justifyContent: "space-between", gap: 1 }}
                     >
                       <Typography variant="body2" color="text.secondary">
                         Restante
                       </Typography>
-                      <Typography variant="body2" fontWeight={700}>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
                         {formatUsd(category.remainingUsd)}
                       </Typography>
                     </Stack>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ overflowWrap: "anywhere" }}>
                       {category.recommendation}
                     </Typography>
                   </Stack>
@@ -373,19 +377,22 @@ export default async function DashboardPage({
             data.latestTransactions.map((transaction) => (
               <Stack
                 key={transaction.id}
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={0.5}
+                direction={{ xs: "column", sm: "row" }}
+                spacing={0.75}
                 sx={{
-                    py: 1.25,
+                  py: 1.25,
                   justifyContent: "space-between",
+                  alignItems: { sm: "flex-start" },
                   borderBottom: "1px solid",
                   borderColor: "divider",
                 }}
               >
-                <span>
+                <Box sx={{ minWidth: 0, overflowWrap: "anywhere" }}>
                   {formatDisplayDate(transaction.date)} · {transaction.name}
-                </span>
-                <strong>{formatUsd(transaction.amountUsd)}</strong>
+                </Box>
+                <Box component="strong" sx={{ flexShrink: 0 }}>
+                  {formatUsd(transaction.amountUsd)}
+                </Box>
               </Stack>
             ))
           )}
@@ -406,17 +413,22 @@ export default async function DashboardPage({
             data.uncategorizedTransactions.map((transaction) => (
               <Stack
                 key={transaction.id}
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={0.5}
+                direction={{ xs: "column", sm: "row" }}
+                spacing={0.75}
                 sx={{
-                    py: 1.25,
+                  py: 1.25,
                   justifyContent: "space-between",
+                  alignItems: { sm: "flex-start" },
                   borderBottom: "1px solid",
                   borderColor: "divider",
                 }}
               >
-                <span>{transaction.name}</span>
-                <strong>{formatUsd(transaction.amountUsd)}</strong>
+                <Box sx={{ minWidth: 0, overflowWrap: "anywhere" }}>
+                  {transaction.name}
+                </Box>
+                <Box component="strong" sx={{ flexShrink: 0 }}>
+                  {formatUsd(transaction.amountUsd)}
+                </Box>
               </Stack>
             ))
           )}
