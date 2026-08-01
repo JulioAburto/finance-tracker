@@ -23,6 +23,8 @@ Las decisiones de producto están en [`MVP.md`](./MVP.md) y el esquema en [`DATA
 - pnpm.
 - Proyecto de Supabase.
 - Cadena de conexión del transaction pooler.
+- Herramientas cliente de PostgreSQL (`pg_dump` y `pg_restore`) o Docker
+  Desktop en ejecución para cambios de producción.
 
 ## Instalar dependencias
 
@@ -38,6 +40,7 @@ Crea `.env.local` a partir de `.env.example`:
 
 ```env
 DATABASE_URL="postgresql://postgres.[PROJECT_REF]:[PASSWORD]@[HOST]:6543/postgres"
+# DATABASE_BACKUP_URL="postgresql://postgres.[PROJECT_REF]:[PASSWORD]@[SESSION_POOLER_HOST]:5432/postgres"
 AUTH_SECRET="[RANDOM_SECRET_WITH_AT_LEAST_32_CHARACTERS]"
 ```
 
@@ -55,6 +58,41 @@ Reglas:
 - No uses el prefijo `NEXT_PUBLIC_`.
 - No imprimas la URL completa en logs.
 - Usa valores distintos por entorno.
+
+`DATABASE_BACKUP_URL` es opcional para el funcionamiento de la aplicación y
+solo se usa en tareas administrativas. Debe apuntar al mismo proyecto y base de
+datos que `DATABASE_URL`, mediante conexión directa o session pooler en el
+puerto `5432`. El script seguro puede derivarla de un transaction pooler de
+Supabase válido; nunca imprime la URL ni la contraseña.
+
+## Cambios seguros en la base de datos de producción
+
+Todo cambio de datos o esquema de producción debe vivir en
+[`scripts/database/`](../scripts/database/) y seguir este orden bloqueante:
+
+1. Confirmar explícitamente la operación.
+2. Generar un respaldo lógico local del esquema de aplicación `public`.
+3. Validar el respaldo con `pg_restore --list`, comprobar los datos afectados y
+   calcular su checksum SHA-256.
+4. Ejecutar una operación idempotente dentro de una transacción cuando sea
+   posible.
+5. Consultar el estado final y abortar con error si no coincide con lo esperado.
+
+Si el respaldo o una validación falla, el script no puede modificar producción.
+Los archivos quedan en `scripts/database/backups/`, están ignorados por Git y
+deben tratarse como datos financieros sensibles. No restaures un respaldo sobre
+producción sin aprobación separada y sin validar primero un destino aislado.
+
+Para agregar las categorías iniciales pendientes:
+
+```powershell
+pnpm db:add-default-categories
+```
+
+El comando crea y valida el respaldo antes de insertar de forma idempotente
+`Pulpería`, `Regalo` y `Pago de préstamos (deudas)`. No reemplaza valores de
+una categoría que ya exista. Requisitos y detalles:
+[`scripts/database/README.md`](../scripts/database/README.md).
 
 Genera `AUTH_SECRET` desde PowerShell y copia el resultado a `.env.local`:
 

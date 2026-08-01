@@ -111,6 +111,15 @@ Reglas:
 - No agregar `user_id` durante MVP v1.
 - No cambiar el esquema después de migraciones aplicadas sin aprobación.
 - Revisar migraciones generadas antes de aplicarlas.
+- Todo cambio de datos o esquema en producción debe tener un script dedicado en
+  `scripts/database/` y un respaldo lógico verificable previo a la escritura.
+- Si el respaldo, su validación o su checksum fallan, no ejecutes la modificación.
+- Usa conexión directa o session pooler en el puerto `5432` para respaldos; no
+  uses el transaction pooler del puerto `6543` con `pg_dump`.
+- Los respaldos son sensibles: mantenlos ignorados por Git y nunca los confirmes.
+- Ejecuta cambios dentro de una transacción cuando sea posible y verifica el
+  resultado después. Restaurar un respaldo requiere aprobación separada y un
+  destino comprobado.
 
 No almacenes credenciales bancarias, tokens ni secretos financieros.
 
@@ -251,7 +260,11 @@ Base de datos:
 pnpm db:generate
 pnpm db:migrate
 pnpm db:seed
+pnpm db:add-default-categories
 ```
+
+Los cambios seguros de producción se documentan en
+[`scripts/database/README.md`](./scripts/database/README.md).
 
 `pnpm run dev:https` usa Webpack deliberadamente por compatibilidad en Windows.
 

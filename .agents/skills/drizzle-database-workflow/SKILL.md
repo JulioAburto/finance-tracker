@@ -243,13 +243,23 @@ When changing schema:
 2. Identify whether the change affects existing data.
 3. Propose the schema change.
 4. Ask for approval if it changes existing tables or data semantics.
-5. Update `src/lib/db/schema.ts`.
-6. Run `pnpm db:generate`.
-7. Review generated migration.
-8. Do not run `pnpm db:migrate` unless `DATABASE_URL` exists and user approves.
-9. Report migration files created.
+5. For production, create and verify a logical backup through a dedicated
+   `scripts/database/` wrapper before any write. Abort if backup validation or
+   its checksum fails.
+6. Update `src/lib/db/schema.ts`.
+7. Run `pnpm db:generate`.
+8. Review generated migration.
+9. Do not run `pnpm db:migrate` unless `DATABASE_URL` exists, the backup passed,
+   and the user approves.
+10. Report migration files created.
 
 Do not use `db:push` once migrations exist unless explicitly approved.
+
+Use a direct connection or Supabase session pooler on port `5432` for
+`pg_dump`; never use the transaction pooler on port `6543` for backups. Keep
+backup artifacts out of Git, execute data changes transactionally and
+idempotently when possible, and verify the resulting state. Restores require
+separate approval and a verified target.
 
 ## Seed Workflow
 

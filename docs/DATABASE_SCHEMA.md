@@ -335,6 +335,22 @@ pnpm db:migrate
 
 No edites una migración ya aplicada para representar un cambio nuevo. Genera una migración adicional y revisa su SQL.
 
+Antes de modificar datos o esquema en producción:
+
+1. Crea un script dedicado en `scripts/database/`.
+2. Genera un respaldo lógico del esquema `public` mediante una conexión directa
+   o session pooler en el puerto `5432`.
+3. Verifica que el respaldo sea legible, contenga los datos afectados y tenga
+   un checksum SHA-256.
+4. Cancela el cambio si cualquier comprobación falla.
+5. Ejecuta la modificación de forma idempotente y transaccional cuando sea
+   posible, y valida el estado final.
+
+No uses el transaction pooler del puerto `6543` para `pg_dump`. Los respaldos
+son sensibles, se almacenan localmente fuera del control de versiones y no se
+restauran en producción sin aprobación separada. Consulta
+[`scripts/database/README.md`](../scripts/database/README.md).
+
 ## Cambios futuros que requieren aprobación
 
 - `users` y columnas `user_id`.

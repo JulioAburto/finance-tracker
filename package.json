@@ -15,6 +15,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx --env-file=.env.local src/lib/db/seed.ts",
+    "db:add-default-categories": "pwsh -NoProfile -File scripts/database/add-default-categories-safe.ps1 -Execute",
     "auth:create-user": "tsx --env-file=.env.local src/lib/auth/create-user.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
