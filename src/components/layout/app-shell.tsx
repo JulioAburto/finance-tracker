@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import Link from 'next/link';
-import {usePathname} from 'next/navigation';
+import {usePathname, useRouter} from 'next/navigation';
 import type {ReactNode} from 'react';
 import {useState} from 'react';
 import {logoutAction} from '@/features/auth/actions';
@@ -43,6 +43,7 @@ const shellWidthSx = {
 
 export function AppShell({children}: {children: ReactNode}) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   function isActive(href: string): boolean {
@@ -74,6 +75,10 @@ export function AppShell({children}: {children: ReactNode}) {
 
   function closeMobileNav() {
     setMobileNavOpen(false);
+  }
+
+  function prefetchRoute(href: string) {
+    if (!isActive(href)) router.prefetch(href);
   }
 
   return (
@@ -108,6 +113,8 @@ export function AppShell({children}: {children: ReactNode}) {
             <Box
               component={Link}
               href="/dashboard"
+              onPointerEnter={() => prefetchRoute('/dashboard')}
+              onFocus={() => prefetchRoute('/dashboard')}
               sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -177,6 +184,8 @@ export function AppShell({children}: {children: ReactNode}) {
                     key={item.href}
                     component={Link}
                     href={item.href}
+                    onPointerEnter={() => prefetchRoute(item.href)}
+                    onFocus={() => prefetchRoute(item.href)}
                     aria-current={active ? 'page' : undefined}
                     color="inherit"
                     sx={{
@@ -312,6 +321,8 @@ export function AppShell({children}: {children: ReactNode}) {
                   key={item.href}
                   component={Link}
                   href={item.href}
+                  onPointerEnter={() => prefetchRoute(item.href)}
+                  onFocus={() => prefetchRoute(item.href)}
                   onClick={closeMobileNav}
                   selected={active}
                   aria-current={active ? 'page' : undefined}

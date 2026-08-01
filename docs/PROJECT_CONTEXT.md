@@ -36,6 +36,7 @@ No es un sistema contable ni bancario completo.
 | Base de datos       | Supabase Postgres                                             |
 | Acceso a datos      | Drizzle ORM con `postgres`                                    |
 | Despliegue previsto | Vercel                                                        |
+| Región de funciones | `pdx1`, junto a Supabase `us-west-2`                          |
 | Usuario             | Único usuario durante MVP v1                                  |
 | Moneda interna      | USD                                                           |
 | Monedas capturadas  | USD y NIO                                                     |
@@ -153,6 +154,8 @@ Las pruebas de lógica pura no requieren conexión a Supabase.
 - Se eligió Postgres en lugar de Firebase por las relaciones y agregaciones financieras.
 - Se eligió Drizzle para mantener esquema y consultas tipadas.
 - La conexión, migración y seed iniciales fueron comprobados contra Supabase.
+- Las funciones de Vercel se fijaron a `pdx1` para evitar latencia de red con
+  Supabase `us-west-2`; el pool admite cuatro consultas paralelas por instancia.
 - Se eliminó la dependencia de Google Fonts para que el build no requiera red.
 - HTTPS local se fijó a Webpack por un problema reproducible de Turbopack en Windows.
 

@@ -74,10 +74,27 @@ Preview.
 
 - Valida que exista `DATABASE_URL`.
 - Añade `sslmode=require`.
-- Crea el cliente `postgres` con una conexión por instancia serverless y hasta
-  tres conexiones reutilizables en desarrollo.
+- Crea el cliente `postgres` con hasta cuatro conexiones reutilizables por
+  instancia para que las consultas independientes se ejecuten en paralelo.
+- Conserva conexiones inactivas durante cinco minutos para evitar repetir el
+  handshake TLS durante una sesión normal de navegación.
 - Usa `prepare: false` para el transaction pooler.
 - Expone la instancia tipada de Drizzle.
+
+El límite de cuatro conexiones está pensado para esta aplicación de un solo
+usuario y para el transaction pooler de Supabase. Antes de aumentarlo, revisa
+las conexiones activas y el límite del plan en **Supabase > Observability**.
+
+## Región de producción
+
+`vercel.json` ejecuta las funciones en Portland (`pdx1`), la región de Vercel
+correspondiente a `us-west-2`, donde está alojado el proyecto actual de
+Supabase. Mantener la función y PostgreSQL en la misma región evita que cada
+consulta cruce Estados Unidos.
+
+Si se crea otra base o se cambia su región, actualiza `regions` en
+`vercel.json` antes de desplegar. La región configurada debe ser la más cercana
+a la base, no necesariamente la más cercana al navegador.
 
 `drizzle.config.ts`:
 

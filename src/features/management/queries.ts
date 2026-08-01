@@ -16,34 +16,42 @@ export async function getCategoryManagementData(month: string) {
 
   return withDatabaseDiagnostics('management.categories.load', async () => {
     const budgetDate = `${month}-01`;
-    const [categoryRows, budgetRows, allocations] = await Promise.all([
+    const [categoryRows, budgetAllocationRows] = await Promise.all([
       db
         .select()
         .from(categories)
         .orderBy(categories.sortOrder, categories.name),
       db
-        .select()
-        .from(monthlyBudgets)
-        .where(eq(monthlyBudgets.month, budgetDate))
-        .limit(1),
-      db
         .select({
+          id: monthlyBudgets.id,
+          month: monthlyBudgets.month,
+          salaryUsd: monthlyBudgets.salaryUsd,
+          expectedSavingsUsd: monthlyBudgets.expectedSavingsUsd,
           categoryId: monthlyBudgetCategories.categoryId,
           amountUsd: monthlyBudgetCategories.amountUsd,
         })
-        .from(monthlyBudgetCategories)
-        .innerJoin(
-          monthlyBudgets,
+        .from(monthlyBudgets)
+        .leftJoin(
+          monthlyBudgetCategories,
           eq(monthlyBudgetCategories.monthlyBudgetId, monthlyBudgets.id),
         )
         .where(eq(monthlyBudgets.month, budgetDate)),
     ]);
-    const budget = budgetRows[0] ?? null;
+    const budgetRow = budgetAllocationRows[0] ?? null;
+    const budget = budgetRow
+      ? {
+          id: budgetRow.id,
+          month: budgetRow.month,
+          salaryUsd: budgetRow.salaryUsd,
+          expectedSavingsUsd: budgetRow.expectedSavingsUsd,
+        }
+      : null;
     const allocationByCategory = new Map(
-      allocations.map(allocation => [
-        allocation.categoryId,
-        allocation.amountUsd,
-      ]),
+      budgetAllocationRows.flatMap(allocation =>
+        allocation.categoryId && allocation.amountUsd !== null
+          ? [[allocation.categoryId, allocation.amountUsd] as const]
+          : [],
+      ),
     );
 
     return {

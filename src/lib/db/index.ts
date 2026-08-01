@@ -17,18 +17,19 @@ declare global {
   var __financeTrackerDbClient: Sql | undefined;
 }
 
-function createDatabaseClient() {
-  const isProduction = process.env.NODE_ENV === 'production';
+const MAX_CONNECTIONS_PER_INSTANCE = 4;
+const IDLE_TIMEOUT_SECONDS = 300;
 
+function createDatabaseClient() {
   // postgres-js administra un pool de conexiones. `prepare: false` es
-  // necesario para el pooler de Supabase. En desarrollo mantenemos tres
-  // conexiones para que Promise.all sea realmente paralelo y evitamos cerrar
-  // el pool entre navegaciones. En serverless conservamos una conexión por
-  // instancia para no multiplicar sesiones durante escalamiento horizontal.
+  // necesario para el transaction pooler de Supabase. Cuatro conexiones
+  // permiten ejecutar en paralelo los grupos de consultas más grandes de la
+  // aplicación. El timeout conserva conexiones TLS durante una sesión de uso
+  // normal y evita pagar una reconexión en cada navegación.
   return postgres(connectionUrl.toString(), {
     prepare: false,
-    max: isProduction ? 1 : 3,
-    idle_timeout: isProduction ? 20 : 300,
+    max: MAX_CONNECTIONS_PER_INSTANCE,
+    idle_timeout: IDLE_TIMEOUT_SECONDS,
     connect_timeout: 10,
   });
 }

@@ -230,7 +230,10 @@ Como GitHub ya está conectado con Vercel:
    repositorio.
 6. Mantén los comandos detectados por Vercel; el build del proyecto es
    `pnpm build`.
-7. Antes de seleccionar **Deploy**, agrega las variables del siguiente paso.
+7. Confirma que Vercel detecte `vercel.json`. El proyecto fija `pdx1`
+   (Portland) para ejecutar cerca de la base actual de Supabase en
+   `us-west-2`.
+8. Antes de seleccionar **Deploy**, agrega las variables del siguiente paso.
 
 La rama de producción normalmente será `main`. Los pushes posteriores a esa
 rama crearán nuevos deployments de producción automáticamente.
@@ -341,6 +344,9 @@ Haz estas comprobaciones en una ventana privada:
    una conexión saludable a PostgreSQL.
 8. Revisa los Runtime Logs de Vercel y confirma que no contengan credenciales,
    montos, notas ni la URL completa de la base.
+9. Revisa que `X-Vercel-Id` comience con `pdx1` en la respuesta de una ruta. Si
+   aparece otra región, confirma que el deployment incluya `vercel.json` y que
+   ninguna configuración del proyecto lo esté sobrescribiendo.
 
 ## Actualizaciones posteriores
 
@@ -406,6 +412,17 @@ especiales en `DATABASE_URL`.
 Los cambios de variables no modifican deployments existentes. Ejecuta un
 Redeploy y verifica que la variable esté asignada al entorno correcto.
 
+### El menú sigue respondiendo lentamente
+
+- Confirma que la región de las funciones sea `pdx1` y que Supabase continúe en
+  `us-west-2`. Si la base cambió de región, actualiza `vercel.json`.
+- Revisa en los Runtime Logs los eventos `database.operation.slow`; indican la
+  operación y duración sin registrar datos financieros ni credenciales.
+- Revisa conexiones y recursos en **Supabase > Observability** antes de ampliar
+  el pool por encima de cuatro conexiones por instancia.
+- El primer acceso después de inactividad puede incluir un cold start. Compara
+  también dos o tres navegaciones consecutivas.
+
 ## Checklist final
 
 - [ ] Validaciones locales aprobadas.
@@ -415,6 +432,7 @@ Redeploy y verifica que la variable esté asignada al entorno correcto.
 - [ ] Código revisado y subido a GitHub.
 - [ ] Repositorio importado en Vercel.
 - [ ] `DATABASE_URL` y `AUTH_SECRET` configurados en Production.
+- [ ] Funciones verificadas en `pdx1`, junto a Supabase `us-west-2`.
 - [ ] Deployment exitoso.
 - [ ] URL de producción final revisada.
 - [ ] Rutas protegidas verificadas en ventana privada.
@@ -430,6 +448,7 @@ Redeploy y verifica que la variable esté asignada al entorno correcto.
 - [Cambiar el nombre de un proyecto de Vercel](https://vercel.com/kb/guide/how-do-i-change-the-name-of-my-vercel-project)
 - [Agregar y configurar un dominio propio](https://vercel.com/docs/domains/working-with-domains/add-a-domain)
 - [Conectar una aplicación a Supabase Postgres](https://supabase.com/docs/guides/database/connecting-to-postgres)
+- [Configurar regiones de Vercel Functions](https://vercel.com/docs/functions/configuring-functions/region)
 - [Auth.js](https://authjs.dev/)
 
 Para configuración y troubleshooting local, consulta
