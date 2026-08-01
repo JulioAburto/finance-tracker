@@ -15,6 +15,7 @@ import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import type {ReactNode} from 'react';
 import {useState} from 'react';
+import {logoutAction} from '@/features/auth/actions';
 
 const navigation = [
   {href: '/dashboard', label: 'Resumen'},
@@ -198,6 +199,16 @@ export function AppShell({children}: {children: ReactNode}) {
               Agregar gasto
             </Button>
 
+            <form action={logoutAction}>
+              <Button
+                type="submit"
+                color="inherit"
+                sx={{display: {xs: 'none', lg: 'inline-flex'}}}
+              >
+                Salir
+              </Button>
+            </form>
+
             <Button
               variant="outlined"
               onClick={() => setMobileNavOpen(true)}
@@ -322,6 +333,12 @@ export function AppShell({children}: {children: ReactNode}) {
               );
             })}
           </List>
+
+          <Box component="form" action={logoutAction} sx={{mt: 'auto'}}>
+            <Button type="submit" variant="outlined" fullWidth>
+              Cerrar sesión
+            </Button>
+          </Box>
         </Box>
       </Drawer>
 

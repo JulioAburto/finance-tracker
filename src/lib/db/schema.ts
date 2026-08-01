@@ -48,6 +48,35 @@ const timestampColumns = () => ({
     .defaultNow(),
 });
 
+// Las cuentas autentican el acceso a todo el dataset del MVP. No representan
+// todavía propiedad por usuario: la aplicación continúa siendo de un usuario.
+export const appUsers = pgTable(
+  'app_users',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    email: varchar('email', {length: 254}).notNull().unique(),
+    name: varchar('name', {length: 120}).notNull(),
+    passwordHash: text('password_hash').notNull(),
+    isActive: boolean('is_active').notNull().default(true),
+    sessionVersion: integer('session_version').notNull().default(1),
+    failedLoginAttempts: integer('failed_login_attempts').notNull().default(0),
+    lockedUntil: timestamp('locked_until', {withTimezone: true}),
+    lastLoginAt: timestamp('last_login_at', {withTimezone: true}),
+    ...timestampColumns(),
+  },
+  table => [
+    index('app_users_is_active_idx').on(table.isActive),
+    check(
+      'app_users_session_version_positive',
+      sql`${table.sessionVersion} > 0`,
+    ),
+    check(
+      'app_users_failed_login_attempts_non_negative',
+      sql`${table.failedLoginAttempts} >= 0`,
+    ),
+  ],
+);
+
 // Configuración global de la aplicación. El seed mantiene una sola fila.
 export const appSettings = pgTable(
   'app_settings',

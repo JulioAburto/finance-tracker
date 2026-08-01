@@ -1,5 +1,6 @@
 import {sql} from 'drizzle-orm';
 import {NextResponse} from 'next/server';
+import {getCurrentUser} from '@/lib/auth/dal';
 import {db} from '@/lib/db';
 import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
 import {createIncidentId} from '@/lib/observability/logger';
@@ -12,6 +13,14 @@ const noStoreHeaders = {
 };
 
 export async function GET() {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json(
+      {status: 'unauthorized'},
+      {status: 401, headers: noStoreHeaders},
+    );
+  }
+
   const incidentId = createIncidentId();
 
   try {

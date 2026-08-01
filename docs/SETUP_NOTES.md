@@ -10,6 +10,7 @@ TypeScript
 MUI
 Supabase Postgres
 Drizzle ORM
+Auth.js
 Jest
 pnpm
 ```
@@ -37,6 +38,7 @@ Crea `.env.local` a partir de `.env.example`:
 
 ```env
 DATABASE_URL="postgresql://postgres.[PROJECT_REF]:[PASSWORD]@[HOST]:6543/postgres"
+AUTH_SECRET="[RANDOM_SECRET_WITH_AT_LEAST_32_CHARACTERS]"
 ```
 
 Requisitos de la URL:
@@ -53,6 +55,18 @@ Reglas:
 - No uses el prefijo `NEXT_PUBLIC_`.
 - No imprimas la URL completa en logs.
 - Usa valores distintos por entorno.
+
+Genera `AUTH_SECRET` desde PowerShell y copia el resultado a `.env.local`:
+
+```powershell
+[Convert]::ToBase64String(
+  [Security.Cryptography.RandomNumberGenerator]::GetBytes(48)
+)
+```
+
+No uses `NEXT_PUBLIC_` para este secreto, no lo compartas ni lo reutilices en
+otros proyectos. En Vercel debe configurarse para Production y, si corresponde,
+Preview.
 
 ## Conexión a la base
 
@@ -83,6 +97,37 @@ pnpm db:seed
 ```
 
 El seed es idempotente: usa upserts para evitar duplicar registros principales.
+
+### Crear la cuenta de acceso
+
+Después de aplicar la migración que crea `app_users`, provisiona la única cuenta
+desde PowerShell. La contraseña se enmascara y solo permanece en variables del
+proceso durante el comando:
+
+```powershell
+$env:AUTH_USER_EMAIL = "tu-correo@example.com"
+$env:AUTH_USER_NAME = "Tu nombre"
+$env:AUTH_USER_PASSWORD = Read-Host "Contraseña nueva (12-128 caracteres)" -MaskInput
+
+try {
+  pnpm auth:create-user
+} finally {
+  Remove-Item Env:AUTH_USER_EMAIL
+  Remove-Item Env:AUTH_USER_NAME
+  Remove-Item Env:AUTH_USER_PASSWORD
+}
+```
+
+Reemplaza los valores de ejemplo del correo y el nombre. El texto pasado a
+`Read-Host` es solo la etiqueta del prompt; escribe la contraseña cuando
+PowerShell la solicite y no dentro del comando.
+
+La contraseña debe tener entre 12 y 128 caracteres. El comando rechaza crear
+una segunda cuenta distinta. Si se ejecuta con el mismo correo, reemplaza la
+contraseña e invalida las sesiones anteriores.
+
+No agregues estas variables temporales a `.env.local`, Vercel ni Git. El seed
+financiero no crea usuarios.
 
 Cuando cambie deliberadamente `src/lib/db/schema.ts`:
 
@@ -129,20 +174,21 @@ pnpm build
 
 ## Scripts disponibles
 
-| Script               | Función                                         |
-| -------------------- | ----------------------------------------------- |
-| `pnpm dev`           | Servidor HTTP de desarrollo                     |
-| `pnpm run dev:https` | Servidor HTTPS de desarrollo                    |
-| `pnpm test`          | Jest                                            |
-| `pnpm test:watch`    | Jest en modo watch                              |
-| `pnpm lint`          | ESLint                                          |
-| `pnpm build`         | Build de producción                             |
-| `pnpm start`         | Ejecutar el build                               |
-| `pnpm db:generate`   | Generar migraciones                             |
-| `pnpm db:migrate`    | Aplicar migraciones                             |
-| `pnpm db:push`       | Sincronización directa; usar con cautela        |
-| `pnpm db:studio`     | Drizzle Studio                                  |
-| `pnpm db:seed`       | Cargar catálogos iniciales y transacciones mock |
+| Script                  | Función                                         |
+| ----------------------- | ----------------------------------------------- |
+| `pnpm dev`              | Servidor HTTP de desarrollo                     |
+| `pnpm run dev:https`    | Servidor HTTPS de desarrollo                    |
+| `pnpm test`             | Jest                                            |
+| `pnpm test:watch`       | Jest en modo watch                              |
+| `pnpm lint`             | ESLint                                          |
+| `pnpm build`            | Build de producción                             |
+| `pnpm start`            | Ejecutar el build                               |
+| `pnpm db:generate`      | Generar migraciones                             |
+| `pnpm db:migrate`       | Aplicar migraciones                             |
+| `pnpm db:push`          | Sincronización directa; usar con cautela        |
+| `pnpm db:studio`        | Drizzle Studio                                  |
+| `pnpm db:seed`          | Cargar catálogos iniciales y transacciones mock |
+| `pnpm auth:create-user` | Crear o reemplazar la única cuenta de acceso    |
 
 ## Archivos principales
 
@@ -152,6 +198,7 @@ drizzle/
 src/lib/db/index.ts
 src/lib/db/schema.ts
 src/lib/db/seed.ts
+src/lib/auth/
 src/lib/money/
 src/lib/budget/
 src/features/transactions/
@@ -196,11 +243,27 @@ Detén el servidor anterior antes de iniciar otro. Next solo permite un servidor
 
 El seed inicial crea julio de 2026 y también transacciones mock para ese mes. Selecciona `2026-07` o crea el presupuesto del mes correspondiente cuando exista la interfaz de gestión.
 
+### `MissingSecret` o redirección continua a `/login`
+
+- Confirma que `AUTH_SECRET` exista en el entorno que ejecuta la aplicación.
+- Usa el mismo valor durante la vida de un deployment; cambiarlo invalida sus
+  cookies.
+- Confirma que la migración de `app_users` esté aplicada y que la cuenta haya
+  sido creada con `pnpm auth:create-user`.
+
 ## Seguridad antes de desplegar
 
-La aplicación aún no tiene autenticación. Antes de publicar:
+La aplicación exige login mediante Auth.js y no ofrece registro público. Antes
+de publicar:
 
-- Habilita Vercel Deployment Protection, o
-- Implementa una protección aprobada explícitamente.
+- Configura `DATABASE_URL` y `AUTH_SECRET` en Vercel.
+- Aplica la migración y crea la única cuenta antes del primer acceso.
+- Comprueba en una ventana privada que `/dashboard` redirija a `/login`.
+- Mantén Vercel Deployment Protection para previews cuando esté disponible.
 
-No agregues autenticación, multiusuario ni Row Level Security como cambio incidental.
+Sigue el procedimiento completo en
+[`VERCEL_DEPLOYMENT.md`](./VERCEL_DEPLOYMENT.md).
+
+La autenticación protege el dataset global, pero no convierte el proyecto en
+multiusuario: las tablas financieras no incluyen `user_id` ni aislamiento entre
+cuentas. No habilites una segunda cuenta sin diseñar primero ese aislamiento.

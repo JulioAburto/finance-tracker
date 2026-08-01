@@ -2,7 +2,7 @@
 
 > Alcance de producto y estado de implementación.
 
-Última revisión: 2026-06-20.
+Última revisión: 2026-07-30.
 
 ## Objetivo
 
@@ -38,15 +38,17 @@ Multiusuario y control de roles no forman parte del MVP v1.
 - ✅ Dashboard mensual con presupuesto, porcentajes y alertas.
 - ✅ Datos iniciales de categorías, métodos, presupuesto y reglas.
 - ✅ Pruebas unitarias de reglas financieras.
+- ✅ Gestión de categorías, presupuestos, reglas y configuración.
+- ✅ Login y cierre de sesión para una cuenta activa mediante Auth.js.
+- ✅ Protección server-side de páginas, consultas y mutaciones.
 
 ### Pendiente
 
-- ⏳ Gestión de categorías y presupuestos.
-- ⏳ Gestión de reglas de comercios.
-- ⏳ Configuración editable.
 - ⏳ Aplicación automática de reglas durante el registro.
-- ⏳ Protección del despliegue público.
 - ⏳ IA opcional como fallback.
+
+La autenticación está implementada en código. Cada entorno debe aplicar la
+migración, crear su cuenta y configurar `AUTH_SECRET` antes de desplegar.
 
 ## Alcance incluido
 
@@ -153,6 +155,15 @@ La IA:
 
 ## Pantallas
 
+### `/login`
+
+Implementada.
+
+- No existe registro público.
+- La cuenta se provisiona desde un script del servidor.
+- Cinco intentos fallidos bloquean la cuenta durante 15 minutos.
+- La sesión expira después de 12 horas y puede invalidarse desde la base.
+
 ### `/dashboard`
 
 Implementada.
@@ -193,19 +204,19 @@ Valida:
 
 ### `/categories`
 
-Pendiente.
+Implementada.
 
 Debe permitir crear, editar, desactivar y actualizar presupuestos.
 
 ### `/rules`
 
-Pendiente.
+Implementada.
 
 Debe permitir crear, editar, priorizar y desactivar reglas.
 
 ### `/settings`
 
-Pendiente.
+Implementada.
 
 Debe permitir modificar moneda, tasa predeterminada y opciones de tarjeta.
 
@@ -225,15 +236,16 @@ Los importes y columnas exactos están en [`DATABASE_SCHEMA.md`](./DATABASE_SCHE
 
 ## Fases
 
-| Fase          | Estado | Contenido                               |
-| ------------- | ------ | --------------------------------------- |
-| Fundación     | ✅     | MUI, Drizzle, esquema, migración y seed |
-| Utilidades    | ✅     | Dinero y presupuesto                    |
-| Transacciones | ✅     | Crear, listar, editar y eliminar        |
-| Dashboard     | ✅     | Cálculos y alertas                      |
-| Categorías    | ⏳     | CRUD y presupuestos                     |
-| Reglas        | ⏳     | CRUD y clasificación                    |
-| IA opcional   | ⏳     | Solo después de reglas                  |
+| Fase          | Estado | Contenido                                |
+| ------------- | ------ | ---------------------------------------- |
+| Fundación     | ✅     | MUI, Drizzle, esquema, migración y seed  |
+| Utilidades    | ✅     | Dinero y presupuesto                     |
+| Transacciones | ✅     | Crear, listar, editar y eliminar         |
+| Dashboard     | ✅     | Cálculos y alertas                       |
+| Categorías    | ✅     | CRUD y presupuestos                      |
+| Reglas        | ✅     | CRUD de reglas                           |
+| Seguridad     | ✅     | Login, sesión y autorización server-side |
+| IA opcional   | ⏳     | Solo después de reglas                   |
 
 ## Criterios de éxito
 

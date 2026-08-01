@@ -1,4 +1,5 @@
 import {and, desc, eq, gte, lt, type SQL} from 'drizzle-orm';
+import {requireCurrentUser} from '@/lib/auth/dal';
 import {db} from '@/lib/db';
 import {
   appSettings,
@@ -18,6 +19,8 @@ export type TransactionFilters = {
 // Las consultas viven fuera de los componentes para que las páginas solo
 // coordinen datos y presentación. Drizzle genera SQL parametrizado.
 export async function getTransactionFormOptions() {
+  await requireCurrentUser();
+
   return withDatabaseDiagnostics('transactions.options.load', async () => {
     const [categoryRows, paymentMethodRows, settingsRows] = await Promise.all([
       db
@@ -55,6 +58,8 @@ export async function getTransactionFormOptions() {
 }
 
 export async function getTransactions(filters: TransactionFilters) {
+  await requireCurrentUser();
+
   return withDatabaseDiagnostics('transactions.list', async () => {
     const {startDate, endDate} = getMonthRange(filters.month);
     const conditions: SQL[] = [
@@ -98,6 +103,8 @@ export async function getTransactions(filters: TransactionFilters) {
 }
 
 export async function getTransactionById(id: string) {
+  await requireCurrentUser();
+
   return withDatabaseDiagnostics('transactions.detail', async () => {
     const rows = await db
       .select()

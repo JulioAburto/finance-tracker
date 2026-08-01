@@ -40,6 +40,7 @@ Para el transaction pooler de Supabase:
 - Restricciones de base para invariantes críticos.
 - Valores monetarios almacenados como `numeric`.
 - Sin `user_id` durante MVP v1.
+- Una cuenta activa autentica el acceso al dataset global del MVP.
 - Desactivación lógica para categorías y métodos.
 - Tasa histórica almacenada por transacción.
 - Relaciones explícitas entre presupuestos, categorías y transacciones.
@@ -83,6 +84,36 @@ exceeded
 ```
 
 ## Tablas
+
+### `app_users`
+
+Credenciales de acceso a la aplicación. El MVP continúa siendo de un usuario:
+esta tabla autentica el acceso completo, pero las entidades financieras no
+tienen propiedad por usuario.
+
+| Columna                 | Tipo         | Reglas                   |
+| ----------------------- | ------------ | ------------------------ |
+| `id`                    | uuid         | PK                       |
+| `email`                 | varchar(254) | requerido, único         |
+| `name`                  | varchar(120) | requerido                |
+| `password_hash`         | text         | requerido, hash `scrypt` |
+| `is_active`             | boolean      | requerido, `true`        |
+| `session_version`       | integer      | requerido, mayor que 0   |
+| `failed_login_attempts` | integer      | requerido, no negativo   |
+| `locked_until`          | timestamptz  | opcional                 |
+| `last_login_at`         | timestamptz  | opcional                 |
+| `created_at`            | timestamptz  | requerido                |
+| `updated_at`            | timestamptz  | requerido                |
+
+Índice adicional sobre `is_active`.
+
+Las contraseñas nunca se almacenan en texto plano. Cinco intentos fallidos
+bloquean temporalmente la cuenta durante 15 minutos. Incrementar
+`session_version` invalida las sesiones emitidas anteriormente.
+
+El seed financiero no crea usuarios ni contiene contraseñas. La cuenta inicial
+se provisiona deliberadamente mediante `pnpm auth:create-user` después de
+aplicar la migración.
 
 ### `app_settings`
 
@@ -290,6 +321,8 @@ Los resultados se redondean a dos decimales antes de persistirse.
 - 15 transacciones mock para `2026-07`.
 
 El seed puede repetirse sin duplicar estas entidades. También sincroniza los valores iniciales definidos en el archivo.
+
+El seed no crea ni modifica `app_users`.
 
 ## Migraciones
 

@@ -17,12 +17,13 @@ Actualmente están implementados:
 - Gestión de reglas determinísticas de comercios.
 - Configuración general y administración de tarjetas de crédito.
 - Interfaz adaptable para escritorio y dispositivos móviles.
+- Login y cierre de sesión para una única cuenta activa mediante Auth.js.
 - Logs estructurados, diagnóstico de base de datos y health check.
 - Pruebas unitarias de lógica financiera, validación y observabilidad.
 
-Continúan pendientes la aplicación automática de reglas durante el registro, la
-protección del despliegue público y la IA opcional como último fallback. El
-alcance detallado está en [docs/MVP.md](./docs/MVP.md).
+Continúan pendientes la aplicación automática de reglas durante el registro y
+la IA opcional como último fallback. El alcance detallado está en
+[docs/MVP.md](./docs/MVP.md).
 
 ## Inicio rápido
 
@@ -38,8 +39,10 @@ pnpm dev
 ```
 
 Configura `DATABASE_URL` en `.env.local` con la cadena del transaction pooler de
-Supabase. La aplicación estará disponible normalmente en
-`http://localhost:3000`.
+Supabase y agrega un `AUTH_SECRET` aleatorio. Después de la migración, crea la
+cuenta con `pnpm auth:create-user` siguiendo
+[docs/SETUP_NOTES.md](./docs/SETUP_NOTES.md). La aplicación estará disponible
+normalmente en `http://localhost:3000`.
 
 Consulta [docs/SETUP_NOTES.md](./docs/SETUP_NOTES.md) para HTTPS local,
 configuración de Supabase y solución de problemas.
@@ -48,6 +51,7 @@ configuración de Supabase y solución de problemas.
 
 | Ruta                      | Función                                       |
 | ------------------------- | --------------------------------------------- |
+| `/login`                  | Inicio de sesión                              |
 | `/`                       | Redirige a `/dashboard`                       |
 | `/dashboard`              | Resumen mensual, presupuestos y alertas       |
 | `/transactions`           | Listado y filtros de transacciones            |
@@ -58,9 +62,9 @@ configuración de Supabase y solución de problemas.
 | `/settings`               | Configuración general y tarjetas de crédito   |
 | `/api/health`             | Estado seguro de Next.js y Postgres           |
 
-`GET /api/health` devuelve `200` cuando la aplicación y Postgres responden, o
-`503` con un `incidentId` cuando la base de datos no está disponible. Nunca
-expone detalles internos.
+`GET /api/health` requiere sesión y devuelve `200` cuando la aplicación y
+Postgres responden, `401` sin autenticación o `503` con un `incidentId` cuando
+la base de datos no está disponible. Nunca expone detalles internos.
 
 ## Logs y diagnóstico
 
@@ -107,20 +111,25 @@ Los comandos de migración, seed y Drizzle Studio están documentados en
 
 ## Seguridad
 
-La aplicación es de un solo usuario y todavía no tiene autenticación. Antes de
-publicarla, habilita Vercel Deployment Protection u otra protección aprobada.
-Si se exponen tablas del esquema `public` mediante PostgREST, habilita RLS y
-define políticas explícitas antes de permitir acceso.
+La aplicación exige login, no ofrece registro público y el script de alta
+rechaza crear una segunda cuenta distinta. La autenticación protege el dataset
+global; no existe aislamiento multiusuario mediante `user_id`.
+
+Antes de desplegar, configura `AUTH_SECRET`, aplica la migración, crea la cuenta
+y verifica la redirección a `/login` en una ventana privada. Si se exponen tablas
+del esquema `public` mediante PostgREST, habilita RLS y define políticas
+explícitas antes de permitir acceso.
 
 Nunca publiques ni confirmes `.env.local`, `DATABASE_URL`, contraseñas, API keys,
 JWT secrets ni service-role keys.
 
 ## Documentación
 
-| Documento                                            | Responsabilidad                           |
-| ---------------------------------------------------- | ----------------------------------------- |
-| [docs/MVP.md](./docs/MVP.md)                         | Alcance y estado del producto             |
-| [docs/DATABASE_SCHEMA.md](./docs/DATABASE_SCHEMA.md) | Contrato de base de datos                 |
-| [docs/SETUP_NOTES.md](./docs/SETUP_NOTES.md)         | Configuración, comandos y troubleshooting |
-| [docs/PROJECT_CONTEXT.md](./docs/PROJECT_CONTEXT.md) | Decisiones y problemas conocidos          |
-| [AGENTS.md](./AGENTS.md)                             | Reglas de colaboración para agentes       |
+| Documento                                                | Responsabilidad                           |
+| -------------------------------------------------------- | ----------------------------------------- |
+| [docs/MVP.md](./docs/MVP.md)                             | Alcance y estado del producto             |
+| [docs/DATABASE_SCHEMA.md](./docs/DATABASE_SCHEMA.md)     | Contrato de base de datos                 |
+| [docs/SETUP_NOTES.md](./docs/SETUP_NOTES.md)             | Configuración, comandos y troubleshooting |
+| [docs/VERCEL_DEPLOYMENT.md](./docs/VERCEL_DEPLOYMENT.md) | Despliegue y credenciales de acceso       |
+| [docs/PROJECT_CONTEXT.md](./docs/PROJECT_CONTEXT.md)     | Decisiones y problemas conocidos          |
+| [AGENTS.md](./AGENTS.md)                                 | Reglas de colaboración para agentes       |

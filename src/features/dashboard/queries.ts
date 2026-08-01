@@ -1,4 +1,5 @@
 import {and, desc, eq, gte, lt} from 'drizzle-orm';
+import {requireCurrentUser} from '@/lib/auth/dal';
 import {db} from '@/lib/db';
 import {
   categories,
@@ -11,6 +12,8 @@ import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics'
 import {calculateDashboardSummary} from './calculations';
 
 export async function getDashboardData(month: string) {
+  await requireCurrentUser();
+
   return withDatabaseDiagnostics('dashboard.load', async () => {
     const {startDate, endDate, budgetDate} = getMonthRange(month);
 

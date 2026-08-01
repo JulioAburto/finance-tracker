@@ -1,6 +1,7 @@
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import {Providers} from './providers';
+import {auth} from '@/auth';
 import {AppShell} from '@/components/layout/app-shell';
 
 export const metadata: Metadata = {
@@ -16,16 +17,18 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="es">
       <body className="google-sans">
         <Providers>
-          <AppShell>{children}</AppShell>
+          {session?.user ? <AppShell>{children}</AppShell> : children}
         </Providers>
       </body>
     </html>

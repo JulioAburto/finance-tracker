@@ -3,6 +3,7 @@
 import {and, eq} from 'drizzle-orm';
 import {revalidatePath} from 'next/cache';
 import {redirect} from 'next/navigation';
+import {requireCurrentUser} from '@/lib/auth/dal';
 import {db} from '@/lib/db';
 import {categories, paymentMethods, transactions} from '@/lib/db/schema';
 import {convertMoney} from '@/lib/money/convert';
@@ -138,6 +139,8 @@ export async function createTransactionAction(
   _previousState: TransactionFormState,
   formData: FormData,
 ): Promise<TransactionFormState> {
+  await requireCurrentUser();
+
   const result = await parseAndValidate(formData);
   if (!result.success) return result.state;
 
@@ -162,6 +165,8 @@ export async function updateTransactionAction(
   _previousState: TransactionFormState,
   formData: FormData,
 ): Promise<TransactionFormState> {
+  await requireCurrentUser();
+
   const result = await parseAndValidate(formData);
   if (!result.success) return result.state;
 
@@ -190,6 +195,8 @@ export async function updateTransactionAction(
 }
 
 export async function deleteTransactionAction(id: string): Promise<void> {
+  await requireCurrentUser();
+
   await withDatabaseDiagnostics('transactions.delete', () =>
     db.delete(transactions).where(eq(transactions.id, id)),
   );

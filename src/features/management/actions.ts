@@ -3,6 +3,7 @@
 import {and, eq} from 'drizzle-orm';
 import {revalidatePath} from 'next/cache';
 import {redirect} from 'next/navigation';
+import {requireCurrentUser} from '@/lib/auth/dal';
 import {db} from '@/lib/db';
 import {
   appSettings,
@@ -34,6 +35,8 @@ function finish(path: string, status: 'saved' | 'invalid'): never {
 }
 
 export async function saveMonthlyBudgetAction(formData: FormData) {
+  await requireCurrentUser();
+
   const month = readText(formData, 'month');
   const salary = readPositiveNumber(formData, 'salaryUsd');
   const savings = readNonNegativeNumber(formData, 'expectedSavingsUsd');
@@ -66,6 +69,8 @@ export async function saveMonthlyBudgetAction(formData: FormData) {
 }
 
 export async function createCategoryAction(formData: FormData) {
+  await requireCurrentUser();
+
   const name = readText(formData, 'name');
   const budget = readNonNegativeNumber(formData, 'monthlyBudgetUsd');
   if (!name || name.length > 120 || budget === null)
@@ -83,6 +88,8 @@ export async function createCategoryAction(formData: FormData) {
 }
 
 export async function updateCategoryAction(id: string, formData: FormData) {
+  await requireCurrentUser();
+
   const name = readText(formData, 'name');
   const defaultBudget = readNonNegativeNumber(formData, 'monthlyBudgetUsd');
   const selectedBudget = readNonNegativeNumber(
@@ -153,6 +160,8 @@ export async function updateCategoryAction(id: string, formData: FormData) {
 }
 
 export async function createRuleAction(formData: FormData) {
+  await requireCurrentUser();
+
   const pattern = readText(formData, 'pattern');
   const categoryId = readText(formData, 'categoryId');
   const priority = readInteger(formData, 'priority');
@@ -170,6 +179,8 @@ export async function createRuleAction(formData: FormData) {
 }
 
 export async function updateRuleAction(id: string, formData: FormData) {
+  await requireCurrentUser();
+
   const pattern = readText(formData, 'pattern');
   const categoryId = readText(formData, 'categoryId');
   const priority = readInteger(formData, 'priority');
@@ -197,6 +208,8 @@ export async function updateRuleAction(id: string, formData: FormData) {
 }
 
 export async function updateSettingsAction(formData: FormData) {
+  await requireCurrentUser();
+
   const currency = readText(formData, 'defaultCurrency');
   const rate = readPositiveNumber(formData, 'defaultExchangeRate');
   if ((currency !== 'USD' && currency !== 'NIO') || rate === null) {
@@ -226,6 +239,8 @@ export async function updatePaymentMethodAction(
   id: string,
   formData: FormData,
 ) {
+  await requireCurrentUser();
+
   const creditLimit = readText(formData, 'creditLimitUsd');
   const cutDay = readText(formData, 'statementCutDay');
   const dueDay = readText(formData, 'paymentDueDay');

@@ -2,7 +2,7 @@
 
 > Decisiones vigentes, estado de implementación y problemas conocidos.
 
-Última revisión: 2026-06-20.
+Última revisión: 2026-07-30.
 
 ## Fuentes de verdad
 
@@ -29,18 +29,18 @@ No es un sistema contable ni bancario completo.
 
 ## Decisiones vigentes
 
-| Tema                | Decisión                                                         |
-| ------------------- | ---------------------------------------------------------------- |
-| Framework           | Next.js App Router con TypeScript                                |
-| UI                  | MUI; no Tailwind                                                 |
-| Base de datos       | Supabase Postgres                                                |
-| Acceso a datos      | Drizzle ORM con `postgres`                                       |
-| Despliegue previsto | Vercel                                                           |
-| Usuario             | Único usuario durante MVP v1                                     |
-| Moneda interna      | USD                                                              |
-| Monedas capturadas  | USD y NIO                                                        |
-| Clasificación       | Selección manual, luego reglas y finalmente IA opcional          |
-| Autenticación       | No requerida localmente; necesaria alguna protección al publicar |
+| Tema                | Decisión                                                      |
+| ------------------- | ------------------------------------------------------------- |
+| Framework           | Next.js App Router con TypeScript                             |
+| UI                  | MUI; no Tailwind                                              |
+| Base de datos       | Supabase Postgres                                             |
+| Acceso a datos      | Drizzle ORM con `postgres`                                    |
+| Despliegue previsto | Vercel                                                        |
+| Usuario             | Único usuario durante MVP v1                                  |
+| Moneda interna      | USD                                                           |
+| Monedas capturadas  | USD y NIO                                                     |
+| Clasificación       | Selección manual, luego reglas y finalmente IA opcional       |
+| Autenticación       | Auth.js Credentials; una cuenta activa y sin registro público |
 
 ## Estado actual
 
@@ -54,16 +54,15 @@ No es un sistema contable ni bancario completo.
 - Listado con filtros por mes, categoría y método de pago.
 - Edición y eliminación con confirmación.
 - Dashboard mensual con cálculos reales.
+- Gestión de categorías, presupuestos, reglas y configuración.
+- Login, cierre de sesión y autorización server-side con Auth.js.
+- Bloqueo temporal de intentos y revocación por versión de sesión.
 - Pruebas unitarias con Jest.
 - Validación mediante lint y build.
 
 ### Pendiente
 
-- CRUD de categorías y actualización de presupuestos.
-- CRUD de reglas de comercios.
-- Pantalla de configuración.
 - Aplicación automática de reglas de comercios.
-- Protección para un despliegue público.
 - IA opcional, únicamente después de completar las reglas.
 
 ## Flujo de datos actual
@@ -71,6 +70,7 @@ No es un sistema contable ni bancario completo.
 ```txt
 Formulario cliente
   -> Server Action
+  -> verificación de sesión y usuario activo
   -> validación del lado servidor
   -> validación de categoría y método de pago
   -> conversión USD/NIO
@@ -80,6 +80,10 @@ Formulario cliente
 ```
 
 Las consultas se ejecutan desde Server Components o módulos exclusivos del servidor. `DATABASE_URL` nunca debe llegar al navegador.
+
+El login y el logout también usan Server Actions. Auth.js requiere su Route
+Handler interno en `/api/auth/[...nextauth]`, pero la interfaz no consulta
+PostgreSQL ni invoca Auth.js directamente desde componentes cliente.
 
 ## Reglas financieras que no deben cambiarse accidentalmente
 
@@ -135,6 +139,9 @@ Las pruebas de lógica pura no requieren conexión a Supabase.
 ## Consideraciones de seguridad
 
 - `.env.local` está ignorado por Git.
+- `AUTH_SECRET` cifra y firma las cookies/tokens de sesión y nunca es público.
+- Cada consulta y mutación sensible revalida la cuenta activa en PostgreSQL.
+- La autenticación protege un dataset global; no existe aislamiento multiusuario.
 - No registrar credenciales ni URLs completas en logs.
 - No confiar en validación del navegador.
 - Las mutaciones deben validar nuevamente en el servidor.
@@ -151,8 +158,5 @@ Las pruebas de lógica pura no requieren conexión a Supabase.
 
 ## Próxima prioridad
 
-1. Gestión de categorías y presupuestos.
-2. Gestión y aplicación de reglas de comercios.
-3. Configuración editable.
-4. Protección del despliegue.
-5. IA opcional como fallback.
+1. Aplicación automática de reglas de comercios durante el registro.
+2. IA opcional como fallback.

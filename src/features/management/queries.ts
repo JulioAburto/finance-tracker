@@ -1,4 +1,5 @@
 import {asc, eq} from 'drizzle-orm';
+import {requireCurrentUser} from '@/lib/auth/dal';
 import {db} from '@/lib/db';
 import {
   appSettings,
@@ -11,6 +12,8 @@ import {
 import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
 
 export async function getCategoryManagementData(month: string) {
+  await requireCurrentUser();
+
   return withDatabaseDiagnostics('management.categories.load', async () => {
     const budgetDate = `${month}-01`;
     const [categoryRows, budgetRows] = await Promise.all([
@@ -50,6 +53,8 @@ export async function getCategoryManagementData(month: string) {
 }
 
 export async function getRulesManagementData() {
+  await requireCurrentUser();
+
   return withDatabaseDiagnostics('management.rules.load', async () => {
     const [rules, categoryRows] = await Promise.all([
       db
@@ -76,6 +81,8 @@ export async function getRulesManagementData() {
 }
 
 export async function getSettingsData() {
+  await requireCurrentUser();
+
   return withDatabaseDiagnostics('management.settings.load', async () => {
     const [settingsRows, methodRows] = await Promise.all([
       db.select().from(appSettings).limit(1),
