@@ -30,6 +30,7 @@ export default async function NewTransactionPage() {
             action={createTransactionAction}
             categories={options.categories}
             paymentMethods={options.paymentMethods}
+            creditCardModeEnabled={options.settings.creditCardModeEnabled}
             initialValues={{
               name: '',
               amount: '',

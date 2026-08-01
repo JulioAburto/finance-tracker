@@ -294,6 +294,9 @@ Salud
 Transporte
 Efectivo operativo
 Varios
+Pulpería
+Regalo
+Pago de préstamos (deudas)
 ```
 
 ## Initial Payment Methods

@@ -44,6 +44,13 @@ const categorySeed = [
     isEssential: false,
   },
   {name: 'Varios', monthlyBudgetUsd: '70.00', isEssential: false},
+  {name: 'Pulpería', monthlyBudgetUsd: '0.00', isEssential: true},
+  {name: 'Regalo', monthlyBudgetUsd: '0.00', isEssential: false},
+  {
+    name: 'Pago de préstamos (deudas)',
+    monthlyBudgetUsd: '0.00',
+    isEssential: true,
+  },
 ] as const;
 
 const paymentMethodSeed = [

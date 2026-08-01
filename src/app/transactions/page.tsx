@@ -81,6 +81,7 @@ export default async function TransactionsPage({
         paymentMethodId={paymentMethodId}
         categories={options.categories}
         paymentMethods={options.paymentMethods}
+        creditCardModeEnabled={options.settings.creditCardModeEnabled}
       />
 
       {rows.length === 0 ? (
@@ -171,17 +172,21 @@ export default async function TransactionsPage({
                     </Stack>
 
                     <Stack direction="row" spacing={1}>
-                      <Button
-                        href={`/transactions/${transaction.id}/edit`}
-                        variant="outlined"
-                        fullWidth
-                      >
-                        Editar
-                      </Button>
-                      <Box sx={{flex: 1}}>
+                      <Box sx={{flex: '1 1 0', minWidth: 0}}>
+                        <Button
+                          href={`/transactions/${transaction.id}/edit`}
+                          variant="outlined"
+                          fullWidth
+                          sx={{minHeight: 40}}
+                        >
+                          Editar
+                        </Button>
+                      </Box>
+                      <Box sx={{flex: '1 1 0', minWidth: 0}}>
                         <DeleteTransactionButton
                           transactionId={transaction.id}
                           fullWidth
+                          size="medium"
                         />
                       </Box>
                     </Stack>

@@ -44,6 +44,7 @@ export default async function EditTransactionPage({
             action={action}
             categories={options.categories}
             paymentMethods={options.paymentMethods}
+            creditCardModeEnabled={options.settings.creditCardModeEnabled}
             initialValues={{
               name: transaction.name,
               amount: transaction.amount,

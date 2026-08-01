@@ -21,6 +21,10 @@ import {
 import {ManagementDialog} from '@/features/management/components/management-dialog';
 import {getSettingsData} from '@/features/management/queries';
 import {formatUsd} from '@/lib/money/format';
+import {
+  getPaymentMethodLabel,
+  getVisiblePaymentMethods,
+} from '@/lib/payment-methods';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,7 +35,15 @@ export default async function SettingsPage({
 }) {
   const params = await searchParams;
   const data = await getSettingsData();
-  const creditCards = data.paymentMethods.filter(
+  const creditCardModeEnabled = data.settings?.creditCardModeEnabled ?? false;
+  const visiblePaymentMethods = getVisiblePaymentMethods(
+    data.paymentMethods,
+    creditCardModeEnabled,
+  );
+  const standardMethods = visiblePaymentMethods.filter(
+    method => method.type !== 'credit_card',
+  );
+  const creditCards = visiblePaymentMethods.filter(
     method => method.type === 'credit_card',
   );
 
@@ -160,16 +172,58 @@ export default async function SettingsPage({
 
       <Stack spacing={1.5}>
         <Box>
-          <Typography variant="h6">Tarjetas de crédito</Typography>
+          <Typography variant="h6">Métodos de pago</Typography>
           <Typography color="text.secondary" variant="body2">
-            Administra límites y fechas sin convertir los pagos en nuevos
-            gastos.
+            {creditCardModeEnabled
+              ? 'El modo tarjeta está activo; se muestran todos los métodos configurados.'
+              : 'Activa el modo tarjeta para mostrar métodos adicionales.'}
           </Typography>
         </Box>
 
+        {visiblePaymentMethods.length === 0 ? (
+          <Alert severity="info">No hay métodos de pago configurados.</Alert>
+        ) : null}
+
+        {standardMethods.map(method => (
+          <Card key={method.id}>
+            <CardContent
+              sx={{
+                p: {xs: 2, md: 2.5},
+                '&:last-child': {pb: {xs: 2, md: 2.5}},
+              }}
+            >
+              <Stack
+                direction={{xs: 'column', sm: 'row'}}
+                spacing={1.5}
+                sx={{
+                  justifyContent: 'space-between',
+                  alignItems: {sm: 'center'},
+                }}
+              >
+                <Box sx={{minWidth: 0}}>
+                  <Typography variant="h6" sx={{overflowWrap: 'anywhere'}}>
+                    {getPaymentMethodLabel(method)}
+                  </Typography>
+                  <Typography color="text.secondary" variant="body2">
+                    Disponible para registrar y filtrar transacciones.
+                  </Typography>
+                </Box>
+                <Chip
+                  size="small"
+                  label={method.isActive ? 'Activo' : 'Inactivo'}
+                  color={method.isActive ? 'success' : 'default'}
+                  sx={{alignSelf: {xs: 'flex-start', sm: 'center'}}}
+                />
+              </Stack>
+            </CardContent>
+          </Card>
+        ))}
+
         {creditCards.length === 0 ? (
           <Alert severity="info">
-            No hay tarjetas de crédito configuradas.
+            {creditCardModeEnabled
+              ? 'No hay tarjetas de crédito configuradas.'
+              : 'Los métodos adicionales están ocultos mientras el modo tarjeta está inactivo.'}
           </Alert>
         ) : (
           creditCards.map(method => (

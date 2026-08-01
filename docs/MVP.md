@@ -225,7 +225,7 @@ Debe permitir modificar moneda, tasa predeterminada y opciones de tarjeta.
 El seed crea:
 
 - Configuración global.
-- 13 categorías.
+- 16 categorías.
 - 7 métodos de pago.
 - Presupuesto para julio de 2026.
 - Presupuestos por categoría.

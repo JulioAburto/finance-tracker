@@ -1,6 +1,6 @@
 'use client';
 
-import {Button} from '@mui/material';
+import {Button, type ButtonProps} from '@mui/material';
 import {useRouter} from 'next/navigation';
 import {useTransition} from 'react';
 import {deleteTransactionAction} from '../actions';
@@ -8,9 +8,11 @@ import {deleteTransactionAction} from '../actions';
 export function DeleteTransactionButton({
   transactionId,
   fullWidth = false,
+  size = 'small',
 }: {
   transactionId: string;
   fullWidth?: boolean;
+  size?: ButtonProps['size'];
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -27,7 +29,7 @@ export function DeleteTransactionButton({
   return (
     <Button
       color="error"
-      size="small"
+      size={size}
       onClick={handleDelete}
       disabled={pending}
       fullWidth={fullWidth}

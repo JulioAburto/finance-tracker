@@ -13,6 +13,12 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import {useState} from 'react';
+import {MonthSelector} from '@/components/ui/month-selector';
+import {
+  getPaymentMethodLabel,
+  getVisiblePaymentMethods,
+} from '@/lib/payment-methods';
+import type {PaymentMethodFormOption} from '../types';
 
 type FilterOption = {
   id: string;
@@ -24,7 +30,8 @@ type TransactionFiltersProps = {
   categoryId?: string;
   paymentMethodId?: string;
   categories: FilterOption[];
-  paymentMethods: FilterOption[];
+  paymentMethods: PaymentMethodFormOption[];
+  creditCardModeEnabled: boolean;
 };
 
 type FilterFieldsProps = TransactionFiltersProps & {
@@ -37,19 +44,18 @@ function FilterFields({
   paymentMethodId,
   categories,
   paymentMethods,
+  creditCardModeEnabled,
   mobile = false,
 }: FilterFieldsProps) {
+  const visiblePaymentMethods = getVisiblePaymentMethods(
+    paymentMethods,
+    creditCardModeEnabled,
+    paymentMethodId,
+  );
+
   return (
     <>
-      <TextField
-        name="month"
-        label="Mes"
-        type="month"
-        defaultValue={month}
-        fullWidth={mobile}
-        size="small"
-        slotProps={{inputLabel: {shrink: true}}}
-      />
+      <MonthSelector month={month} label="Mes" fullWidth={mobile} />
       <TextField
         select
         name="categoryId"
@@ -76,9 +82,9 @@ function FilterFields({
         sx={{minWidth: {md: 220}}}
       >
         <MenuItem value="">Todos</MenuItem>
-        {paymentMethods.map(method => (
+        {visiblePaymentMethods.map(method => (
           <MenuItem key={method.id} value={method.id}>
-            {method.name}
+            {getPaymentMethodLabel(method)}
           </MenuItem>
         ))}
       </TextField>
@@ -92,6 +98,7 @@ export function TransactionFilters({
   paymentMethodId,
   categories,
   paymentMethods,
+  creditCardModeEnabled,
 }: TransactionFiltersProps) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const activeFilterCount =
@@ -112,6 +119,7 @@ export function TransactionFilters({
             paymentMethodId={paymentMethodId}
             categories={categories}
             paymentMethods={paymentMethods}
+            creditCardModeEnabled={creditCardModeEnabled}
           />
           <Button type="submit" variant="outlined" sx={{flexShrink: 0}}>
             Filtrar
@@ -209,6 +217,7 @@ export function TransactionFilters({
               paymentMethodId={paymentMethodId}
               categories={categories}
               paymentMethods={paymentMethods}
+              creditCardModeEnabled={creditCardModeEnabled}
               mobile
             />
           </Stack>

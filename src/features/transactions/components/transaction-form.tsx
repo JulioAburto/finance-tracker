@@ -11,7 +11,11 @@ import {
   Typography,
 } from '@mui/material';
 import Link from 'next/link';
-import {useActionState, useEffect, useId, useState} from 'react';
+import {useActionState, useCallback, useEffect, useId, useState} from 'react';
+import {
+  getPaymentMethodLabel,
+  getVisiblePaymentMethods,
+} from '@/lib/payment-methods';
 import {isSavingsCategoryName} from '../schemas';
 import type {
   TransactionField,
@@ -55,6 +59,7 @@ type TransactionFormProps = {
   ) => Promise<TransactionFormState>;
   categories: TransactionFormOption[];
   paymentMethods: PaymentMethodFormOption[];
+  creditCardModeEnabled: boolean;
   initialValues: TransactionFormValues;
   submitLabel: string;
 };
@@ -63,6 +68,7 @@ export function TransactionForm({
   action,
   categories,
   paymentMethods,
+  creditCardModeEnabled,
   initialValues,
   submitLabel,
 }: TransactionFormProps) {
@@ -81,6 +87,11 @@ export function TransactionForm({
   const selectedPaymentMethod = paymentMethods.find(
     method => method.id === paymentMethodId,
   );
+  const visiblePaymentMethods = getVisiblePaymentMethods(
+    paymentMethods,
+    creditCardModeEnabled,
+    paymentMethodId,
+  );
   const isCreditCard = selectedPaymentMethod?.type === 'credit_card';
   const hasFieldErrors = Boolean(
     state.status === 'error' &&
@@ -88,9 +99,11 @@ export function TransactionForm({
     Object.keys(state.fieldErrors).length > 0,
   );
 
-  function getFieldId(field: TransactionField): string {
-    return `${fieldIdPrefix}-${FIELD_ID_SUFFIX[field]}`;
-  }
+  const getFieldId = useCallback(
+    (field: TransactionField): string =>
+      `${fieldIdPrefix}-${FIELD_ID_SUFFIX[field]}`,
+    [fieldIdPrefix],
+  );
 
   useEffect(() => {
     if (!state.fieldErrors) return;
@@ -116,7 +129,7 @@ export function TransactionForm({
       target.focus();
       target.scrollIntoView({block: 'center', behavior: 'smooth'});
     }
-  }, [state.fieldErrors]);
+  }, [getFieldId, state.fieldErrors]);
 
   return (
     <Box component="form" action={formAction} noValidate>
@@ -254,9 +267,9 @@ export function TransactionForm({
                   ? 'Selecciona un método de pago'
                   : 'Sin método de pago'}
               </MenuItem>
-              {paymentMethods.map(method => (
+              {visiblePaymentMethods.map(method => (
                 <MenuItem key={method.id} value={method.id}>
-                  {method.name}
+                  {getPaymentMethodLabel(method)}
                 </MenuItem>
               ))}
             </TextField>

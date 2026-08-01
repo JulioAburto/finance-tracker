@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import {PageHeader} from '@/components/layout/page-header';
+import {MonthSelector} from '@/components/ui/month-selector';
 import {
   createCategoryAction,
   saveMonthlyBudgetAction,
@@ -84,30 +85,19 @@ export default async function CategoriesPage({
         <Alert severity="error">Revisa los valores ingresados.</Alert>
       ) : null}
 
-      <Card component="form" method="get">
+      <Card>
         <CardContent sx={{p: 2, '&:last-child': {pb: 2}}}>
           <Stack
             direction={{xs: 'column', sm: 'row'}}
             spacing={1.5}
             sx={{alignItems: {sm: 'center'}}}
           >
-            <TextField
-              name="month"
+            <MonthSelector
+              month={month}
               label="Mes a administrar"
-              type="month"
-              defaultValue={month}
-              size="small"
               fullWidth
-              slotProps={{inputLabel: {shrink: true}}}
               sx={{maxWidth: {sm: 260}}}
             />
-            <Button
-              type="submit"
-              variant="outlined"
-              sx={{width: {xs: '100%', sm: 'auto'}}}
-            >
-              Ver mes
-            </Button>
           </Stack>
         </CardContent>
       </Card>

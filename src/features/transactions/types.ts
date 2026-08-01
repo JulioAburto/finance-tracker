@@ -1,4 +1,5 @@
 import type {Currency} from '@/lib/money/convert';
+import type {PaymentMethodType} from '@/lib/payment-methods';
 
 export type TransactionType = 'income' | 'expense' | 'transfer';
 
@@ -35,15 +36,6 @@ export type TransactionFormOption = {
   id: string;
   name: string;
 };
-
-export type PaymentMethodType =
-  | 'cash'
-  | 'debit'
-  | 'credit_card'
-  | 'bank_transfer'
-  | 'prepaid'
-  | 'agency'
-  | 'other';
 
 export type PaymentMethodFormOption = TransactionFormOption & {
   type: PaymentMethodType;

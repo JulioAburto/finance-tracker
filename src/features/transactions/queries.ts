@@ -41,6 +41,7 @@ export async function getTransactionFormOptions() {
         .select({
           defaultCurrency: appSettings.defaultCurrency,
           defaultExchangeRate: appSettings.defaultExchangeRate,
+          creditCardModeEnabled: appSettings.creditCardModeEnabled,
         })
         .from(appSettings)
         .limit(1),
@@ -52,6 +53,7 @@ export async function getTransactionFormOptions() {
       settings: settingsRows[0] ?? {
         defaultCurrency: 'USD' as const,
         defaultExchangeRate: '36.6243',
+        creditCardModeEnabled: false,
       },
     };
   });

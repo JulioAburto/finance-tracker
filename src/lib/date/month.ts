@@ -1,9 +1,18 @@
 const MONTH_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/;
+const APP_TIME_ZONE = 'America/Managua';
 
-export function getCurrentMonth(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
+export function getCurrentMonth(now = new Date()): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: APP_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+  }).formatToParts(now);
+  const year = parts.find(part => part.type === 'year')?.value;
+  const month = parts.find(part => part.type === 'month')?.value;
+
+  if (!year || !month) {
+    throw new Error('Could not determine the current month');
+  }
 
   return `${year}-${month}`;
 }

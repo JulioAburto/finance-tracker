@@ -12,12 +12,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from '@mui/material';
 import {PageHeader} from '@/components/layout/page-header';
 import {BudgetStatusChip} from '@/components/ui/budget-status-chip';
 import {EmptyState} from '@/components/ui/empty-state';
+import {MonthSelector} from '@/components/ui/month-selector';
 import {SummaryCard} from '@/components/ui/summary-card';
 import {getDashboardData} from '@/features/dashboard/queries';
 import {normalizeMonth} from '@/lib/date/month';
@@ -60,8 +60,6 @@ export default async function DashboardPage({
       />
 
       <Card
-        component="form"
-        method="get"
         sx={{
           display: 'flex',
           flexDirection: {xs: 'column', sm: 'row'},
@@ -70,22 +68,12 @@ export default async function DashboardPage({
           p: 2,
         }}
       >
-        <TextField
-          name="month"
+        <MonthSelector
+          month={month}
           label="Mes"
-          type="month"
-          defaultValue={month}
-          size="small"
-          slotProps={{inputLabel: {shrink: true}}}
+          fullWidth
           sx={{width: {xs: '100%', sm: 'auto'}, minWidth: {sm: 190}}}
         />
-        <Button
-          type="submit"
-          variant="outlined"
-          sx={{width: {xs: '100%', sm: 'auto'}}}
-        >
-          Ver mes
-        </Button>
       </Card>
 
       {!data.hasBudget ? (
