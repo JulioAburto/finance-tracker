@@ -17,57 +17,59 @@ export async function getDashboardData(month: string) {
   return withDatabaseDiagnostics('dashboard.load', async () => {
     const {startDate, endDate, budgetDate} = getMonthRange(month);
 
-    // Primero buscamos la cabecera porque sus categorías dependen de ese UUID.
-    const budgetRows = await db
-      .select({
-        id: monthlyBudgets.id,
-        salaryUsd: monthlyBudgets.salaryUsd,
-        expectedSavingsUsd: monthlyBudgets.expectedSavingsUsd,
-      })
-      .from(monthlyBudgets)
-      .where(eq(monthlyBudgets.month, budgetDate))
-      .limit(1);
+    const [budgetRows, categoryBudgetRows, transactionRows] = await Promise.all(
+      [
+        db
+          .select({
+            id: monthlyBudgets.id,
+            salaryUsd: monthlyBudgets.salaryUsd,
+            expectedSavingsUsd: monthlyBudgets.expectedSavingsUsd,
+          })
+          .from(monthlyBudgets)
+          .where(eq(monthlyBudgets.month, budgetDate))
+          .limit(1),
+        db
+          .select({
+            categoryId: categories.id,
+            categoryName: categories.name,
+            amountUsd: monthlyBudgetCategories.amountUsd,
+            warningThreshold: categories.warningThreshold,
+            dangerThreshold: categories.dangerThreshold,
+            exceededThreshold: categories.exceededThreshold,
+          })
+          .from(monthlyBudgetCategories)
+          .innerJoin(
+            monthlyBudgets,
+            eq(monthlyBudgetCategories.monthlyBudgetId, monthlyBudgets.id),
+          )
+          .innerJoin(
+            categories,
+            eq(monthlyBudgetCategories.categoryId, categories.id),
+          )
+          .where(eq(monthlyBudgets.month, budgetDate))
+          .orderBy(categories.sortOrder),
+        db
+          .select({
+            id: transactions.id,
+            name: transactions.name,
+            date: transactions.date,
+            type: transactions.type,
+            amountUsd: transactions.amountUsd,
+            categoryId: transactions.categoryId,
+            categoryName: categories.name,
+          })
+          .from(transactions)
+          .leftJoin(categories, eq(transactions.categoryId, categories.id))
+          .where(
+            and(
+              gte(transactions.date, startDate),
+              lt(transactions.date, endDate),
+            ),
+          )
+          .orderBy(desc(transactions.date), desc(transactions.createdAt)),
+      ],
+    );
     const budget = budgetRows[0] ?? null;
-
-    const [categoryBudgetRows, transactionRows] = await Promise.all([
-      budget
-        ? db
-            .select({
-              categoryId: categories.id,
-              categoryName: categories.name,
-              amountUsd: monthlyBudgetCategories.amountUsd,
-              warningThreshold: categories.warningThreshold,
-              dangerThreshold: categories.dangerThreshold,
-              exceededThreshold: categories.exceededThreshold,
-            })
-            .from(monthlyBudgetCategories)
-            .innerJoin(
-              categories,
-              eq(monthlyBudgetCategories.categoryId, categories.id),
-            )
-            .where(eq(monthlyBudgetCategories.monthlyBudgetId, budget.id))
-            .orderBy(categories.sortOrder)
-        : Promise.resolve([]),
-      db
-        .select({
-          id: transactions.id,
-          name: transactions.name,
-          date: transactions.date,
-          type: transactions.type,
-          amountUsd: transactions.amountUsd,
-          categoryId: transactions.categoryId,
-          categoryName: categories.name,
-        })
-        .from(transactions)
-        .leftJoin(categories, eq(transactions.categoryId, categories.id))
-        .where(
-          and(
-            gte(transactions.date, startDate),
-            lt(transactions.date, endDate),
-          ),
-        )
-        .orderBy(desc(transactions.date), desc(transactions.createdAt)),
-    ]);
 
     const transactionData = transactionRows.map(transaction => ({
       ...transaction,

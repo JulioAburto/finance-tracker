@@ -74,7 +74,8 @@ Preview.
 
 - Valida que exista `DATABASE_URL`.
 - Añade `sslmode=require`.
-- Crea el cliente `postgres`.
+- Crea el cliente `postgres` con una conexión por instancia serverless y hasta
+  tres conexiones reutilizables en desarrollo.
 - Usa `prepare: false` para el transaction pooler.
 - Expone la instancia tipada de Drizzle.
 
@@ -159,6 +160,9 @@ next dev --webpack --experimental-https
 ```
 
 Esto evita un error de React Client Manifest observado con Turbopack y HTTPS en Windows. El navegador puede mostrar una advertencia por el certificado local.
+
+El script HTTP usa el Turbopack predeterminado de Next.js 16. Si cambias entre
+los dos modos, detén primero el servidor anterior.
 
 ## Validación
 

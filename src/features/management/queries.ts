@@ -16,7 +16,7 @@ export async function getCategoryManagementData(month: string) {
 
   return withDatabaseDiagnostics('management.categories.load', async () => {
     const budgetDate = `${month}-01`;
-    const [categoryRows, budgetRows] = await Promise.all([
+    const [categoryRows, budgetRows, allocations] = await Promise.all([
       db
         .select()
         .from(categories)
@@ -26,14 +26,19 @@ export async function getCategoryManagementData(month: string) {
         .from(monthlyBudgets)
         .where(eq(monthlyBudgets.month, budgetDate))
         .limit(1),
+      db
+        .select({
+          categoryId: monthlyBudgetCategories.categoryId,
+          amountUsd: monthlyBudgetCategories.amountUsd,
+        })
+        .from(monthlyBudgetCategories)
+        .innerJoin(
+          monthlyBudgets,
+          eq(monthlyBudgetCategories.monthlyBudgetId, monthlyBudgets.id),
+        )
+        .where(eq(monthlyBudgets.month, budgetDate)),
     ]);
     const budget = budgetRows[0] ?? null;
-    const allocations = budget
-      ? await db
-          .select()
-          .from(monthlyBudgetCategories)
-          .where(eq(monthlyBudgetCategories.monthlyBudgetId, budget.id))
-      : [];
     const allocationByCategory = new Map(
       allocations.map(allocation => [
         allocation.categoryId,

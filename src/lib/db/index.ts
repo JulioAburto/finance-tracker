@@ -18,13 +18,17 @@ declare global {
 }
 
 function createDatabaseClient() {
+  const isProduction = process.env.NODE_ENV === 'production';
+
   // postgres-js administra un pool de conexiones. `prepare: false` es
-  // necesario para el pooler de Supabase. Limitamos el pool y reutilizamos
-  // el cliente entre recargas de Next en desarrollo para no agotar sesiones.
+  // necesario para el pooler de Supabase. En desarrollo mantenemos tres
+  // conexiones para que Promise.all sea realmente paralelo y evitamos cerrar
+  // el pool entre navegaciones. En serverless conservamos una conexión por
+  // instancia para no multiplicar sesiones durante escalamiento horizontal.
   return postgres(connectionUrl.toString(), {
     prepare: false,
-    max: 1,
-    idle_timeout: 20,
+    max: isProduction ? 1 : 3,
+    idle_timeout: isProduction ? 20 : 300,
     connect_timeout: 10,
   });
 }

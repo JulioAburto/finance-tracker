@@ -270,6 +270,48 @@ No configures `pnpm db:migrate` como parte automática del build. Las migracione
 deben revisarse y aplicarse deliberadamente antes del deployment que las
 necesita.
 
+### Cambiar la URL asignada por Vercel
+
+Tienes dos opciones diferentes.
+
+#### Opción A: cambiar el subdominio gratuito `vercel.app`
+
+La URL de producción generada por Vercel se basa en el nombre del proyecto y
+su disponibilidad. Para solicitar otro nombre:
+
+1. Abre el proyecto en el dashboard de Vercel.
+2. Ve a **Settings > General**.
+3. En **Project Name**, escribe un nombre nuevo y guarda el cambio.
+4. Usa minúsculas y un nombre simple con letras, números o guiones, por
+   ejemplo `finance-tracker-julio`.
+5. Crea un **Redeploy** si la URL nueva no aparece todavía en el deployment de
+   producción.
+6. Revisa **Settings > Domains** para confirmar cuál dominio quedó asignado.
+
+Los subdominios `vercel.app` se asignan por orden de disponibilidad. Renombrar
+el proyecto no renombra el repositorio de GitHub. La URL anterior puede dejar
+de ser la URL principal; actualiza cualquier marcador que dependa de ella.
+
+#### Opción B: usar un dominio propio
+
+Si ya posees un dominio, o compras uno mediante Vercel u otro registrador:
+
+1. Abre **Settings > Domains** dentro del proyecto.
+2. Selecciona **Add Domain**.
+3. Escribe el dominio o subdominio, por ejemplo
+   `finanzas.tu-dominio.com`.
+4. Configura en tu proveedor DNS exactamente los registros que Vercel muestre.
+5. Espera que Vercel confirme la verificación y emita el certificado HTTPS.
+6. Si agregas el dominio raíz y `www`, elige uno como principal y configura la
+   redirección del otro.
+
+Cambiar de dominio no requiere cambiar `AUTH_SECRET`. Las cookies no se
+comparten entre dominios, por lo que tendrás que iniciar sesión nuevamente en
+la URL nueva.
+
+Cambiar la URL no vuelve privada la aplicación. Conserva el login y la
+protección adicional descrita en el siguiente paso.
+
 ## Paso 10: activar protección adicional
 
 En el proyecto de Vercel:
@@ -374,6 +416,7 @@ Redeploy y verifica que la variable esté asignada al entorno correcto.
 - [ ] Repositorio importado en Vercel.
 - [ ] `DATABASE_URL` y `AUTH_SECRET` configurados en Production.
 - [ ] Deployment exitoso.
+- [ ] URL de producción final revisada.
 - [ ] Rutas protegidas verificadas en ventana privada.
 - [ ] Login y logout verificados.
 - [ ] Runtime Logs revisados sin secretos ni datos financieros.
@@ -384,6 +427,8 @@ Redeploy y verifica que la variable esté asignada al entorno correcto.
 - [Desplegar repositorios Git con Vercel](https://vercel.com/docs/git)
 - [Variables de entorno de Vercel](https://vercel.com/docs/environment-variables)
 - [Deployment Protection de Vercel](https://vercel.com/docs/deployment-protection)
+- [Cambiar el nombre de un proyecto de Vercel](https://vercel.com/kb/guide/how-do-i-change-the-name-of-my-vercel-project)
+- [Agregar y configurar un dominio propio](https://vercel.com/docs/domains/working-with-domains/add-a-domain)
 - [Conectar una aplicación a Supabase Postgres](https://supabase.com/docs/guides/database/connecting-to-postgres)
 - [Auth.js](https://authjs.dev/)
 
