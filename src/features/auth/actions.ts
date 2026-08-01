@@ -3,13 +3,10 @@
 import {AuthError} from 'next-auth';
 import {signIn, signOut} from '@/auth';
 import {readLoginCredentials} from '@/lib/auth/credentials';
-
-export type LoginActionState = {
-  status: 'idle' | 'error';
-  message?: string;
-};
-
-export const initialLoginActionState: LoginActionState = {status: 'idle'};
+import {
+  initialLoginActionState,
+  type LoginActionState,
+} from './login-action-state';
 
 export async function loginAction(
   _previousState: LoginActionState,

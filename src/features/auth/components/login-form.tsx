@@ -2,7 +2,8 @@
 
 import {Alert, Box, Button, TextField} from '@mui/material';
 import {useActionState} from 'react';
-import {initialLoginActionState, loginAction} from '@/features/auth/actions';
+import {loginAction} from '@/features/auth/actions';
+import {initialLoginActionState} from '@/features/auth/login-action-state';
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState(
