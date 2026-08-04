@@ -49,21 +49,50 @@ export async function saveMonthlyBudgetAction(formData: FormData) {
   }
 
   await withDatabaseDiagnostics('management.budget.save', () =>
-    db
-      .insert(monthlyBudgets)
-      .values({
-        month: `${month}-01`,
-        salaryUsd: salary.toFixed(2),
-        expectedSavingsUsd: savings.toFixed(2),
-      })
-      .onConflictDoUpdate({
-        target: monthlyBudgets.month,
-        set: {
+    db.transaction(async tx => {
+      const [budget] = await tx
+        .insert(monthlyBudgets)
+        .values({
+          month: `${month}-01`,
           salaryUsd: salary.toFixed(2),
           expectedSavingsUsd: savings.toFixed(2),
-          updatedAt: new Date(),
-        },
-      }),
+        })
+        .onConflictDoUpdate({
+          target: monthlyBudgets.month,
+          set: {
+            salaryUsd: salary.toFixed(2),
+            expectedSavingsUsd: savings.toFixed(2),
+            updatedAt: new Date(),
+          },
+        })
+        .returning({id: monthlyBudgets.id});
+
+      const defaultCategories = await tx
+        .select({
+          categoryId: categories.id,
+          amountUsd: categories.monthlyBudgetUsd,
+        })
+        .from(categories)
+        .where(eq(categories.isActive, true));
+
+      if (defaultCategories.length > 0) {
+        await tx
+          .insert(monthlyBudgetCategories)
+          .values(
+            defaultCategories.map(category => ({
+              monthlyBudgetId: budget.id,
+              categoryId: category.categoryId,
+              amountUsd: category.amountUsd,
+            })),
+          )
+          .onConflictDoNothing({
+            target: [
+              monthlyBudgetCategories.monthlyBudgetId,
+              monthlyBudgetCategories.categoryId,
+            ],
+          });
+      }
+    }),
   );
   finish(`/categories?month=${month}`, 'saved');
 }
