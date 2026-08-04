@@ -146,10 +146,12 @@ export function calculateDashboardSummary({
     totalBudgetUsd,
     totalSpentUsd,
     remainingBudgetUsd: roundMoney(totalBudgetUsd - totalSpentUsd),
-    usagePercent: getBudgetUsagePercent({
-      usedAmountUsd: totalSpentUsd,
-      budgetAmountUsd: totalBudgetUsd,
-    }),
+    usagePercent: budget
+      ? getBudgetUsagePercent({
+          usedAmountUsd: totalSpentUsd,
+          budgetAmountUsd: totalBudgetUsd,
+        })
+      : 0,
     categoryUsage,
     alerts: categoryUsage.filter(category => category.status !== 'safe'),
     uncategorizedCount: expenses.filter(

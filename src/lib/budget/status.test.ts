@@ -11,6 +11,12 @@ describe('budget rules', () => {
     ).toBe(80);
   });
 
+  it('marca como 100% usado un presupuesto cero con gasto positivo', () => {
+    expect(
+      getBudgetUsagePercent({usedAmountUsd: 79.46, budgetAmountUsd: 0}),
+    ).toBe(100);
+  });
+
   it.each([
     [69, 'safe'],
     [70, 'warning'],
@@ -19,6 +25,12 @@ describe('budget rules', () => {
   ] as const)('clasifica %s%% como %s', (usedAmountUsd, expected) => {
     expect(getBudgetStatus({usedAmountUsd, budgetAmountUsd: 100})).toBe(
       expected,
+    );
+  });
+
+  it('clasifica como excedido un presupuesto cero con gasto positivo', () => {
+    expect(getBudgetStatus({usedAmountUsd: 79.46, budgetAmountUsd: 0})).toBe(
+      'exceeded',
     );
   });
 

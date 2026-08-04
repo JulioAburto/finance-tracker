@@ -20,7 +20,7 @@ export function getBudgetUsagePercent({
   budgetAmountUsd,
 }: BudgetUsageInput): number {
   if (budgetAmountUsd <= 0) {
-    return 0;
+    return usedAmountUsd > 0 ? 100 : 0;
   }
 
   return (usedAmountUsd / budgetAmountUsd) * 100;

@@ -77,6 +77,43 @@ describe('dashboard calculations', () => {
     });
   });
 
+  it('marca como excedida una categoría sin presupuesto con gasto positivo', () => {
+    const summary = calculateDashboardSummary({
+      budget: {salaryUsd: 1300, expectedSavingsUsd: 450},
+      budgetCategories: [
+        {
+          categoryId: 'gift',
+          categoryName: 'Regalo',
+          amountUsd: 0,
+          warningThreshold: 70,
+          dangerThreshold: 80,
+          exceededThreshold: 100,
+        },
+      ],
+      transactions: [
+        {
+          id: 'ambrosia',
+          name: 'Ambrosia',
+          date: '2026-08-03',
+          type: 'expense',
+          amountUsd: 79.46,
+          categoryId: 'gift',
+          categoryName: 'Regalo',
+        },
+      ],
+      dayOfMonth: 3,
+    });
+
+    expect(summary.categoryUsage[0]).toMatchObject({
+      budgetUsd: 0,
+      spentUsd: 79.46,
+      remainingUsd: -79.46,
+      usagePercent: 100,
+      status: 'exceeded',
+    });
+    expect(summary.alerts).toHaveLength(1);
+  });
+
   it('cuenta gastos sin categoría', () => {
     const summary = calculateDashboardSummary({
       budget: null,
