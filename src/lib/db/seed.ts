@@ -11,48 +11,68 @@ import {
 } from './schema';
 
 const categorySeed = [
-  {name: 'Ahorro', monthlyBudgetUsd: '450.00', isEssential: true},
+  {name: 'Ahorro', monthlyBudgetUsd: '600.00', isEssential: true},
   {name: 'Servicios', monthlyBudgetUsd: '60.00', isEssential: true},
   {
     name: 'Productividad',
     monthlyBudgetUsd: '25.00',
     isEssential: true,
   },
-  {name: 'Entretenimiento', monthlyBudgetUsd: '45.00', isEssential: false},
+  {name: 'Entretenimiento', monthlyBudgetUsd: '31.00', isEssential: false},
   {
     name: 'Supermercado',
-    monthlyBudgetUsd: '165.00',
+    monthlyBudgetUsd: '140.00',
     isEssential: true,
   },
-  {name: 'Delivery', monthlyBudgetUsd: '70.00', isEssential: false},
+  {name: 'Delivery', monthlyBudgetUsd: '35.00', isEssential: false},
   {
     name: 'Novia / salidas / regalos',
-    monthlyBudgetUsd: '110.00',
+    monthlyBudgetUsd: '100.00',
     isEssential: false,
   },
   {
     name: 'Amazon / agencias',
-    monthlyBudgetUsd: '70.00',
+    monthlyBudgetUsd: '50.00',
     isEssential: false,
   },
-  {name: 'Ropa', monthlyBudgetUsd: '45.00', isEssential: false},
+  {name: 'Ropa', monthlyBudgetUsd: '20.00', isEssential: false},
   {name: 'Salud', monthlyBudgetUsd: '55.00', isEssential: true},
-  {name: 'Transporte', monthlyBudgetUsd: '35.00', isEssential: false},
+  {name: 'Transporte', monthlyBudgetUsd: '35.00', isEssential: true},
   {
     name: 'Efectivo operativo',
-    monthlyBudgetUsd: '100.00',
+    monthlyBudgetUsd: '0.00',
     isEssential: false,
   },
-  {name: 'Varios', monthlyBudgetUsd: '70.00', isEssential: false},
-  {name: 'Pulpería', monthlyBudgetUsd: '0.00', isEssential: true},
-  {name: 'Regalo', monthlyBudgetUsd: '0.00', isEssential: false},
-  {name: 'Apolo', monthlyBudgetUsd: '0.00', isEssential: true},
+  {name: 'Varios', monthlyBudgetUsd: '14.00', isEssential: false},
+  {name: 'Pulpería', monthlyBudgetUsd: '25.00', isEssential: true},
+  {name: 'Regalo', monthlyBudgetUsd: '25.00', isEssential: false},
+  {name: 'Apolo', monthlyBudgetUsd: '60.00', isEssential: true},
   {
     name: 'Pago de préstamos (deudas)',
-    monthlyBudgetUsd: '0.00',
+    monthlyBudgetUsd: '25.00',
     isEssential: true,
   },
 ] as const;
+
+const july2026BudgetUsdByCategoryName = new Map<string, string>([
+  ['Ahorro', '450.00'],
+  ['Servicios', '60.00'],
+  ['Productividad', '25.00'],
+  ['Entretenimiento', '45.00'],
+  ['Supermercado', '165.00'],
+  ['Delivery', '70.00'],
+  ['Novia / salidas / regalos', '110.00'],
+  ['Amazon / agencias', '70.00'],
+  ['Ropa', '45.00'],
+  ['Salud', '55.00'],
+  ['Transporte', '35.00'],
+  ['Efectivo operativo', '100.00'],
+  ['Varios', '70.00'],
+  ['Pulpería', '0.00'],
+  ['Regalo', '0.00'],
+  ['Apolo', '0.00'],
+  ['Pago de préstamos (deudas)', '0.00'],
+]);
 
 const paymentMethodSeed = [
   {name: 'Efectivo', type: 'cash'},
@@ -371,9 +391,14 @@ async function seed() {
   // Cada combinación presupuesto-categoría es única en la base de datos.
   for (const category of categorySeed) {
     const categoryId = categoryIds.get(category.name);
+    const julyBudgetUsd = july2026BudgetUsdByCategoryName.get(category.name);
 
     if (!categoryId) {
       throw new Error(`Seed category was not found: ${category.name}`);
+    }
+
+    if (!julyBudgetUsd) {
+      throw new Error(`Seed July budget was not found: ${category.name}`);
     }
 
     await db
@@ -381,7 +406,7 @@ async function seed() {
       .values({
         monthlyBudgetId: monthlyBudget.id,
         categoryId,
-        amountUsd: category.monthlyBudgetUsd,
+        amountUsd: julyBudgetUsd,
       })
       .onConflictDoUpdate({
         target: [
@@ -389,7 +414,7 @@ async function seed() {
           monthlyBudgetCategories.categoryId,
         ],
         set: {
-          amountUsd: category.monthlyBudgetUsd,
+          amountUsd: julyBudgetUsd,
           updatedAt: new Date(),
         },
       });

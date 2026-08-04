@@ -88,3 +88,28 @@ El flujo:
 
 El script no modifica transacciones existentes. Si hay gastos ya registrados
 relacionados con Apolo, deben reclasificarse desde `/transactions`.
+
+## Actualizar presupuestos de agosto 2026
+
+Ejecuta desde la raíz del repositorio:
+
+```powershell
+pnpm db:update-august-2026-category-budgets
+```
+
+El flujo:
+
+1. Crea `backups/finance-tracker-pre-update-august-2026-category-budgets-<UTC>.dump`.
+2. Verifica el contenido del respaldo y crea el archivo `.sha256` asociado.
+3. Actualiza `categories.monthly_budget_usd` e `is_essential` según la tabla
+   aprobada para agosto de 2026.
+4. Crea o actualiza el presupuesto mensual `2026-08-01` con salario
+   `1300.00 USD` y ahorro esperado `600.00 USD`.
+5. Crea o actualiza las asignaciones de `monthly_budget_categories` para
+   agosto de 2026.
+6. Verifica dentro de la misma transacción que existan las 17 categorías y que
+   los totales predeterminado y agosto sumen `1300.00 USD`.
+
+El script no modifica transacciones, métodos de pago, reglas de comercio,
+usuarios ni meses distintos a agosto de 2026. Los nuevos valores
+predeterminados sí aplican a la tabla global de categorías.

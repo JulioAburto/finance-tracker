@@ -17,6 +17,7 @@
     "db:seed": "tsx --env-file=.env.local src/lib/db/seed.ts",
     "db:add-default-categories": "pwsh -NoProfile -File scripts/database/add-default-categories-safe.ps1 -Execute",
     "db:add-apolo-category": "pwsh -NoProfile -File scripts/database/add-apolo-category-safe.ps1 -Execute",
+    "db:update-august-2026-category-budgets": "pwsh -NoProfile -File scripts/database/update-august-2026-category-budgets-safe.ps1 -Execute",
     "auth:create-user": "tsx --env-file=.env.local src/lib/auth/create-user.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

@@ -248,6 +248,7 @@ pnpm build
 | `pnpm db:studio`        | Drizzle Studio                                  |
 | `pnpm db:seed`          | Cargar catálogos iniciales y transacciones mock |
 | `pnpm db:add-apolo-category` | Agregar la categoría Apolo con respaldo seguro |
+| `pnpm db:update-august-2026-category-budgets` | Actualizar presupuestos de agosto 2026 con respaldo seguro |
 | `pnpm auth:create-user` | Crear o reemplazar la única cuenta de acceso    |
 
 ## Archivos principales
