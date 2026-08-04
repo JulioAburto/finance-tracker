@@ -2,7 +2,7 @@
 
 > Alcance de producto y estado de implementación.
 
-Última revisión: 2026-07-30.
+Última revisión: 2026-08-04.
 
 ## Objetivo
 
@@ -39,6 +39,7 @@ Multiusuario y control de roles no forman parte del MVP v1.
 - ✅ Datos iniciales de categorías, métodos, presupuesto y reglas.
 - ✅ Pruebas unitarias de reglas financieras.
 - ✅ Gestión de categorías, presupuestos, reglas y configuración.
+- ✅ Generación manual de gastos recurrentes mensuales.
 - ✅ Login y cierre de sesión para una cuenta activa mediante Auth.js.
 - ✅ Protección server-side de páginas, consultas y mutaciones.
 
@@ -63,6 +64,7 @@ migración, crear su cuenta y configurar `AUTH_SECRET` antes de desplegar.
 - Reglas editables de comercios.
 - Configuración básica.
 - Modo de tarjeta de crédito.
+- Plantillas de gastos recurrentes con generación manual mensual.
 - Seed inicial.
 
 ## Fuera de alcance
@@ -76,7 +78,7 @@ Requieren aprobación explícita:
 - Conciliación contable.
 - Reportes avanzados.
 - Simulaciones complejas de metas.
-- Automatización de transacciones recurrentes.
+- Automatización de transacciones recurrentes mediante cron, jobs o endpoints externos.
 - Notificaciones push o correo.
 - Importación CSV.
 - Sincronización con Google Sheets.
@@ -220,6 +222,21 @@ Implementada.
 
 Debe permitir modificar moneda, tasa predeterminada y opciones de tarjeta.
 
+### `/recurring`
+
+Implementada.
+
+Permite:
+
+- Crear y editar plantillas mensuales de gastos.
+- Guardar plantillas inactivas incompletas para revisión.
+- Activar solo plantillas con categoría y método de pago activos.
+- Generar manualmente todas las plantillas activas del mes seleccionado.
+- Omitir duplicados cuando ya existe una ejecución para la plantilla y el mes.
+
+La generación usa la tasa vigente en `app_settings.default_exchange_rate` al
+momento de crear las transacciones. No hay cron ni generación automática en v1.
+
 ## Datos iniciales
 
 El seed crea:
@@ -230,6 +247,7 @@ El seed crea:
 - Presupuesto para julio de 2026.
 - Presupuestos por categoría.
 - 8 reglas de comercios.
+- 5 plantillas recurrentes inactivas para revisión.
 - 15 transacciones mock de julio de 2026 para poblar dashboard y listados.
 
 Los importes y columnas exactos están en [`DATABASE_SCHEMA.md`](./DATABASE_SCHEMA.md).
@@ -244,6 +262,7 @@ Los importes y columnas exactos están en [`DATABASE_SCHEMA.md`](./DATABASE_SCHE
 | Dashboard     | ✅     | Cálculos y alertas                       |
 | Categorías    | ✅     | CRUD y presupuestos                      |
 | Reglas        | ✅     | CRUD de reglas                           |
+| Recurrentes   | ✅     | Plantillas y generación manual mensual   |
 | Seguridad     | ✅     | Login, sesión y autorización server-side |
 | IA opcional   | ⏳     | Solo después de reglas                   |
 

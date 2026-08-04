@@ -7,6 +7,7 @@ import {
   monthlyBudgetCategories,
   monthlyBudgets,
   paymentMethods,
+  recurringTransactionTemplates,
   transactions,
 } from './schema';
 
@@ -112,6 +113,44 @@ const merchantRuleSeed = [
     pattern: 'claro|tigo|internet|gas|cable',
     categoryName: 'Servicios',
     priority: 70,
+  },
+] as const;
+
+const recurringTemplateSeed = [
+  {
+    id: '00000000-0000-4000-8000-000000000201',
+    name: 'Netflix',
+    amount: '9.99',
+    currency: 'USD',
+    dayOfMonth: 7,
+  },
+  {
+    id: '00000000-0000-4000-8000-000000000202',
+    name: 'MAX',
+    amount: '219.00',
+    currency: 'NIO',
+    dayOfMonth: 8,
+  },
+  {
+    id: '00000000-0000-4000-8000-000000000203',
+    name: 'YouTube Premium',
+    amount: '7.99',
+    currency: 'USD',
+    dayOfMonth: 1,
+  },
+  {
+    id: '00000000-0000-4000-8000-000000000204',
+    name: 'ChatGPT',
+    amount: '20.00',
+    currency: 'USD',
+    dayOfMonth: 3,
+  },
+  {
+    id: '00000000-0000-4000-8000-000000000205',
+    name: 'Spotify',
+    amount: '6.49',
+    currency: 'USD',
+    dayOfMonth: 30,
   },
 ] as const;
 
@@ -442,6 +481,27 @@ async function seed() {
           categoryId,
           priority: rule.priority,
           isActive: true,
+          updatedAt: new Date(),
+        },
+      });
+  }
+
+  for (const template of recurringTemplateSeed) {
+    await db
+      .insert(recurringTransactionTemplates)
+      .values({
+        ...template,
+        isActive: false,
+        categoryId: null,
+        paymentMethodId: null,
+      })
+      .onConflictDoUpdate({
+        target: recurringTransactionTemplates.id,
+        set: {
+          name: template.name,
+          amount: template.amount,
+          currency: template.currency,
+          dayOfMonth: template.dayOfMonth,
           updatedAt: new Date(),
         },
       });

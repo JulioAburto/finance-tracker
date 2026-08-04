@@ -243,6 +243,53 @@ Reglas de aplicación:
 - El pago de tarjeta debe registrarse como `transfer`.
 - `amount`, `currency` y `exchange_rate` son históricos.
 
+### `recurring_transaction_templates`
+
+Plantillas mensuales de gastos recurrentes generadas manualmente.
+
+| Columna             | Tipo          | Reglas                      |
+| ------------------- | ------------- | --------------------------- |
+| `id`                | uuid          | PK                          |
+| `name`              | varchar(180)  | requerido                   |
+| `amount`            | numeric(12,2) | mayor que 0                 |
+| `currency`          | currency      | requerido                   |
+| `day_of_month`      | integer       | 1-31                        |
+| `category_id`       | uuid          | opcional, FK con `set null` |
+| `payment_method_id` | uuid          | opcional, FK con `set null` |
+| `note`              | text          | opcional                    |
+| `is_active`         | boolean       | requerido, `false`          |
+| `created_at`        | timestamptz   | requerido                   |
+| `updated_at`        | timestamptz   | requerido                   |
+
+Índices sobre estado, categoría y método de pago.
+
+Reglas de aplicación:
+
+- Una plantilla inactiva puede estar incompleta.
+- Para activar una plantilla, categoría y método de pago deben existir y estar activos.
+- Las transacciones generadas siempre usan `type = expense`.
+- Si el día configurado no existe en el mes seleccionado, se usa el último día del mes.
+
+### `recurring_transaction_runs`
+
+Registro de cada generación mensual por plantilla.
+
+| Columna          | Tipo        | Reglas                            |
+| ---------------- | ----------- | --------------------------------- |
+| `id`             | uuid        | PK                                |
+| `template_id`    | uuid        | FK, cascade al eliminar plantilla |
+| `target_month`   | date        | requerido, primer día del mes     |
+| `scheduled_date` | date        | fecha asignada a la transacción   |
+| `transaction_id` | uuid        | opcional, FK con `set null`       |
+| `created_at`     | timestamptz | requerido                         |
+| `updated_at`     | timestamptz | requerido                         |
+
+La combinación `(template_id, target_month)` es única. Si una transacción
+generada se elimina, el run permanece con `transaction_id = null` y la rutina no
+la regenera automáticamente.
+
+Índices sobre plantilla, mes objetivo y transacción generada.
+
 ### `merchant_rules`
 
 Reglas determinísticas de clasificación.
@@ -319,6 +366,7 @@ Los resultados se redondean a dos decimales antes de persistirse.
 - 17 asignaciones de categoría.
 - 8 reglas de comercios.
 - 15 transacciones mock para `2026-07`.
+- 5 plantillas recurrentes inactivas: Netflix, MAX, YouTube Premium, ChatGPT y Spotify.
 
 El seed puede repetirse sin duplicar estas entidades. También sincroniza los valores iniciales definidos en el archivo.
 
@@ -358,7 +406,7 @@ restauran en producción sin aprobación separada. Consulta
 - Cuentas con saldos reales.
 - Conexiones bancarias.
 - Archivos de recibos y OCR.
-- Transacciones recurrentes.
+- Automatización de transacciones recurrentes mediante cron, jobs o endpoints externos.
 - Metas, auditoría o notificaciones.
 
 Al aprobar multiusuario, será necesario revisar todas las claves únicas y agregar aislamiento por usuario.

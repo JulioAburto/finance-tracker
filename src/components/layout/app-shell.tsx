@@ -20,6 +20,7 @@ import {logoutAction} from '@/features/auth/actions';
 const navigation = [
   {href: '/dashboard', label: 'Resumen'},
   {href: '/transactions', label: 'Transacciones'},
+  {href: '/recurring', label: 'Recurrentes'},
   {href: '/categories', label: 'Categorías'},
   {href: '/rules', label: 'Reglas'},
   {href: '/settings', label: 'Configuración'},

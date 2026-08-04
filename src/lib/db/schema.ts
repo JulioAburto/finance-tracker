@@ -285,6 +285,79 @@ export const transactions = pgTable(
   ],
 );
 
+// Plantillas mensuales creadas manualmente desde /recurring.
+export const recurringTransactionTemplates = pgTable(
+  'recurring_transaction_templates',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    name: varchar('name', {length: 180}).notNull(),
+    amount: numeric('amount', {precision: 12, scale: 2}).notNull(),
+    currency: currencyEnum('currency').notNull(),
+    dayOfMonth: integer('day_of_month').notNull(),
+    categoryId: uuid('category_id').references(() => categories.id, {
+      onDelete: 'set null',
+    }),
+    paymentMethodId: uuid('payment_method_id').references(
+      () => paymentMethods.id,
+      {onDelete: 'set null'},
+    ),
+    note: text('note'),
+    isActive: boolean('is_active').notNull().default(false),
+    ...timestampColumns(),
+  },
+  table => [
+    index('recurring_transaction_templates_is_active_idx').on(table.isActive),
+    index('recurring_transaction_templates_category_idx').on(table.categoryId),
+    index('recurring_transaction_templates_payment_method_idx').on(
+      table.paymentMethodId,
+    ),
+    check(
+      'recurring_transaction_templates_amount_positive',
+      sql`${table.amount} > 0`,
+    ),
+    check(
+      'recurring_transaction_templates_day_valid',
+      sql`${table.dayOfMonth} between 1 and 31`,
+    ),
+    check(
+      'recurring_transaction_templates_active_requires_refs',
+      sql`${table.isActive} = false or (${table.categoryId} is not null and ${table.paymentMethodId} is not null)`,
+    ),
+  ],
+);
+
+// Registra cada generación mensual para no duplicar gastos recurrentes.
+export const recurringTransactionRuns = pgTable(
+  'recurring_transaction_runs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    templateId: uuid('template_id')
+      .notNull()
+      .references(() => recurringTransactionTemplates.id, {
+        onDelete: 'cascade',
+      }),
+    targetMonth: date('target_month').notNull(),
+    scheduledDate: date('scheduled_date').notNull(),
+    transactionId: uuid('transaction_id').references(() => transactions.id, {
+      onDelete: 'set null',
+    }),
+    ...timestampColumns(),
+  },
+  table => [
+    unique('recurring_transaction_runs_template_month_unique').on(
+      table.templateId,
+      table.targetMonth,
+    ),
+    index('recurring_transaction_runs_template_idx').on(table.templateId),
+    index('recurring_transaction_runs_target_month_idx').on(table.targetMonth),
+    index('recurring_transaction_runs_transaction_idx').on(table.transactionId),
+    check(
+      'recurring_transaction_runs_target_month_first_day',
+      sql`${table.targetMonth} = date_trunc('month', ${table.targetMonth})::date`,
+    ),
+  ],
+);
+
 // Estas reglas determinísticas se evaluarán antes de cualquier integración de IA.
 export const merchantRules = pgTable(
   'merchant_rules',
