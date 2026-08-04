@@ -153,6 +153,8 @@ pnpm db:seed
 ```
 
 El seed es idempotente: usa upserts para evitar duplicar registros principales.
+También crea plantillas recurrentes iniciales inactivas para revisión desde
+`/recurring`; no generan transacciones hasta completarlas y activarlas.
 
 ### Crear la cuenta de acceso
 
@@ -233,23 +235,23 @@ pnpm build
 
 ## Scripts disponibles
 
-| Script                  | Función                                         |
-| ----------------------- | ----------------------------------------------- |
-| `pnpm dev`              | Servidor HTTP de desarrollo                     |
-| `pnpm run dev:https`    | Servidor HTTPS de desarrollo                    |
-| `pnpm test`             | Jest                                            |
-| `pnpm test:watch`       | Jest en modo watch                              |
-| `pnpm lint`             | ESLint                                          |
-| `pnpm build`            | Build de producción                             |
-| `pnpm start`            | Ejecutar el build                               |
-| `pnpm db:generate`      | Generar migraciones                             |
-| `pnpm db:migrate`       | Aplicar migraciones                             |
-| `pnpm db:push`          | Sincronización directa; usar con cautela        |
-| `pnpm db:studio`        | Drizzle Studio                                  |
-| `pnpm db:seed`          | Cargar catálogos iniciales y transacciones mock |
-| `pnpm db:add-apolo-category` | Agregar la categoría Apolo con respaldo seguro |
+| Script                                        | Función                                                    |
+| --------------------------------------------- | ---------------------------------------------------------- |
+| `pnpm dev`                                    | Servidor HTTP de desarrollo                                |
+| `pnpm run dev:https`                          | Servidor HTTPS de desarrollo                               |
+| `pnpm test`                                   | Jest                                                       |
+| `pnpm test:watch`                             | Jest en modo watch                                         |
+| `pnpm lint`                                   | ESLint                                                     |
+| `pnpm build`                                  | Build de producción                                        |
+| `pnpm start`                                  | Ejecutar el build                                          |
+| `pnpm db:generate`                            | Generar migraciones                                        |
+| `pnpm db:migrate`                             | Aplicar migraciones                                        |
+| `pnpm db:push`                                | Sincronización directa; usar con cautela                   |
+| `pnpm db:studio`                              | Drizzle Studio                                             |
+| `pnpm db:seed`                                | Cargar catálogos iniciales y transacciones mock            |
+| `pnpm db:add-apolo-category`                  | Agregar la categoría Apolo con respaldo seguro             |
 | `pnpm db:update-august-2026-category-budgets` | Actualizar presupuestos de agosto 2026 con respaldo seguro |
-| `pnpm auth:create-user` | Crear o reemplazar la única cuenta de acceso    |
+| `pnpm auth:create-user`                       | Crear o reemplazar la única cuenta de acceso               |
 
 ## Archivos principales
 
@@ -264,7 +266,13 @@ src/lib/money/
 src/lib/budget/
 src/features/transactions/
 src/features/dashboard/
+src/features/recurring/
 ```
+
+`drizzle/0002_cooing_elektra.sql` agrega las tablas de plantillas y ejecuciones
+de gastos recurrentes manuales. Revisa el SQL antes de aplicar la migración en
+cualquier entorno con datos. En producción, aplica primero el flujo de respaldo
+lógico verificable descrito en esta guía.
 
 ## PowerShell
 

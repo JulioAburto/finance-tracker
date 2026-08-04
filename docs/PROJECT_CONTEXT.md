@@ -2,7 +2,7 @@
 
 > Decisiones vigentes, estado de implementación y problemas conocidos.
 
-Última revisión: 2026-07-30.
+Última revisión: 2026-08-04.
 
 ## Fuentes de verdad
 
@@ -42,6 +42,7 @@ No es un sistema contable ni bancario completo.
 | Monedas capturadas  | USD y NIO                                                     |
 | Clasificación       | Selección manual, luego reglas y finalmente IA opcional       |
 | Autenticación       | Auth.js Credentials; una cuenta activa y sin registro público |
+| Recurrentes         | Plantillas mensuales con generación manual; sin cron en v1    |
 
 ## Estado actual
 
@@ -56,6 +57,7 @@ No es un sistema contable ni bancario completo.
 - Edición y eliminación con confirmación.
 - Dashboard mensual con cálculos reales.
 - Gestión de categorías, presupuestos, reglas y configuración.
+- Plantillas de gastos recurrentes y generación manual mensual.
 - Login, cierre de sesión y autorización server-side con Auth.js.
 - Bloqueo temporal de intentos y revocación por versión de sesión.
 - Pruebas unitarias con Jest.
@@ -82,6 +84,10 @@ Formulario cliente
 
 Las consultas se ejecutan desde Server Components o módulos exclusivos del servidor. `DATABASE_URL` nunca debe llegar al navegador.
 
+La generación recurrente se ejecuta manualmente desde `/recurring`, lee la tasa
+vigente de `app_settings.default_exchange_rate`, crea transacciones `expense` y
+registra un run por `(template_id, target_month)` para evitar duplicados.
+
 El login y el logout también usan Server Actions. Auth.js requiere su Route
 Handler interno en `/api/auth/[...nextauth]`, pero la interfaz no consulta
 PostgreSQL ni invoca Auth.js directamente desde componentes cliente.
@@ -97,6 +103,7 @@ PostgreSQL ni invoca Auth.js directamente desde componentes cliente.
 - Las transacciones históricas no se recalculan con tasas nuevas.
 - Solo las transacciones de tipo `expense` consumen presupuesto.
 - Las reglas determinísticas tienen prioridad sobre IA.
+- Una transacción recurrente generada consume presupuesto como cualquier gasto.
 
 ## Presupuesto inicial
 
@@ -134,6 +141,7 @@ Las pruebas unitarias cubren:
 - Regla de congelamiento antes del día 20.
 - Validación de transacciones.
 - Cálculos agregados del dashboard.
+- Fechas, validación, conversión y duplicados de recurrentes manuales.
 
 Las pruebas de lógica pura no requieren conexión a Supabase.
 
