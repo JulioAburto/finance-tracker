@@ -46,6 +46,7 @@ const categorySeed = [
   {name: 'Varios', monthlyBudgetUsd: '70.00', isEssential: false},
   {name: 'Pulpería', monthlyBudgetUsd: '0.00', isEssential: true},
   {name: 'Regalo', monthlyBudgetUsd: '0.00', isEssential: false},
+  {name: 'Apolo', monthlyBudgetUsd: '0.00', isEssential: true},
   {
     name: 'Pago de préstamos (deudas)',
     monthlyBudgetUsd: '0.00',
@@ -86,6 +87,7 @@ const merchantRuleSeed = [
     priority: 50,
   },
   {pattern: 'farmacia', categoryName: 'Salud', priority: 60},
+  {pattern: 'apolo', categoryName: 'Apolo', priority: 65},
   {
     pattern: 'claro|tigo|internet|gas|cable',
     categoryName: 'Servicios',

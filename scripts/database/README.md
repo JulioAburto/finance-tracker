@@ -65,3 +65,26 @@ Las nuevas categorías parten con presupuesto `0.00 USD`. `Pulpería` y
 `Pago de préstamos (deudas)` se marcan esenciales; `Regalo`, no esencial. El
 script no sobrescribe categorías existentes ni modifica transacciones,
 presupuestos, usuarios o reglas.
+
+## Agregar categoría Apolo
+
+Ejecuta desde la raíz del repositorio:
+
+```powershell
+pnpm db:add-apolo-category
+```
+
+El flujo:
+
+1. Crea `backups/finance-tracker-pre-add-apolo-category-<UTC>.dump`.
+2. Verifica el contenido del respaldo y crea el archivo `.sha256` asociado.
+3. Inserta `Apolo` si no existe, con presupuesto predeterminado `0.00 USD` y
+   marcada como esencial.
+4. Crea asignaciones mensuales `0.00 USD` para los presupuestos existentes que
+   todavía no tengan esa categoría.
+5. Inserta o actualiza la regla `apolo -> Apolo`.
+6. Consulta la categoría, sus asignaciones mensuales y la regla dentro de la
+   misma transacción antes de confirmarla.
+
+El script no modifica transacciones existentes. Si hay gastos ya registrados
+relacionados con Apolo, deben reclasificarse desde `/transactions`.

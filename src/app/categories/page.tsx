@@ -48,6 +48,7 @@ export default async function CategoriesPage({
             description="Configura el nombre y presupuesto predeterminado. Podrás ajustar sus umbrales después."
           >
             <Box component="form" action={createCategoryAction}>
+              <input type="hidden" name="month" value={month} />
               <Stack spacing={2.5}>
                 <TextField name="name" label="Nombre" required fullWidth />
                 <TextField

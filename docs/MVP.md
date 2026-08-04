@@ -225,11 +225,11 @@ Debe permitir modificar moneda, tasa predeterminada y opciones de tarjeta.
 El seed crea:
 
 - Configuración global.
-- 16 categorías.
+- 17 categorías.
 - 7 métodos de pago.
 - Presupuesto para julio de 2026.
 - Presupuestos por categoría.
-- 7 reglas de comercios.
+- 8 reglas de comercios.
 - 15 transacciones mock de julio de 2026 para poblar dashboard y listados.
 
 Los importes y columnas exactos están en [`DATABASE_SCHEMA.md`](./DATABASE_SCHEMA.md).

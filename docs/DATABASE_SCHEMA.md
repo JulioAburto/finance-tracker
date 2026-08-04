@@ -313,11 +313,11 @@ Los resultados se redondean a dos decimales antes de persistirse.
 `src/lib/db/seed.ts` usa upserts e inserta:
 
 - 1 fila de configuración.
-- 16 categorías.
+- 17 categorías.
 - 7 métodos de pago.
 - Presupuesto para `2026-07-01`.
-- 16 asignaciones de categoría.
-- 7 reglas de comercios.
+- 17 asignaciones de categoría.
+- 8 reglas de comercios.
 - 15 transacciones mock para `2026-07`.
 
 El seed puede repetirse sin duplicar estas entidades. También sincroniza los valores iniciales definidos en el archivo.

@@ -102,18 +102,40 @@ export async function createCategoryAction(formData: FormData) {
 
   const name = readText(formData, 'name');
   const budget = readNonNegativeNumber(formData, 'monthlyBudgetUsd');
+  const month = readText(formData, 'month');
   if (!name || name.length > 120 || budget === null)
     finish('/categories', 'invalid');
 
   await withDatabaseDiagnostics('management.category.create', () =>
-    db.insert(categories).values({
-      name,
-      monthlyBudgetUsd: budget.toFixed(2),
-      isEssential: readBoolean(formData, 'isEssential'),
-      sortOrder: readInteger(formData, 'sortOrder') ?? 0,
+    db.transaction(async tx => {
+      const [category] = await tx
+        .insert(categories)
+        .values({
+          name,
+          monthlyBudgetUsd: budget.toFixed(2),
+          isEssential: readBoolean(formData, 'isEssential'),
+          sortOrder: readInteger(formData, 'sortOrder') ?? 0,
+        })
+        .returning({id: categories.id});
+
+      if (/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+        const [monthlyBudget] = await tx
+          .select({id: monthlyBudgets.id})
+          .from(monthlyBudgets)
+          .where(eq(monthlyBudgets.month, `${month}-01`))
+          .limit(1);
+
+        if (monthlyBudget) {
+          await tx.insert(monthlyBudgetCategories).values({
+            monthlyBudgetId: monthlyBudget.id,
+            categoryId: category.id,
+            amountUsd: budget.toFixed(2),
+          });
+        }
+      }
     }),
   );
-  finish('/categories', 'saved');
+  finish(month ? `/categories?month=${month}` : '/categories', 'saved');
 }
 
 export async function updateCategoryAction(id: string, formData: FormData) {

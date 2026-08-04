@@ -247,6 +247,7 @@ pnpm build
 | `pnpm db:push`          | Sincronización directa; usar con cautela        |
 | `pnpm db:studio`        | Drizzle Studio                                  |
 | `pnpm db:seed`          | Cargar catálogos iniciales y transacciones mock |
+| `pnpm db:add-apolo-category` | Agregar la categoría Apolo con respaldo seguro |
 | `pnpm auth:create-user` | Crear o reemplazar la única cuenta de acceso    |
 
 ## Archivos principales
