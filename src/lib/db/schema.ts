@@ -11,6 +11,7 @@ import {
   text,
   timestamp,
   unique,
+  uniqueIndex,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
@@ -77,7 +78,7 @@ export const appUsers = pgTable(
   ],
 );
 
-// Configuración global de la aplicación. El seed mantiene una sola fila.
+// Configuración global: el índice único de expresión admite como máximo una fila.
 export const appSettings = pgTable(
   'app_settings',
   {
@@ -95,6 +96,7 @@ export const appSettings = pgTable(
     ...timestampColumns(),
   },
   table => [
+    uniqueIndex('app_settings_singleton_idx').on(sql`(true)`),
     check(
       'app_settings_default_exchange_rate_positive',
       sql`${table.defaultExchangeRate} > 0`,

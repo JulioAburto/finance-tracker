@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "app_settings_singleton_idx" ON "app_settings" USING btree ((true));

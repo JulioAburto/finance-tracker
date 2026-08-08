@@ -167,45 +167,47 @@ export async function updateCategoryAction(id: string, formData: FormData) {
   }
 
   await withDatabaseDiagnostics('management.category.update', async () => {
-    await db
-      .update(categories)
-      .set({
-        name,
-        monthlyBudgetUsd: defaultBudget.toFixed(2),
-        isEssential: readBoolean(formData, 'isEssential'),
-        isActive: readBoolean(formData, 'isActive'),
-        warningThreshold: warning,
-        dangerThreshold: danger,
-        exceededThreshold: exceeded,
-        sortOrder: readInteger(formData, 'sortOrder') ?? 0,
-        updatedAt: new Date(),
-      })
-      .where(eq(categories.id, id));
-
-    const budgetRows = await db
-      .select({id: monthlyBudgets.id})
-      .from(monthlyBudgets)
-      .where(eq(monthlyBudgets.month, `${month}-01`))
-      .limit(1);
-    if (budgetRows[0]) {
-      await db
-        .insert(monthlyBudgetCategories)
-        .values({
-          monthlyBudgetId: budgetRows[0].id,
-          categoryId: id,
-          amountUsd: selectedBudget.toFixed(2),
+    await db.transaction(async tx => {
+      await tx
+        .update(categories)
+        .set({
+          name,
+          monthlyBudgetUsd: defaultBudget.toFixed(2),
+          isEssential: readBoolean(formData, 'isEssential'),
+          isActive: readBoolean(formData, 'isActive'),
+          warningThreshold: warning,
+          dangerThreshold: danger,
+          exceededThreshold: exceeded,
+          sortOrder: readInteger(formData, 'sortOrder') ?? 0,
+          updatedAt: new Date(),
         })
-        .onConflictDoUpdate({
-          target: [
-            monthlyBudgetCategories.monthlyBudgetId,
-            monthlyBudgetCategories.categoryId,
-          ],
-          set: {
+        .where(eq(categories.id, id));
+
+      const budgetRows = await tx
+        .select({id: monthlyBudgets.id})
+        .from(monthlyBudgets)
+        .where(eq(monthlyBudgets.month, `${month}-01`))
+        .limit(1);
+      if (budgetRows[0]) {
+        await tx
+          .insert(monthlyBudgetCategories)
+          .values({
+            monthlyBudgetId: budgetRows[0].id,
+            categoryId: id,
             amountUsd: selectedBudget.toFixed(2),
-            updatedAt: new Date(),
-          },
-        });
-    }
+          })
+          .onConflictDoUpdate({
+            target: [
+              monthlyBudgetCategories.monthlyBudgetId,
+              monthlyBudgetCategories.categoryId,
+            ],
+            set: {
+              amountUsd: selectedBudget.toFixed(2),
+              updatedAt: new Date(),
+            },
+          });
+      }
+    });
   });
   finish(`/categories?month=${month}`, 'saved');
 }
