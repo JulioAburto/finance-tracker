@@ -1,14 +1,14 @@
 import {Box, Card, CardContent, Typography} from '@mui/material';
 import type {Metadata} from 'next';
 import {redirect} from 'next/navigation';
-import {auth} from '@/auth';
 import {LoginForm} from '@/features/auth/components/login-form';
+import {getCurrentUser} from '@/lib/auth/dal';
 
 export const metadata: Metadata = {title: 'Iniciar sesión'};
 
 export default async function LoginPage() {
-  const session = await auth();
-  if (session?.user) redirect('/dashboard');
+  const user = await getCurrentUser();
+  if (user) redirect('/dashboard');
 
   return (
     <Box

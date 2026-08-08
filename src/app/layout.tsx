@@ -1,8 +1,8 @@
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import {Providers} from './providers';
-import {auth} from '@/auth';
 import {AppShell} from '@/components/layout/app-shell';
+import {getCurrentUser} from '@/lib/auth/dal';
 
 export const metadata: Metadata = {
   title: {
@@ -22,13 +22,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
+  const user = await getCurrentUser();
 
   return (
     <html lang="es">
       <body className="google-sans">
         <Providers>
-          {session?.user ? <AppShell>{children}</AppShell> : children}
+          {user ? <AppShell>{children}</AppShell> : children}
         </Providers>
       </body>
     </html>
