@@ -372,8 +372,6 @@ export default async function DashboardPage({
               <EmptyState
                 title="No hay transacciones"
                 description="Registra tu primer gasto para comenzar a ver el resumen."
-                actionHref="/transactions/new"
-                actionLabel="Agregar gasto"
               />
             ) : (
               data.latestTransactions.map(transaction => (

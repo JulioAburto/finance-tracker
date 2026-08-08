@@ -121,15 +121,18 @@ El dashboard selecciona el mes actual por defecto. Para revisar el seed inicial,
 
 No usar `NEXT_PUBLIC_DATABASE_URL`.
 
-## Desarrollo HTTPS
+## Desarrollo local
 
-`pnpm run dev:https` usa Webpack deliberadamente:
+`pnpm dev` y `pnpm run dev:https` usan Webpack deliberadamente:
 
 ```powershell
+next dev --webpack
 next dev --webpack --experimental-https
 ```
 
-Durante la implementación, Turbopack con HTTPS en Windows produjo errores del React Client Manifest. El desarrollo HTTP y el build pueden continuar usando Turbopack.
+Durante la implementación se observaron errores del React Client Manifest y
+bloqueos de respuesta con Turbopack en Windows. El build puede continuar usando
+la configuración predeterminada de Next.js.
 
 ## Pruebas
 
@@ -165,7 +168,7 @@ Las pruebas de lógica pura no requieren conexión a Supabase.
 - Las funciones de Vercel se fijaron a `pdx1` para evitar latencia de red con
   Supabase `us-west-2`; el pool admite cuatro consultas paralelas por instancia.
 - Se eliminó la dependencia de Google Fonts para que el build no requiera red.
-- HTTPS local se fijó a Webpack por un problema reproducible de Turbopack en Windows.
+- El desarrollo local se fijó a Webpack por problemas reproducibles de Turbopack en Windows.
 
 ## Próxima prioridad
 

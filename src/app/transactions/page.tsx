@@ -89,8 +89,6 @@ export default async function TransactionsPage({
           <EmptyState
             title="No hay transacciones"
             description="No encontramos movimientos para los filtros seleccionados."
-            actionHref="/transactions/new"
-            actionLabel="Agregar gasto"
           />
         </Card>
       ) : (

@@ -198,7 +198,7 @@ Revisa siempre el SQL generado antes de aplicarlo. No uses `db:push` sobre una b
 
 ## Ejecutar la aplicación
 
-Desarrollo HTTP con Turbopack:
+Desarrollo HTTP con Webpack:
 
 ```powershell
 pnpm dev
@@ -210,16 +210,16 @@ Desarrollo HTTPS con certificado autofirmado:
 pnpm run dev:https
 ```
 
-El script HTTPS usa Webpack:
+El script HTTPS también usa Webpack:
 
 ```txt
 next dev --webpack --experimental-https
 ```
 
-Esto evita un error de React Client Manifest observado con Turbopack y HTTPS en Windows. El navegador puede mostrar una advertencia por el certificado local.
+Esto evita bloqueos del servidor de desarrollo observados con Turbopack en
+Windows. El navegador puede mostrar una advertencia por el certificado local.
 
-El script HTTP usa el Turbopack predeterminado de Next.js 16. Si cambias entre
-los dos modos, detén primero el servidor anterior.
+Si cambias entre HTTP y HTTPS, detén primero el servidor anterior.
 
 ## Validación
 

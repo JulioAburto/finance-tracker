@@ -67,6 +67,12 @@ export function AppShell({children}: {children: ReactNode}) {
         : (navigation.find(item => isActive(item.href))?.label ??
           'Finance Tracker');
 
+  const hasPageLevelAddExpenseAction =
+    pathname === '/dashboard' || pathname === '/transactions';
+
+  const showGlobalQuickAdd =
+    pathname !== '/transactions/new' && !hasPageLevelAddExpenseAction;
+
   const showQuickAdd =
     pathname !== '/transactions/new' &&
     (pathname === '/categories' ||
@@ -200,14 +206,16 @@ export function AppShell({children}: {children: ReactNode}) {
               })}
             </Box>
 
-            <Button
-              component={Link}
-              href="/transactions/new"
-              variant="contained"
-              sx={{display: {xs: 'none', sm: 'inline-flex'}}}
-            >
-              Agregar gasto
-            </Button>
+            {showGlobalQuickAdd ? (
+              <Button
+                component={Link}
+                href="/transactions/new"
+                variant="contained"
+                sx={{display: {xs: 'none', sm: 'inline-flex'}}}
+              >
+                Agregar gasto
+              </Button>
+            ) : null}
 
             <form action={logoutAction}>
               <Button
