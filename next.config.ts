@@ -1,6 +1,9 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  experimental: {
+    optimizePackageImports: ['@mui/material'],
+  },
   // Evita que Turbopack tome por error el yarn.lock del perfil de Windows
   // como raíz del proyecto.
   turbopack: {

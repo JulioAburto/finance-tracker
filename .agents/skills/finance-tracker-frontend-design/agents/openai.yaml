@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Finance Tracker Frontend Design'
+  short_description: 'Distinctive MUI design for Finance Tracker'
+  default_prompt: 'Use $finance-tracker-frontend-design to refine a Finance Tracker interface with a deliberate, distinctive MUI direction.'
