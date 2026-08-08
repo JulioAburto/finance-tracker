@@ -103,9 +103,9 @@ export default async function DashboardPage({
                 component="p"
                 sx={{
                   mt: 0.5,
-                  fontSize: 'clamp(2rem, 7vw, 3.25rem)',
+                  fontSize: '2rem',
                   fontWeight: 800,
-                  letterSpacing: '-0.04em',
+                  letterSpacing: 0,
                   lineHeight: 1.1,
                   overflowWrap: 'anywhere',
                 }}

@@ -48,18 +48,18 @@ export const theme = createTheme({
     fontFamily:
       '"Google Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     h4: {
-      fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
+      fontSize: '2rem',
       fontWeight: 700,
-      letterSpacing: '-0.025em',
+      letterSpacing: 0,
       lineHeight: 1.2,
     },
     h5: {
       fontWeight: 700,
-      letterSpacing: '-0.015em',
+      letterSpacing: 0,
     },
     h6: {
       fontWeight: 700,
-      letterSpacing: '-0.01em',
+      letterSpacing: 0,
     },
     button: {
       fontWeight: 700,
@@ -156,7 +156,7 @@ export const theme = createTheme({
           backgroundColor: '#F8FAFB',
           fontSize: '0.75rem',
           fontWeight: 800,
-          letterSpacing: '0.04em',
+          letterSpacing: 0,
           textTransform: 'uppercase',
         },
       },

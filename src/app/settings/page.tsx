@@ -324,11 +324,14 @@ export default async function SettingsPage({
                   <Box
                     sx={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                      gridTemplateColumns: {
+                        xs: 'repeat(2, minmax(0, 1fr))',
+                        sm: 'repeat(3, minmax(0, 1fr))',
+                      },
                       gap: 2,
                     }}
                   >
-                    <Box>
+                    <Box sx={{gridColumn: {xs: '1 / -1', sm: 'auto'}}}>
                       <Typography color="text.secondary" variant="caption">
                         Límite
                       </Typography>
