@@ -29,6 +29,7 @@ export type RecurringTemplateForGeneration = {
   dayOfMonth: number;
   categoryId: string | null;
   categoryIsActive: boolean | null;
+  categoryName: string | null;
   paymentMethodId: string | null;
   paymentMethodIsActive: boolean | null;
   note: string | null;
@@ -57,7 +58,7 @@ export type PlannedRecurringTransaction = {
 };
 
 export type SkippedRecurringTemplateReason =
-  'duplicate' | 'inactive' | 'incomplete';
+  'duplicate' | 'inactive' | 'incomplete' | 'invalid';
 
 export type SkippedRecurringTemplate = {
   templateId: string;

@@ -9,6 +9,7 @@ import {
   recurringTransactionTemplates,
 } from '@/lib/db/schema';
 import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
+import {isSavingsCategoryName} from '@/features/transactions/schemas';
 
 export async function getRecurringPageData(month: string) {
   await requireCurrentUser();
@@ -96,7 +97,9 @@ export async function getRecurringPageData(month: string) {
             }
           : null,
       })),
-      categories: categoryRows,
+      categories: categoryRows.filter(
+        category => !isSavingsCategoryName(category.name),
+      ),
       paymentMethods: paymentMethodRows,
       defaultExchangeRate: settingsRows[0]?.defaultExchangeRate ?? '36.6243',
     };

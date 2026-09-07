@@ -24,6 +24,7 @@ import {ManagementDialog} from '@/features/management/components/management-dial
 import {getRecurringPageData} from '@/features/recurring/queries';
 import {normalizeMonth, formatDisplayDate} from '@/lib/date/month';
 import {formatNio, formatUsd} from '@/lib/money/format';
+import {isSavingsCategoryName} from '@/features/transactions/schemas';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,6 +45,10 @@ function getTemplateStatus(template: RecurringTemplate): {
   color: 'success' | 'warning' | 'default';
 } {
   if (!template.isActive) return {label: 'Inactiva', color: 'default'};
+
+  if (template.categoryName && isSavingsCategoryName(template.categoryName)) {
+    return {label: 'Categoría no válida para gastos', color: 'warning'};
+  }
 
   if (
     !template.categoryId ||
@@ -239,7 +244,8 @@ export default async function RecurringPage({
       {params.status === 'invalid' ? (
         <Alert severity="error">
           Revisa los valores. Para activar una plantilla, la categoría y el
-          método deben estar activos.
+          método deben estar activos. Ahorro debe registrarse como
+          transferencia.
         </Alert>
       ) : null}
       {params.status === 'generated' ? (
@@ -247,6 +253,12 @@ export default async function RecurringPage({
           Generación de {month}: {params.created ?? 0} creadas,{' '}
           {params.duplicate ?? 0} duplicadas omitidas, {params.inactive ?? 0}{' '}
           inactivas omitidas y {params.incomplete ?? 0} incompletas omitidas.
+        </Alert>
+      ) : null}
+      {params.status === 'generated' && Number(params.invalid) > 0 ? (
+        <Alert severity="warning">
+          {params.invalid} plantillas no válidas omitidas. Revisa sus montos y
+          la tasa de cambio. Ahorro no puede generarse como gasto.
         </Alert>
       ) : null}
 

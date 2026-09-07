@@ -1,4 +1,5 @@
-import {convertMoney} from '@/lib/money/convert';
+import {convertMoney, isValidMoneyAmount} from '@/lib/money/convert';
+import {isSavingsCategoryName} from '@/features/transactions/schemas';
 import type {
   PlannedRecurringTransaction,
   RecurringGenerationPlan,
@@ -70,6 +71,9 @@ export function validateRecurringTemplateInput(
 
   if (!Number.isFinite(amount) || amount <= 0)
     fieldErrors.amount = 'El monto debe ser mayor que cero.';
+  else if (!isValidMoneyAmount(amount))
+    fieldErrors.amount =
+      'El monto admite hasta 2 decimales y un máximo de 9,999,999,999.99.';
 
   if (raw.currency !== 'USD' && raw.currency !== 'NIO')
     fieldErrors.currency = 'Selecciona USD o NIO.';
@@ -146,6 +150,10 @@ export function buildRecurringTransactionDraft({
     throw new Error('Recurring template must have category and payment method');
   }
 
+  if (!template.categoryName || isSavingsCategoryName(template.categoryName)) {
+    throw new RangeError('Savings cannot be generated as a recurring expense');
+  }
+
   const {amountUsd, amountNio} = convertMoney({
     amount: template.amount,
     currency: template.currency,
@@ -180,12 +188,15 @@ function getSkipReason(
 
   if (
     !template.categoryId ||
+    !template.categoryName ||
     !template.paymentMethodId ||
     template.categoryIsActive !== true ||
     template.paymentMethodIsActive !== true
   ) {
     return 'incomplete';
   }
+
+  if (isSavingsCategoryName(template.categoryName)) return 'invalid';
 
   return null;
 }
@@ -216,9 +227,15 @@ export function planRecurringTransactionGeneration({
       continue;
     }
 
-    candidates.push(
-      buildRecurringTransactionDraft({template, month, exchangeRate}),
-    );
+    try {
+      candidates.push(
+        buildRecurringTransactionDraft({template, month, exchangeRate}),
+      );
+    } catch (error) {
+      if (!(error instanceof RangeError)) throw error;
+      // Una conversión fuera de rango no debe impedir generar otras plantillas.
+      skipped.push({templateId: template.id, reason: 'invalid'});
+    }
   }
 
   return {candidates, skipped};

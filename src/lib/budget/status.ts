@@ -12,7 +12,7 @@ type BudgetStatusInput = BudgetUsageInput & {
 };
 
 type FreezeCategoryInput = BudgetUsageInput & {
-  dayOfMonth: number;
+  dayOfMonth: number | null;
 };
 
 export function getBudgetUsagePercent({
@@ -55,5 +55,10 @@ export function shouldFreezeCategory({
     budgetAmountUsd,
   });
 
-  return usagePercent >= 80 && dayOfMonth < 20;
+  return (
+    dayOfMonth !== null &&
+    dayOfMonth >= 1 &&
+    dayOfMonth < 20 &&
+    usagePercent >= 80
+  );
 }

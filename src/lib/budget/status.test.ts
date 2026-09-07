@@ -5,6 +5,18 @@ import {
 } from './status';
 
 describe('budget rules', () => {
+  it.each([null, 0, 20, 31])(
+    'no recomienda congelar con día %s',
+    dayOfMonth => {
+      expect(
+        shouldFreezeCategory({
+          usedAmountUsd: 80,
+          budgetAmountUsd: 100,
+          dayOfMonth,
+        }),
+      ).toBe(false);
+    },
+  );
   it('calcula el porcentaje de uso', () => {
     expect(
       getBudgetUsagePercent({usedAmountUsd: 80, budgetAmountUsd: 100}),

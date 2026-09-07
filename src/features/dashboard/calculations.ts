@@ -60,7 +60,15 @@ function isSavingsCategory(name: string): boolean {
 function getRecommendation(
   status: BudgetStatus,
   shouldFreeze: boolean,
+  isCurrentMonth: boolean,
 ): string {
+  if (!isCurrentMonth) {
+    if (status === 'exceeded') return 'Presupuesto excedido.';
+    if (status === 'danger') return 'Uso del presupuesto en nivel de peligro.';
+    if (status === 'warning')
+      return 'Uso del presupuesto en nivel de advertencia.';
+    return 'Dentro del presupuesto.';
+  }
   if (shouldFreeze) return 'Congela gastos extra en esta categoría.';
   if (status === 'exceeded') return 'Detén gastos y revisa el excedente.';
   if (status === 'danger') return 'Reduce gastos durante el resto del mes.';
@@ -79,7 +87,7 @@ export function calculateDashboardSummary({
   budget: DashboardBudget | null;
   budgetCategories: DashboardBudgetCategory[];
   transactions: DashboardTransaction[];
-  dayOfMonth: number;
+  dayOfMonth: number | null;
 }): DashboardSummary {
   const expenses = transactions.filter(
     transaction => transaction.type === 'expense',
@@ -126,7 +134,7 @@ export function calculateDashboardSummary({
       remainingUsd: roundMoney(category.amountUsd - spentUsd),
       usagePercent,
       status,
-      recommendation: getRecommendation(status, freeze),
+      recommendation: getRecommendation(status, freeze, dayOfMonth !== null),
     };
   });
 

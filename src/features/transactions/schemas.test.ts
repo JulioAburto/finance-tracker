@@ -13,6 +13,35 @@ const validExpense = {
 };
 
 describe('transaction validation', () => {
+  it.each(['0.001', '10.005', '10000000000', 'NaN', 'Infinity'])(
+    'rechaza el monto no persistible %s',
+    amount => {
+      const result = validateTransactionInput({...validExpense, amount});
+      expect(result.success).toBe(false);
+      if (!result.success) expect(result.fieldErrors.amount).toBeDefined();
+    },
+  );
+
+  it.each(['0.00001', '36.62431', '100000000', 'NaN', 'Infinity'])(
+    'rechaza la tasa no persistible %s',
+    exchangeRate => {
+      const result = validateTransactionInput({...validExpense, exchangeRate});
+      expect(result.success).toBe(false);
+      if (!result.success)
+        expect(result.fieldErrors.exchangeRate).toBeDefined();
+    },
+  );
+
+  it('devuelve error de campo si la conversión desborda el rango', () => {
+    const result = validateTransactionInput({
+      ...validExpense,
+      amount: '9999999999.99',
+      currency: 'USD',
+    });
+    expect(result.success).toBe(false);
+    if (!result.success)
+      expect(result.fieldErrors.amount).toContain('convertido');
+  });
   it('acepta un gasto válido y convierte campos numéricos', () => {
     const result = validateTransactionInput(validExpense);
 

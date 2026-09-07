@@ -7,7 +7,7 @@ import {
   monthlyBudgets,
   transactions,
 } from '@/lib/db/schema';
-import {getMonthRange} from '@/lib/date/month';
+import {getCurrentDayOfMonth, getMonthRange} from '@/lib/date/month';
 import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
 import {calculateDashboardSummary} from './calculations';
 
@@ -98,7 +98,7 @@ export async function getDashboardData(month: string) {
         amountUsd: Number(category.amountUsd),
       })),
       transactions: transactionData,
-      dayOfMonth: new Date().getDate(),
+      dayOfMonth: getCurrentDayOfMonth(month),
     });
 
     return {

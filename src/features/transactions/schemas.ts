@@ -1,3 +1,8 @@
+import {
+  convertMoney,
+  isValidExchangeRate,
+  isValidMoneyAmount,
+} from '@/lib/money/convert';
 import type {
   TransactionField,
   TransactionInput,
@@ -78,12 +83,36 @@ export function validateTransactionInput(
 
   if (!Number.isFinite(amount) || amount <= 0)
     fieldErrors.amount = 'El monto debe ser mayor que cero.';
+  else if (!isValidMoneyAmount(amount))
+    fieldErrors.amount =
+      'El monto admite hasta 2 decimales y un máximo de 9,999,999,999.99.';
 
   if (raw.currency !== 'USD' && raw.currency !== 'NIO')
     fieldErrors.currency = 'Selecciona USD o NIO.';
 
   if (!Number.isFinite(exchangeRate) || exchangeRate <= 0)
     fieldErrors.exchangeRate = 'El tipo de cambio debe ser mayor que cero.';
+  else if (!isValidExchangeRate(exchangeRate))
+    fieldErrors.exchangeRate =
+      'La tasa admite hasta 4 decimales y un máximo de 99,999,999.9999.';
+
+  if (
+    !fieldErrors.amount &&
+    !fieldErrors.exchangeRate &&
+    !fieldErrors.currency
+  ) {
+    try {
+      convertMoney({
+        amount,
+        currency: raw.currency as 'USD' | 'NIO',
+        exchangeRate,
+      });
+    } catch (error) {
+      if (!(error instanceof RangeError)) throw error;
+      fieldErrors.amount =
+        'El monto convertido supera el máximo permitido. Revisa el monto y la tasa.';
+    }
+  }
 
   if (!isValidDate(raw.date)) fieldErrors.date = 'Selecciona una fecha válida.';
 

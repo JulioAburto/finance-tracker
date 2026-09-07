@@ -19,6 +19,7 @@ import {
   isUuid,
   isValidRulePattern,
   readBoolean,
+  readExchangeRate,
   readInteger,
   readNonNegativeNumber,
   readPositiveNumber,
@@ -264,7 +265,7 @@ export async function updateSettingsAction(formData: FormData) {
   await requireCurrentUser();
 
   const currency = readText(formData, 'defaultCurrency');
-  const rate = readPositiveNumber(formData, 'defaultExchangeRate');
+  const rate = readExchangeRate(formData, 'defaultExchangeRate');
   if ((currency !== 'USD' && currency !== 'NIO') || rate === null) {
     finish('/settings', 'invalid');
   }

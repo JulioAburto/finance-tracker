@@ -21,6 +21,21 @@ export function normalizeMonth(value: string | undefined): string {
   return value && MONTH_PATTERN.test(value) ? value : getCurrentMonth();
 }
 
+// Solo el mes en curso admite recomendaciones basadas en el día actual.
+export function getCurrentDayOfMonth(
+  month: string,
+  now = new Date(),
+): number | null {
+  if (month !== getCurrentMonth(now)) return null;
+
+  return Number(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: APP_TIME_ZONE,
+      day: 'numeric',
+    }).format(now),
+  );
+}
+
 export function getMonthRange(month: string): {
   startDate: string;
   endDate: string;

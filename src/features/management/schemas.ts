@@ -1,3 +1,5 @@
+import {isValidExchangeRate, isValidMoneyAmount} from '@/lib/money/convert';
+
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i;
 
@@ -10,15 +12,24 @@ export function readPositiveNumber(
   name: string,
 ): number | null {
   const value = Number(readText(formData, name));
-  return Number.isFinite(value) && value > 0 ? value : null;
+  return isValidMoneyAmount(value) && value > 0 ? value : null;
+}
+
+export function readExchangeRate(
+  formData: FormData,
+  name: string,
+): number | null {
+  const value = Number(readText(formData, name));
+  return isValidExchangeRate(value) ? value : null;
 }
 
 export function readNonNegativeNumber(
   formData: FormData,
   name: string,
 ): number | null {
-  const value = Number(readText(formData, name));
-  return Number.isFinite(value) && value >= 0 ? value : null;
+  const text = readText(formData, name);
+  const value = Number(text);
+  return text && isValidMoneyAmount(value) ? value : null;
 }
 
 export function readInteger(formData: FormData, name: string): number | null {

@@ -14,6 +14,7 @@ import {
   transactions,
 } from '@/lib/db/schema';
 import {withDatabaseDiagnostics} from '@/lib/observability/database-diagnostics';
+import {isSavingsCategoryName} from '@/features/transactions/schemas';
 import {
   isUuid,
   isValidRecurringMonth,
@@ -56,7 +57,7 @@ async function validateActiveReferences(
 
   const [categoryRows, paymentRows] = await Promise.all([
     db
-      .select({id: categories.id})
+      .select({id: categories.id, name: categories.name})
       .from(categories)
       .where(
         and(eq(categories.id, input.categoryId), eq(categories.isActive, true)),
@@ -74,7 +75,11 @@ async function validateActiveReferences(
       .limit(1),
   ]);
 
-  return categoryRows.length === 1 && paymentRows.length === 1;
+  return (
+    categoryRows.length === 1 &&
+    !isSavingsCategoryName(categoryRows[0].name) &&
+    paymentRows.length === 1
+  );
 }
 
 async function parseAndValidateTemplate(
@@ -175,6 +180,7 @@ export async function generateRecurringTransactionsAction(formData: FormData) {
             dayOfMonth: recurringTransactionTemplates.dayOfMonth,
             categoryId: recurringTransactionTemplates.categoryId,
             categoryIsActive: categories.isActive,
+            categoryName: categories.name,
             paymentMethodId: recurringTransactionTemplates.paymentMethodId,
             paymentMethodIsActive: paymentMethods.isActive,
             note: recurringTransactionTemplates.note,
@@ -259,8 +265,11 @@ export async function generateRecurringTransactionsAction(formData: FormData) {
       const incomplete = plan.skipped.filter(
         skip => skip.reason === 'incomplete',
       ).length;
+      const invalid = plan.skipped.filter(
+        skip => skip.reason === 'invalid',
+      ).length;
 
-      return {created, duplicate, inactive, incomplete};
+      return {created, duplicate, inactive, incomplete, invalid};
     }),
   );
 
@@ -270,5 +279,6 @@ export async function generateRecurringTransactionsAction(formData: FormData) {
     duplicate: result.duplicate,
     inactive: result.inactive,
     incomplete: result.incomplete,
+    invalid: result.invalid,
   });
 }

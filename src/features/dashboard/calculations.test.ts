@@ -1,4 +1,5 @@
 import {calculateDashboardSummary} from './calculations';
+import {getCurrentDayOfMonth} from '@/lib/date/month';
 
 const budgetCategories = [
   {
@@ -20,6 +21,35 @@ const budgetCategories = [
 ];
 
 describe('dashboard calculations', () => {
+  it.each(['2026-08', '2026-10'])(
+    'mantiene la alerta de %s sin instrucciones basadas en el día actual',
+    month => {
+      const summary = calculateDashboardSummary({
+        budget: {salaryUsd: 1300, expectedSavingsUsd: 450},
+        budgetCategories,
+        transactions: [
+          {
+            id: 'expense',
+            name: 'Delivery',
+            date: `${month}-05`,
+            type: 'expense',
+            amountUsd: 85,
+            categoryId: 'delivery',
+            categoryName: 'Delivery',
+          },
+        ],
+        dayOfMonth: getCurrentDayOfMonth(
+          month,
+          new Date('2026-09-06T12:00:00Z'),
+        ),
+      });
+      expect(summary.totalSpentUsd).toBe(85);
+      expect(summary.alerts[0]).toMatchObject({
+        status: 'danger',
+        recommendation: 'Uso del presupuesto en nivel de peligro.',
+      });
+    },
+  );
   it('excluye ahorro y transferencias del gasto mensual', () => {
     const summary = calculateDashboardSummary({
       budget: {salaryUsd: 1300, expectedSavingsUsd: 450},
